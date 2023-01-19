@@ -2,3 +2,6 @@
 https://dt.miet.ru/ppo_it/api/temp_hum/<number>
 Получение данных с датчиков влажности почвы (1-6):
 https://dt.miet.ru/ppo_it/api/hum/<number>
+
+Библиотека REQUESTS:
+https://pythonist.ru/delaem-zaprosy-k-api-s-pomoshhyu-python/
