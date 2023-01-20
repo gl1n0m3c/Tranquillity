@@ -1,22 +1,35 @@
 import json
 import requests
 import time
-import datetime
+from datetime import timezone
 
-
+# URL для дадчиков температуры и влажности воздуха
 URL_Temperature_AirHumidity_1 = 'https://dt.miet.ru/ppo_it/api/temp_hum/1'
 URL_Temperature_AirHumidity_2 = 'https://dt.miet.ru/ppo_it/api/temp_hum/2'
 URL_Temperature_AirHumidity_3 = 'https://dt.miet.ru/ppo_it/api/temp_hum/3'
 URL_Temperature_AirHumidity_4 = 'https://dt.miet.ru/ppo_it/api/temp_hum/4'
+# URL для дадчиков влажности почв
+URL_GroundHumidity_1 = 'https://dt.miet.ru/ppo_it/api/hum/1'
+URL_GroundHumidity_2 = 'https://dt.miet.ru/ppo_it/api/hum/2'
+URL_GroundHumidity_3 = 'https://dt.miet.ru/ppo_it/api/hum/3'
+URL_GroundHumidity_4 = 'https://dt.miet.ru/ppo_it/api/hum/4'
+URL_GroundHumidity_5 = 'https://dt.miet.ru/ppo_it/api/hum/5'
+URL_GroundHumidity_6 = 'https://dt.miet.ru/ppo_it/api/hum/6'
+# 'Массив' со всеми данными в формате json
 MAS_DATA = {"DATA": []}
 print(MAS_DATA['DATA'])
+timeout_for_sensors = 0.25
 while True:
     print('-----')
-    answer_Temperature_AirHumidity_1 = requests.get(URL_Temperature_AirHumidity_1)
-    answer_Temperature_AirHumidity_2 = requests.get(URL_Temperature_AirHumidity_2)
-    TIME_request = str(datetime.datetime.now())[0:-7]
-    answer_Temperature_AirHumidity_3 = requests.get(URL_Temperature_AirHumidity_3)
-    answer_Temperature_AirHumidity_4 = requests.get(URL_Temperature_AirHumidity_4)
+    # Ответы сервера по температуре и влажности
+    answer_Temperature_AirHumidity_1 = requests.get(URL_Temperature_AirHumidity_1, timeout = timeout_for_sensors)
+    answer_Temperature_AirHumidity_2 = requests.get(URL_Temperature_AirHumidity_2, timeout = timeout_for_sensors)
+    answer_Temperature_AirHumidity_3 = requests.get(URL_Temperature_AirHumidity_3, timeout = timeout_for_sensors)
+    answer_Temperature_AirHumidity_4 = requests.get(URL_Temperature_AirHumidity_4, timeout = timeout_for_sensors)
+    TIME_request = answer_Temperature_AirHumidity_4.headers['Date']
+    print(TIME_request)
+    # answer_GroundHumidity_1 = requests.get()
+    # Переменная, которая будет хранить данные за последние 5сек
     DATA_per_5sec = {"time": TIME_request, 'data':[]}
     # Проверка ответа от датчика 1
     if answer_Temperature_AirHumidity_1.status_code == 200:
