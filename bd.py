@@ -3,14 +3,8 @@ import sqlite3
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
 
-#создание таблиц time, air, ground
-cur.execute("""CREATE TABLE IF NOT EXISTS time(
-   time TEXT,
-   type TEXT);
-""")
-conn.commit()
-cur.execute("""CREATE TABLE IF NOT EXISTS air(
-   type TEXT,
+#создание таблиц air, ground
+cur.execute("""CREATE TABLE IF NOT EXISTS newair(
    result TEXT,
    id TEXT,
    temperature TEXT,
@@ -18,15 +12,13 @@ cur.execute("""CREATE TABLE IF NOT EXISTS air(
    time TEXT);
 """)
 conn.commit()
-cur.execute("""CREATE TABLE IF NOT EXISTS ground(
-   type TEXT,
+cur.execute("""CREATE TABLE IF NOT EXISTS newground(
    result TEXT,
    id TEXT,  
    humidity TEXT,
    time TEXT);
 """)
 conn.commit()
-
 #работа с кортежами для занесения данных в таблицу
 var = {'timeAIR': '2023-01-22 13:24:07',
        'timeGROUND': '2023-01-22 13:24:08',
@@ -47,59 +39,55 @@ var = {'timeAIR': '2023-01-22 13:24:07',
 
 for i in range(0,4):
     if (str(var['data']['air'][i]['result']) == 'True'):
-        type = '1'
         result = str(var['data']['air'][i]['result'])
         id = str(var['data']['air'][i]['id'])
         temperature = str(var['data']['air'][i]['temperature'])
         humidity = str(var['data']['air'][i]['humidity'])
-        time = '-'
-        aird = (type,result,id,temperature,humidity,time)
-        cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?, ?);", aird)
+        time = var['timeAIR']
+        aird = (result,id,temperature,humidity,time)
+        cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
         conn.commit()
         aird = ()
     else:
-        type = '1'
         result = str(var['data']['air'][i]['result'])
         id = str(var['data']['air'][i]['id'])
         temperature = 'NULL'
         humidity = 'NULL'
-        time = '-'
-        aird = (type,result,id,temperature,humidity,time)
-        cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?, ?);", aird)
+        time = var['timeAIR']
+        aird = (result,id,temperature,humidity,time)
+        cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
         conn.commit()
         aird = ()
 
 #запись в таблицу ground
 for i in range(0,6):
     if (str(var['data']['ground'][i]['result']) == 'True'):
-        type = '1'
         result = str(var['data']['ground'][i]['result'])
         id = str(var['data']['ground'][i]['id'])
         humidity = str(var['data']['ground'][i]['humidity'])
-        time = '-'
-        grd = (type,result,id,humidity,time)
-        cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?, ?);", grd)
+        time = var['timeGROUND']
+        grd = (result,id,humidity,time)
+        cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
         conn.commit()
         grd = ()
     else:
-        type = '1'
         result = str(var['data']['ground'][i]['result'])
         id = str(var['data']['ground'][i]['id'])
         humidity = 'NULL'
-        time = '-'
-        grd = (type,result,id,humidity,time)
-        cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?, ?);", grd)
+        time = var['timeAIR']
+        grd = (result,id,humidity,time)
+        cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
         conn.commit()
         grd = ()
 
+#вывод
 
-cur.execute("SELECT * FROM air;")
+cur.execute("SELECT * FROM newair ORDER BY time;")
 all_results = cur.fetchall()
 print(all_results)
-cur.execute("SELECT * FROM ground;")
+cur.execute("SELECT * FROM newground ORDER BY time;")
 all_results1 = cur.fetchall()
 print(all_results1)
 conn.close()
 
-
-
+#вывод данных за определённый промежуток(минута, 10 минут, полчаса, час, 12 часов, день)
