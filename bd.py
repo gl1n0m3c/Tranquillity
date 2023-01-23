@@ -150,3 +150,7 @@ if n == '1 месяц':
     print(all_results)
     cur.close()
     cur.close()
+
+#перевод в строку формата json
+json_data = json.dumps(var, indent=4)
+print(json_data)
