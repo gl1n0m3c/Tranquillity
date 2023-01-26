@@ -2,7 +2,7 @@ import json
 import requests
 import time
 import datetime
-
+from http.server import HTTPServer, CGIHTTPRequestHandler
 
 # URL для дадчиков температуры и влажности воздуха
 URL_Temperature_AirHumidity = 'https://dt.miet.ru/ppo_it/api/temp_hum/'
@@ -11,7 +11,8 @@ URL_GroundHumidity = 'https://dt.miet.ru/ppo_it/api/hum/'
 # 'Массив' со всеми данными в формате json
 MAS_DATA = {"DATA": []}
 print(MAS_DATA['DATA'])
-timeout_for_sensors = 0.25
+timeout_for_sensors = 5     # таймаут для запросов на сервер теплицы
+time_for_reloading = 60     # интервал считывания данных
 while True:
     print('-----')
     # ОТВЕТЫ СЕРВЕРА ПО ТЕМПЕРАТУРЕ И ВЛАЖНОСТИ ВОЗДУХА
@@ -23,7 +24,7 @@ while True:
     # Создание цикла с обращениями к серверу (температура + влажность воздуха)
     for i in range(1, 5):
         try:
-            k = requests.get(URL_Temperature_AirHumidity + str(i))
+            k = requests.get(URL_Temperature_AirHumidity + str(i), timeout = timeout_for_sensors)
         except Exception:
             data_per_5sec['data']['air'].append({'result': False, 'id': i})
         else:
@@ -39,7 +40,7 @@ while True:
     # Создание цикла с обращениями к серверу (влажность почв)
     for i in range(1, 7):
         try:
-            k = requests.get(URL_GroundHumidity + str(i))
+            k = requests.get(URL_GroundHumidity + str(i), timeout = timeout_for_sensors)
         except Exception:
             data_per_5sec['data']['ground'].append({'result': False, 'id': i})
         else:
@@ -63,4 +64,6 @@ while True:
     data_per_5sec['timeGROUND'] = T2
 
     print(data_per_5sec)
-    time.sleep(4)
+    MAS_DATA["DATA"].append(data_per_5sec)
+
+    time.sleep(time_for_reloading)
