@@ -14,12 +14,6 @@ class HttpGetHandler(BaseHTTPRequestHandler):
         # Массив, в котором хранятятся данные, переданные пользователем через ссылку
         m = self.path[1:].split('/')
         print(m)
-        # ПРОВЕРКА НА ПРАВИЛЬНОСТЬ ВВОДА ПАРАМЕТРОВ
-        if m[0] == 'proverka_vvoda':
-            if m[1].isdigit():
-                self.wfile.write('<body>'.encode() + '{"message": "Введенные данные сохранены!"}'.encode() + '</body></html>'.encode())
-            else:
-                self.wfile.write('<body>'.encode() + '{"message": "Неправильный формат ввода параметров!"}'.encode() + '</body></html>'.encode())
         # ЗАПРОС НА ПЕРЕДАЧУ ПОСЛЕДНИХ НАСТРОЕК ПОЛЬЗОВАТЕЛЯ
         '''необхоидмо прописать условия, так как пока я не работаю с бд'''
         if m[0] == 'give_options':
@@ -42,6 +36,9 @@ class HttpGetHandler(BaseHTTPRequestHandler):
         if m[0] == 'start_wattering':
             self.wfile.write('<body>'.encode() + '{"message": "Система полива включена!"}'.encode() + '</body></html>'.encode())
             self.wfile.write('<body>'.encode() + '{"message": "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"}'.encode() + '</body></html>'.encode())
+        else:
+            self.wfile.write('<body>'.encode() + '{"message": "Неверная ссылка!"}'.encode() + '</body></html>'.encode())
+
 
 server_addres = ('', 8000)
 httpd = ThreadingHTTPServer(server_addres, HttpGetHandler)
