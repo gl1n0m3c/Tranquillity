@@ -1,14 +1,26 @@
 import json
 import sqlite3
+
+from os import system
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
+
+#         }
+def air_corpus(t):
+    result = ""
+    for r in t:
+        # {'result': True,'id': i,'temperature': t,'humidity': h}
+        # ('True', '3', '29.79', '44.97', '2023-01-23 18:25:10')
+        result += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + ",'temperature': "+ str(r[2]) +",'humidity': " + str(r[3]) +"}"
+    return result
+
 
 #создание таблиц air, ground
 cur.execute("""CREATE TABLE IF NOT EXISTS newair(
    result TEXT,
-   id TEXT,
-   temperature TEXT,
-   humidity TEXT,
+   id INTEGER,
+   temperature REAL,
+   humidity REAL,
    time TEXT);
 """)
 conn.commit()
@@ -44,10 +56,10 @@ for j in range(0,len(var)):
     for i in range(0,4):
         if (str(var[j]['data']['air'][i]['result']) == 'True'):
             result = str(var[j]['data']['air'][i]['result'])
-            id = str(var[j]['data']['air'][i]['id'])
-            temperature = str(var[j]['data']['air'][i]['temperature'])
-            humidity = str(var[j]['data']['air'][i]['humidity'])
-            time = var[j]['timeAIR']
+            id = var[j]['data']['air'][i]['id']
+            temperature = float(var[j]['data']['air'][i]['temperature'])
+            humidity = float(var[j]['data']['air'][i]['humidity'])
+            time = str(var[j]['timeAIR'])
             aird = (result,id,temperature,humidity,time)
             cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
@@ -126,13 +138,52 @@ if n == '1 день':
     print(all_results)
     cur.close()
 if n == 'month':
-    cur.execute("SELECT * from newair FOR WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
-    all_results1 = cur.fetchall()
-    tpl = tuple(all_results1)
-    j = json.dumps(tpl,indent = 3)
-    print(j)
+    cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+    #{'result': True, 'id': 2, 'temperature': 29.2, 'humidity': 63.43}
+    #("{result:result: Trueid:'id': 4}",)
+    # SELECT 'Olga' || ' ' || 'Samvel';
+    # SELECT first_name || ' ' || last_name AS contact_name
+    #\'{\'result\':\' || result || \'}\'
+    # cur.execute('SELECT \'{\'result\':\' || result || \'}\' from newair WHERE time BETWEEN  DATETIME("now","localtime","-1 month") and DATETIME("now","localtime")')
+    q = cur.fetchall()
+    print(q)
+    # tpl = tuple(a)
+    # j = json.dumps(tpl,indent = 3)
+    # j = '{"DATA": ' + j + '}'
+
     cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
     all_results = cur.fetchall()
     cur.close()
-
 #перевод в строку формата json
+# def json_kal(kal,nigg):
+#     begin = '{"DATA" : [{'
+#     end = "]}"
+#     timeAir = "'timeAIR': "
+#     timeGround = "'timeGROUND': "
+#     data_start = "'data':{"
+#     data_end = "}"
+#     air_start = "'air: [{'"
+#     air_end = "],"
+#     ground_start = "'ground': [{"
+#     ground_end = "]"
+#     st = "{"
+#     s = "},"
+#     tab = "    "
+#     z = ","
+#     a = air_corpus(kal)
+#     g = glinomesye(nigg)
+#     churka = begin + "\n" + tab + timeAir + a[4] + z + "\n" + tab + timeGround + g[3] + z + "\n" + data_start + "\n" + tab + air_start
+#     return
+#
+
+#
+#
+# def glinomesye(glina):
+#     for i in glina:
+#         result = glina[i][0]
+#         id = glina[i][1]
+#         humidity = glina[i][2]
+#         time = glina[i][3]
+#
+#     return [result,id,humidity,time]
+
