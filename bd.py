@@ -93,22 +93,6 @@ for j in range(0,len(var)):
 
 #вывод данных за определённый промежуток(минута, 10 минут, 30 минут, 1 час, 12 часов, 1 день, 1 месяц)
 n = input()
-if n == 'минута':
-    cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 minute') and DATETIME('now','localtime')")
-    all_results1 = cur.fetchall()
-    cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 minute') and DATETIME('now','localtime')")
-    all_results = cur.fetchall()
-    print(all_results1)
-    print(all_results)
-    cur.close()
-if n == '10 минут':
-    cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-10 minutes') and DATETIME('now','localtime')")
-    all_results1 = cur.fetchall()
-    cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-10 minutes') and DATETIME('now','localtime')")
-    all_results = cur.fetchall()
-    print(all_results1)
-    print(all_results)
-    cur.close()
 if n == '30 минут':
     cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
     all_results1 = cur.fetchall()
@@ -141,16 +125,14 @@ if n == '1 день':
     print(all_results1)
     print(all_results)
     cur.close()
-if n == '1 месяц':
-    cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+if n == 'month':
+    cur.execute("SELECT * from newair FOR WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
     all_results1 = cur.fetchall()
+    tpl = tuple(all_results1)
+    j = json.dumps(tpl,indent = 3)
+    print(j)
     cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
     all_results = cur.fetchall()
-    print(all_results1)
-    print(all_results)
-    cur.close()
     cur.close()
 
 #перевод в строку формата json
-json_data = json.dumps(var, indent=4)
-print(json_data)
