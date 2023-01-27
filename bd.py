@@ -5,12 +5,13 @@ from os import system
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
 
-def perevod(big_mas,len_air,len_ground):
+def perevod(air_mas, ground_mas):
     result = ""
-    for i in range(0,len_air):
-        result += "{'result': " + str(big_mas[i][0]) + "," + "\n" + "'id': " + str(big_mas[i][1]) + "," + "\n" + "'temperature': " + str(big_mas[i][2])  + "," + "\n" + "'humidity': " + str(big_mas[i][3]) + "},"
-    for j in range(len_air+1,len_ground):
-        resultgr += "{'result': " + str(big_mas[i][0]) + "," + "\n" + "'id': " + str(big_mas[i][1]) + "," + "\n" + "'humidity': "  + str(big_mas[i][2]) + "},"
+    resultgr = ""
+    for r in air_mas:
+        result += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + ",'temperature': " + str(r[2]) + ",'humidity': " + str(r[3]) + "}"
+    for r in ground_mas:
+        resultgr += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + ",'humidity': " + str(r[2]) + "}"
     return '{"DATA" : [{' + "'timeAIR': " + "'timeGROUND': " + "'data':{" + "'air: ['" + result + "]," + "'ground': [" + resultgr + "]"
 #begin = '{"DATA" : [{'
 #     end = "]}"
@@ -180,7 +181,9 @@ if n == 'month':
     # j = '{"DATA": ' + j + '}'
 
     cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
-    all_results = cur.fetchall()
+    z = cur.fetchall()
+
+    print(perevod(q,z)[:200])
     cur.close()
 #перевод в строку формата json
 # def json_kal(kal,nigg):
