@@ -5,15 +5,43 @@ from os import system
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
 
-#         }
-def air_corpus(t):
+def perevod(big_mas,len_air,len_ground):
     result = ""
-    for r in t:
-        # {'result': True,'id': i,'temperature': t,'humidity': h}
-        # ('True', '3', '29.79', '44.97', '2023-01-23 18:25:10')
-        result += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + ",'temperature': "+ str(r[2]) +",'humidity': " + str(r[3]) +"}"
-    return result
-
+    for i in range(0,len_air):
+        result += "{'result': " + str(big_mas[i][0]) + "," + "\n" + "'id': " + str(big_mas[i][1]) + "," + "\n" + "'temperature': " + str(big_mas[i][2])  + "," + "\n" + "'humidity': " + str(big_mas[i][3]) + "},"
+    for j in range(len_air+1,len_ground):
+        resultgr += "{'result': " + str(big_mas[i][0]) + "," + "\n" + "'id': " + str(big_mas[i][1]) + "," + "\n" + "'humidity': "  + str(big_mas[i][2]) + "},"
+    return '{"DATA" : [{' + "'timeAIR': " + "'timeGROUND': " + "'data':{" + "'air: ['" + result + "]," + "'ground': [" + resultgr + "]"
+#begin = '{"DATA" : [{'
+#     end = "]}"
+#     timeAir = "'timeAIR': "
+#     timeGround = "'timeGROUND': "
+#     data_start = "'data':{"
+#     data_end = "}"
+#     air_start = "'air: [{'"
+#     air_end = "],"
+#     ground_start = "'ground': [{"
+#     ground_end = "]"
+#     st = "{"
+#     s = "},"
+#     tab = "    "
+#     z = ","
+# def air_corpus(t):
+#     result = ""
+#     for r in t:
+#         # {'result': True,'id': i,'temperature': t,'humidity': h}
+#         # ('True', '3', '29.79', '44.97', '2023-01-23 18:25:10')
+#         result += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + ",'temperature': "+ str(r[2]) +",'humidity': " + str(r[3]) +"}"
+#
+#
+#
+# def ground_corpus(v):
+#     # ('True', '3', '71.6', '2023-01-23 18:22:37')
+#     # {'result': True,'id': i,'humidity': h}
+#     resultgr = ""
+#     for r in v:
+#         resultgr += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + "'humidity': " + str(r[2]) +"}"
+#
 
 #создание таблиц air, ground
 cur.execute("""CREATE TABLE IF NOT EXISTS newair(
@@ -146,7 +174,7 @@ if n == 'month':
     #\'{\'result\':\' || result || \'}\'
     # cur.execute('SELECT \'{\'result\':\' || result || \'}\' from newair WHERE time BETWEEN  DATETIME("now","localtime","-1 month") and DATETIME("now","localtime")')
     q = cur.fetchall()
-    print(q)
+
     # tpl = tuple(a)
     # j = json.dumps(tpl,indent = 3)
     # j = '{"DATA": ' + j + '}'
@@ -156,20 +184,7 @@ if n == 'month':
     cur.close()
 #перевод в строку формата json
 # def json_kal(kal,nigg):
-#     begin = '{"DATA" : [{'
-#     end = "]}"
-#     timeAir = "'timeAIR': "
-#     timeGround = "'timeGROUND': "
-#     data_start = "'data':{"
-#     data_end = "}"
-#     air_start = "'air: [{'"
-#     air_end = "],"
-#     ground_start = "'ground': [{"
-#     ground_end = "]"
-#     st = "{"
-#     s = "},"
-#     tab = "    "
-#     z = ","
+#
 #     a = air_corpus(kal)
 #     g = glinomesye(nigg)
 #     churka = begin + "\n" + tab + timeAir + a[4] + z + "\n" + tab + timeGround + g[3] + z + "\n" + data_start + "\n" + tab + air_start
