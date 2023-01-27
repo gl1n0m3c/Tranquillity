@@ -89,15 +89,18 @@ def SERVER():
             # Массив, в котором хранятятся данные, переданные пользователем через ссылку
             m = self.path[1:].split('/')
             print(m)
+
             # ЗАПРОС НА ПЕРЕДАЧУ ПОСЛЕДНИХ НАСТРОЕК ПОЛЬЗОВАТЕЛЯ
             '''необхоидмо прописать условия, так как пока я не работаю с бд'''
             if m[0] == 'give_options':
                 self.wfile.write(
                     '<body>'.encode() + '{"temperature": 30, "AIRhumidity": 60, "GROUNDhumidity": 70}'.encode() + '</body></html>'.encode())
+
             # ЗАПРОС НА ПЕРЕДАЧУ ДАННЫХ С ТЕПЛИЦЫ
             if m[0] == 'give_data':
                 self.wfile.write(
                     '<body>'.encode() + '{"DATA": [{"timeAIR": "2023-01-23 18:17:39", "timeGROUND": "2023-01-23 18:17:39", "data":{"air": [{"result": "True", "id": 1, "temperature": 27.85, "humidity": 46.92},{"result": "True", "id": 2, "temperature": 29.95, "humidity": 67.55},{"result": "True", "id": 3, "temperature": 29.1, "humidity": 72.91},{"result": "True", "id": 4, "temperature": 29.28, "humidity": 56.81}],"ground": [{"result": "True", "id": 1, "humidity": 72.02},{"result": "True", "id": 2, "humidity": 62.21},{"result": "True", "id": 3, "humidity": 74.5},{"result": "True", "id": 4, "humidity": 72.24},{"result": "True", "id": 5, "humidity": 70.33}, {"result": "True", "id": 6, "humidity": 72.16}]}},{"timeAIR": "2023-01-23 18:17:43", "timeGROUND": "2023-01-23 18:17:44", "data": {"air": [{"result": "True", "id": 1, "temperature": 27.16, "humidity": 47.93}, {"result": "True", "id": 2, "temperature": 29.9, "humidity": 49.35}, {"result": "True", "id": 3, "temperature": 29.31, "humidity": 60.92}, {"result": "True", "id": 4, "temperature": 29.54, "humidity": 81.54}], "ground": [{"result": "True", "id": 1, "humidity": 65.6}, {"result": "True", "id": 2, "humidity": 64.3}, {"result": "True", "id": 3, "humidity": 71.69}, {"result": "True", "id": 4, "humidity": 68.01}, {"result": "True", "id": 5, "humidity": 70.87}, {"result": "True", "id": 6, "humidity": 70.8}]}}, {"timeAIR": "2023-01-23 18:17:48", "timeGROUND": "2023-01-23 18:17:48", "data": {"air": [{"result": "True", "id": 1, "temperature": 27.21, "humidity": 70.57}, {"result": "True", "id": 2, "temperature": 31.63, "humidity": 43.44}, {"result": "True", "id": 3, "temperature": 30.38, "humidity": 56.67}, {"result": "True", "id": 4, "temperature": 29.3, "humidity": 50.43}], "ground": [{"result": "True", "id": 1, "humidity": 62.22}, {"result": "True", "id": 2, "humidity": 73.58}, {"result": "True", "id": 3, "humidity": 64.16}, {"result": "True", "id": 4, "humidity": 73.88}, {"result": "True", "id": 5, "humidity": 68.94}, {"result": "True", "id": 6, "humidity": 72.57}]}}, {"timeAIR": "2023-01-23 18:17:53", "timeGROUND": "2023-01-23 18:17:53", "data": {"air": [{"result": "True", "id": 1, "temperature": 28.28, "humidity": 51.25}, {"result": "True", "id": 2, "temperature": 28.62, "humidity": 80.65}, {"result": "True", "id": 3, "temperature": 28.63, "humidity": 67.72}, {"result": "True", "id": 4, "temperature": 29.8, "humidity": 64.11}], "ground": [{"result": "True", "id": 1, "humidity": 62.54}, {"result": "True", "id": 2, "humidity": 74.42}, {"result": "True", "id": 3, "humidity": 67.02}, {"result": "True", "id": 4, "humidity": 75.1}, {"result": "True", "id": 5, "humidity": 73.04}, {"result": "True", "id": 6, "humidity": 70.7}]}},{"timeAIR": "2023-01-23 18:17:53", "timeGROUND": "2023-01-23 18:17:53", "data": {"air": [{"result": "True", "id": 1, "temperature": 28.28, "humidity": 51.25}, {"result": "True", "id": 2, "temperature": 28.62, "humidity": 80.65}, {"result": "True", "id": 3, "temperature": 28.63, "humidity": 67.72}, {"result": "True", "id": 4, "temperature": 29.8, "humidity": 64.11}], "ground": [{"result": "True", "id": 1, "humidity": 62.54}, {"result": "True", "id": 2, "humidity": 74.42}, {"result": "True", "id": 3, "humidity": 67.02}, {"result": "True", "id": 4, "humidity": 75.1}, {"result": "True", "id": 5, "humidity": 73.04}, {"result": "True", "id": 6, "humidity": 70.7}]}}, {"timeAIR": "2023-01-23 18:17:57", "timeGROUND": "2023-01-23 18:17:57", "data": {"air": [{"result": "True", "id": 1, "temperature": 32.98, "humidity": 42.82}, {"result": "True", "id": 2, "temperature": 30.12, "humidity": 49.43}, {"result": "True", "id": 3, "temperature": 29.38, "humidity": 48.58}, {"result": "True", "id": 4, "temperature": 29.1, "humidity": 82.99}], "ground": [{"result": "True", "id": 1, "humidity": 62.2}, {"result": "True", "id": 2, "humidity": 66.91}, {"result": "True", "id": 3, "humidity": 70.06}, {"result": "True", "id": 4, "humidity": 64.83}, {"result": "True", "id": 5, "humidity": 73.31}, {"result": "True", "id": 6, "humidity": 70.36}]}}, {"timeAIR": "2023-01-23 18:18:02", "timeGROUND": "2023-01-23 18:18:02", "data": {"air": [{"result": "True", "id": 1, "temperature": 30.13, "humidity": 50.93}, {"result": "True", "id": 2, "temperature": 27.7, "humidity": 46.62}, {"result": "True", "id": 3, "temperature": 28.48, "humidity": 62.15}, {"result": "True", "id": 4, "temperature": 29.4, "humidity": 51.31}], "ground": [{"result": "True", "id": 1, "humidity": 77.52}, {"result": "True", "id": 2, "humidity": 76.73}, {"result": "True", "id": 3, "humidity": 68.87}, {"result": "True", "id": 4, "humidity": 65.83}, {"result": "True", "id": 5, "humidity": 74.84}, {"result": "True", "id": 6, "humidity": 70.53}]}}, {"timeAIR": "2023-01-23 18:18:06", "timeGROUND": "2023-01-23 18:18:06", "data": {"air": [{"result": "True", "id": 1, "temperature": 29.21, "humidity": 43.78}, {"result": "True", "id": 2, "temperature": 29.09, "humidity": 80.03}, {"result": "True", "id": 3, "temperature": 28.13, "humidity": 79.29}, {"result": "True", "id": 4, "temperature": 29.85, "humidity": 75.63}], "ground": [{"result": "True", "id": 1, "humidity": 65.68}, {"result": "True", "id": 2, "humidity": 72.53}, {"result": "True", "id": 3, "humidity": 76.46}, {"result": "True", "id": 4, "humidity": 65.98}, {"result": "True", "id": 5, "humidity": 66.78}, {"result": "True", "id": 6, "humidity": 73.31}]}}, {"timeAIR": "2023-01-23 18:18:11", "timeGROUND": "2023-01-23 18:18:11", "data": {"air": [{"result": "False", "id": 1}, {"result": "True", "id": 2, "temperature": 28.56, "humidity": 70.73}, {"result": "True", "id": 3, "temperature": 30.31, "humidity": 45.91}, {"result": "True", "id": 4, "temperature": 29.96, "humidity": 78.8}], "ground": [{"result": "True", "id": 1, "humidity": 62.4}, {"result": "True", "id": 2, "humidity": 77.44}, {"result": "True", "id": 3, "humidity": 71.86}, {"result": "True", "id": 4, "humidity": 71.43}, {"result": "True", "id": 5, "humidity": 69.63}, {"result": "True", "id": 6, "humidity": 69.75}]}}, {"timeAIR": "2023-01-23 18:18:15", "timeGROUND": "2023-01-23 18:18:15", "data": {"air": [{"result": "True", "id": 1, "temperature": 31.64, "humidity": 63.1}, {"result": "True", "id": 2, "temperature": 30.6, "humidity": 64.13}, {"result": "True", "id": 3, "temperature": 30.44, "humidity": 77.35}, {"result": "False", "id": 4}], "ground": [{"result": "True", "id": 1, "humidity": 67.29}, {"result": "True", "id": 2, "humidity": 69.78}, {"result": "True", "id": 3, "humidity": 69.06}, {"result": "True", "id": 4, "humidity": 64.29}, {"result": "True", "id": 5, "humidity": 73.23}]}}]}'.encode() + '</body></html>'.encode())
+
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ
             '''необхоидмо прописать условия, так как пока я не работаю с бд'''
             if m[0] == 'open_windows':
@@ -105,13 +108,33 @@ def SERVER():
                     '<body>'.encode() + '{"message": "Форточка открыта!"}'.encode() + '</body></html>'.encode())
                 self.wfile.write(
                     '<body>'.encode() + '{"message": "Форточка не может быть открыта в связи со слишком малой температурой в теплице!"}'.encode() + '</body></html>'.encode())
+
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
             '''необхоидмо прописать условия, так как пока я не работаю с бд'''
             if m[0] == 'start_humidity_system':
-                self.wfile.write(
-                    '<body>'.encode() + '{"message": "Система увлажнения включена!"}'.encode() + '</body></html>'.encode())
+                # Отправка серверу теплицы запрос на включение системы увлажнения
+                '''Дописать проверку условия с параметрами из БД'''
+                try:
+                    k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 1})
+                except Exception:
+                    self.wfile.write('<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Система увлажнения включена!"}'.encode() + '</body></html>'.encode())
                 self.wfile.write(
                     '<body>'.encode() + '{"message": "Система увлажнения воздуха не может быть включена в связи с избыточной влажностью в теплице!"}'.encode() + '</body></html>'.encode())
+
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
+            if m[0] == 'off_humidity_system':
+                try:
+                    k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 0})
+                except Exception:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Система увлажнения воздуха выключена!"}'.encode() + '</body></html>'.encode())
+
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
             '''необхоидмо прописать условия, так как пока я не работаю с бд'''
             if m[0] == 'start_wattering':
