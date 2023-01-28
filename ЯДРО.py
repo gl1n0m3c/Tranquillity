@@ -143,7 +143,6 @@ def SERVER():
                 else:
                     self.wfile.write(
                         '<body>'.encode() + '{"message": "Форточка закрыта!"}'.encode() + '</body></html>'.encode())
-                    print(sr_temp, last_GROUND_humidity, sr_humidity_AIR)
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
             elif m[0] == 'start_humidity_system':
@@ -160,7 +159,7 @@ def SERVER():
                     '<body>'.encode() + '{"message": "Система увлажнения воздуха не может быть включена в связи с избыточной влажностью в теплице!"}'.encode() + '</body></html>'.encode())
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
-            elif m[0] == 'off_humidity_system':
+            elif m[0] == 'stop_humidity_system':
                 try:
                     k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 0})
                 except Exception:
