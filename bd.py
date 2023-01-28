@@ -8,19 +8,29 @@ cur = conn.cursor()
 def perevod(air_mas, ground_mas):
     result = ""
     resultgr = ""
+    flag = 0
+    main_res = "'air': ["
     print(len(air_mas))
-    for r in range(0,len(air_mas), 4):
-        for j in range(4):
-            time = air_mas[r+j][3]
-            result += "            {'result': " + str(air_mas[r+j][0])+ "," + "\n"  + "            'id': " + str(air_mas[r+j][1]) + "," + "\n" + "            'temperature': " + str(air_mas[r+j][2]) + "," + "\n" + "            'humidity': " + str(air_mas[r+j][3]) + "," + "\n" + "            }" + "\n"
-    for r in range(0, len(ground_mas), 6):
-        for j in range(6):
-            time1 = ground_mas[r][3]
-            resultgr += "            {'result': " + str(ground_mas[r+j][0])+ "," + "\n"  + "            'id': " + str(ground_mas[r+j][1]) + "," + "\n" + "            'humidity': " + str(ground_mas[r+j][2]) + "," + "\n" + "            }" + "\n"
-        main_res = "'air': ["+ "\n" + result + "]," + "\n" + "        'ground': ["+ "\n" + resultgr + "]"
-        result = ""
-        resultgr = ""
-    #return '{"DATA" : [{'+ "\n" + "    'timeAIR': "+ "\n" + "    'timeGROUND': "+ "\n" + "    'data':{" + "\n"+ "        'air': ["+ "\n" + result + "]," + "\n" + "        'ground': ["+ "\n" + resultgr + "]"
+    if flag == 0:
+        for r in range(0,len(air_mas), 4):
+            for j in range(4):
+                time = air_mas[r+j][3]
+                result += "            {'result': " + str(air_mas[r+j][0])+ "," + "\n"  + "            'id': " + str(air_mas[r+j][1]) + "," + "\n" + "            'temperature': " + str(air_mas[r+j][2]) + "," + "\n" + "            'humidity': " + str(air_mas[r+j][3]) + "," + "\n" + "            }" + "\n"
+            main_res += "\n" + result
+            result = ""
+            flag = 1
+            r+=1
+    else:
+        for r in range(0, len(ground_mas), 6):
+            for j in range(6):
+                time1 = ground_mas[r][3]
+                resultgr += "            {'result': " + str(ground_mas[r+j][0])+ "," + "\n"  + "            'id': " + str(ground_mas[r+j][1]) + "," + "\n" + "            'humidity': " + str(ground_mas[r+j][2]) + "," + "\n" + "            }" + "\n"
+                main_res +=  "        'ground': ["+ "\n" + resultgr + "]"
+            flag = 0
+            r+=1
+    #main_res += +"'air': [" "\n" + result + "]," + "\n" + "        'ground': ["+ "\n" + resultgr + "]"
+
+    return '{"DATA" : [{'+ "\n" + "    'timeAIR': "+ "\n" + "    'timeGROUND': "+ "\n" + "    'data':{" + "\n"+ main_res
 #begin = '{"DATA" : [{'
 #     end = "]}"
 #     timeAir = "'timeAIR': "
@@ -189,7 +199,7 @@ if n == 'month':
     cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
     z = cur.fetchall()
 
-    print(perevod(q,z))
+    print(perevod(q,z)[:3000])
     cur.close()
 #перевод в строку формата json
 
