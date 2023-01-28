@@ -4,64 +4,51 @@ import sqlite3
 from os import system
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
+"""{"DATA": [
+      {'timeAIR': T1,      // T1 - время, в которое пришли данные с датчиков воздуха (формат времени: '2023-01-22 00:00:00')
+       'timeGROUND': T2,   // T1 - время, в которое пришли данные с датчиков почв (формат времени: '2023-01-22 00:00:00')
+       'data':{
+        'air': [{
+            'result': True,   // Возможно, что тут будет False, что будет означать, что есть проблема с сервером, тогда будет передаваться только id датчика, у которого возникла проблема
+            'id': i,    // int, от 1 до 4
+            'temperature': t,   // float
+            'humidity': h   // float
+          }, {...}, {...}, {...}
+          ], (всего 4 штуки)
+          'ground': [{
+            'result': True,   // Возможно, что тут будет False, что будет означать, что есть проблема с сервером, тогда будет передаваться только id датчика, у которого возникла проблема
+            'id': i,    // int, от 1 до 6
+            'humidity': h   // float
+          }, {...}, {...}, {...}, {...}, {...}
+          ] (всего 6 штук)
+      },
+      {**}, {**}]
+   ]}
+result	id	temperature	humidity	time
+False	1	NULL	NULL	2023-01-22 13:24:07
+True	2	29.2	63.43	2023-01-22 13:24:07
+False	3	NULL	NULL	2023-01-22 13:24:07
+False	4	NULL	NULL	2023-01-22 13:24:07
+True	1	27.85	46.92	2023-01-23 18:17:39
+"""
 
 def perevod(air_mas, ground_mas):
-    result = ""
-    resultgr = ""
-    flag = 0
-    main_res = "'air': ["
-    print(len(air_mas))
-    if flag == 0:
-        for r in range(0,len(air_mas), 4):
-            for j in range(4):
-                time = air_mas[r+j][3]
-                result += "            {'result': " + str(air_mas[r+j][0])+ "," + "\n"  + "            'id': " + str(air_mas[r+j][1]) + "," + "\n" + "            'temperature': " + str(air_mas[r+j][2]) + "," + "\n" + "            'humidity': " + str(air_mas[r+j][3]) + "," + "\n" + "            }" + "\n"
-            main_res += "\n" + result
-            result = ""
-            flag = 1
-            r+=1
-    else:
-        for r in range(0, len(ground_mas), 6):
-            for j in range(6):
-                time1 = ground_mas[r][3]
-                resultgr += "            {'result': " + str(ground_mas[r+j][0])+ "," + "\n"  + "            'id': " + str(ground_mas[r+j][1]) + "," + "\n" + "            'humidity': " + str(ground_mas[r+j][2]) + "," + "\n" + "            }" + "\n"
-                main_res +=  "        'ground': ["+ "\n" + resultgr + "]"
-            flag = 0
-            r+=1
-    #main_res += +"'air': [" "\n" + result + "]," + "\n" + "        'ground': ["+ "\n" + resultgr + "]"
-
-    return '{"DATA" : [{'+ "\n" + "    'timeAIR': "+ "\n" + "    'timeGROUND': "+ "\n" + "    'data':{" + "\n"+ main_res
-#begin = '{"DATA" : [{'
-#     end = "]}"
-#     timeAir = "'timeAIR': "
-#     timeGround = "'timeGROUND': "
-#     data_start = "'data':{"
-#     data_end = "}"
-#     air_start = "'air: [{'"
-#     air_end = "],"
-#     ground_start = "'ground': [{"
-#     ground_end = "]"
-#     st = "{"
-#     s = "},"
-#     tab = "    "
-#     z = ","
-# def air_corpus(t):
-#     result = ""
-#     for r in t:
-#         # {'result': True,'id': i,'temperature': t,'humidity': h}
-#         # ('True', '3', '29.79', '44.97', '2023-01-23 18:25:10')
-#         result += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + ",'temperature': "+ str(r[2]) +",'humidity': " + str(r[3]) +"}"
-#
-#
-#
-# def ground_corpus(v):
-#     # ('True', '3', '71.6', '2023-01-23 18:22:37')
-#     # {'result': True,'id': i,'humidity': h}
-#     resultgr = ""
-#     for r in v:
-#         resultgr += "{'result': " + str(r[0]) + ",'id': " + str(r[1]) + "'humidity': " + str(r[2]) +"}"
-#
-
+    ra = 0
+    rg = 0
+    result = '{"DATA": [\n'
+    while ra < len(air_mas):
+        result += "{'timeAIR':" + air_mas[ra][4] + ",'timeGROUND':" + ground_mas[rg][3] + ",'data':{\n'air': ["
+        for r in range(ra,ra+4):
+            result += "{'result': " + air_mas[r][0] + ",'id': "       + air_mas[r][1] + ",'temperature': " + \
+                                      air_mas[r][2] + ",'humidity': " + air_mas[r][3] + "},\n"
+        ra += 4
+        result += "],\n'ground': [\n"
+        for r in range(rg,rg+6):
+            result += "{'result': " + ground_mas[r][0] + ",'id': " + ground_mas[r][1] + ",'humidity': " + ground_mas[r][2] + "},\n"
+        rg += 6
+        result += "]},\n},"
+    result += "]}"
+    return result
 #создание таблиц air, ground
 cur.execute("""CREATE TABLE IF NOT EXISTS newair(
    result TEXT,
@@ -99,51 +86,51 @@ var = [{'timeAIR': '2023-01-22 13:24:07',
 
 print(len(var))
 #запись в таблицу air
-for j in range(0,len(var)):
-    for i in range(0,4):
-        if (str(var[j]['data']['air'][i]['result']) == 'True'):
-            result = str(var[j]['data']['air'][i]['result'])
-            id = var[j]['data']['air'][i]['id']
-            temperature = float(var[j]['data']['air'][i]['temperature'])
-            humidity = float(var[j]['data']['air'][i]['humidity'])
-            time = str(var[j]['timeAIR'])
-            aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
-            conn.commit()
-            aird = ()
-        else:
-            result = str(var[j]['data']['air'][i]['result'])
-            id = str(var[j]['data']['air'][i]['id'])
-            temperature = 'NULL'
-            humidity = 'NULL'
-            time = var[j]['timeAIR']
-            aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
-            conn.commit()
-            aird = ()
+# for j in range(0,len(var)):
+#     for i in range(0,4):
+#         if (str(var[j]['data']['air'][i]['result']) == 'True'):
+#             result = str(var[j]['data']['air'][i]['result'])
+#             id = var[j]['data']['air'][i]['id']
+#             temperature = float(var[j]['data']['air'][i]['temperature'])
+#             humidity = float(var[j]['data']['air'][i]['humidity'])
+#             time = str(var[j]['timeAIR'])
+#             aird = (result,id,temperature,humidity,time)
+#             cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+#             conn.commit()
+#             aird = ()
+#         else:
+#             result = str(var[j]['data']['air'][i]['result'])
+#             id = str(var[j]['data']['air'][i]['id'])
+#             temperature = 'NULL'
+#             humidity = 'NULL'
+#             time = var[j]['timeAIR']
+#             aird = (result,id,temperature,humidity,time)
+#             cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+#             conn.commit()
+#             aird = ()
+#
+#     #запись в таблицу ground
+#     for i in range(0,6):
+#         if (str(var[j]['data']['ground'][i]['result']) == 'True'):
+#             result = str(var[j]['data']['ground'][i]['result'])
+#             id = str(var[j]['data']['ground'][i]['id'])
+#             humidity = str(var[j]['data']['ground'][i]['humidity'])
+#             time = var[j]['timeGROUND']
+#             grd = (result,id,humidity,time)
+#             cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+#             conn.commit()
+#             grd = ()
+#         else:
+#             result = str(var[j]['data']['ground'][i]['result'])
+#             id = str(var[j]['data']['ground'][i]['id'])
+#             humidity = 'NULL'
+#             time = var[j]['timeAIR']
+#             grd = (result,id,humidity,time)
+#             cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+#             conn.commit()
+#             grd = ()
 
-    #запись в таблицу ground
-    for i in range(0,6):
-        if (str(var[j]['data']['ground'][i]['result']) == 'True'):
-            result = str(var[j]['data']['ground'][i]['result'])
-            id = str(var[j]['data']['ground'][i]['id'])
-            humidity = str(var[j]['data']['ground'][i]['humidity'])
-            time = var[j]['timeGROUND']
-            grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
-            conn.commit()
-            grd = ()
-        else:
-            result = str(var[j]['data']['ground'][i]['result'])
-            id = str(var[j]['data']['ground'][i]['id'])
-            humidity = 'NULL'
-            time = var[j]['timeAIR']
-            grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
-            conn.commit()
-            grd = ()
-
-#удаление
+# #удаление
 # cur.execute("DELETE FROM newair;")
 # conn.commit()
 # cur.execute("DELETE FROM newground;")
@@ -183,23 +170,24 @@ if n == '1 день':
     print(all_results)
     cur.close()
 if n == 'month':
-    cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+    cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
     #{'result': True, 'id': 2, 'temperature': 29.2, 'humidity': 63.43}
     #("{result:result: Trueid:'id': 4}",)
     # SELECT 'Olga' || ' ' || 'Samvel';
     # SELECT first_name || ' ' || last_name AS contact_name
     #\'{\'result\':\' || result || \'}\'
     # cur.execute('SELECT \'{\'result\':\' || result || \'}\' from newair WHERE time BETWEEN  DATETIME("now","localtime","-1 month") and DATETIME("now","localtime")')
-    q = cur.fetchall()
-    print(len(q))
+    air = cur.fetchall()
+    print(len(air))
     # tpl = tuple(a)
     # j = json.dumps(tpl,indent = 3)
     # j = '{"DATA": ' + j + '}'
 
-    cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
-    z = cur.fetchall()
+    cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
+    ground = cur.fetchall()
+    print(len(ground))
+    print(perevod(air,ground))
 
-    print(perevod(q,z)[:3000])
     cur.close()
 #перевод в строку формата json
 
