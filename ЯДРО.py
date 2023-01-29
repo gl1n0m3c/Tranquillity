@@ -21,6 +21,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS newair(
    time TEXT);
 """)
 conn.commit()
+
 cur.execute("""CREATE TABLE IF NOT EXISTS newground(
    result TEXT,
    id TEXT,  
@@ -29,12 +30,44 @@ cur.execute("""CREATE TABLE IF NOT EXISTS newground(
 """)
 conn.commit()
 
+cur.execute("""CREATE TABLE IF NOT EXISTS options(
+    temperature INTEGER,
+    air_hum INTEGER,
+    gr_hum INTEGER);
+""")
+conn.commit()
+
+# ЕСЛИ БД ПУСТА, ТО ЗАПОЛНИТЬ ЕЕ НУЛЯМИ
+def start_options():
+    cur.execute("SELECT * FROM options")
+    axc = cur.fetchall()
+    if len(axc) == 0:
+        cur.execute("INSERT INTO options VALUES (?,?,?)", (0,0,0))
+        conn.commit()
+start_options()
+
+# ФУНКЦИЯ ОБНОВЛЕНИЯ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ТЕМПЕРАТУРЫ
+def temp_update(t):
+    cur.execute("UPDATE options SET temperature = :t",{"t": t})
+    conn.commit()
+
+# ФУНКЦИЯ ОБНОВЛЕНИЯ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ  ВЛАЖНОСТИ ВОЗДУХА
+def air_update(ah):
+    cur.execute("UPDATE options SET air_hum = :ah", {"ah": ah})
+    conn.commit()
+
+# ФУНКЦИЯ ОБНОВЛЕНИЯ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ВЛАЖНОСТИ ЗЕМЛИ
+def gr_update(gh):
+    cur.execute("UPDATE options SET gr_hum = :gh", {"gh": gh})
+    conn.commit()
+
 # ФУНКЦИЯ ОБНУЛЕНИЯ ТАБЛИЦЫ
 def null():
     cur.execute("DELETE FROM newair;")
     conn.commit()
     cur.execute("DELETE FROM newground;")
     conn.commit()
+    cur.execute("DELETE FROM options;")
 
 # ФУНКЦИЯ ЗАПРОСА ДАННЫХ ЗА ОПРЕДЕЛЕННЫЙ ПЕРИОД
 def time_period(n):
@@ -151,7 +184,7 @@ timeout_for_sensors = 5  # таймаут для запросов на серв�
 time_for_reloading = 60  # интервал считывания данных
 sr_temp = 0  # средняя температура
 sr_humidity_AIR = 0  # средняя влажность воздуха
-last_GROUND_humidity = [] # массив с последними показаниями с датчиков влажности почв
+last_GROUND_humidity = [0, 0, 0, 0, 0, 0] # массив с последними показаниями с датчиков влажности почв
 def TEPLICA():
     while True:
         global sr_temp
@@ -192,7 +225,7 @@ def TEPLICA():
                 data_per_5sec['data']['ground'].append({'result': False, 'id': i})
                 last_GROUND_humidity.append(-1)
             else:
-                last_GROUND_humidity.append(k.json()['humidity'])
+                last_GROUND_humidity[i - 1] = (k.json()['humidity'])
                 data_per_5sec['data']['ground'].append({'result': True, 'id': i, 'humidity': k.json()['humidity']})
             print(data_per_5sec['data']['ground'][i - 1])
         # Время получения всех запросов с теплицы (влажность почв)
@@ -221,7 +254,7 @@ def TEPLICA():
         sleep(time_for_reloading)
         # Возвращение параметров в исходное состояние
         sr_humidity_AIR = sr_temp = count = 0
-        last_GROUND_humidity = []
+        last_GROUND_humidity = [0, 0, 0, 0, 0, 0]
 
 
 
@@ -242,10 +275,11 @@ def SERVER():
             print(m)
 
             # ЗАПРОС НА ПЕРЕДАЧУ ПОСЛЕДНИХ НАСТРОЕК ПОЛЬЗОВАТЕЛЯ
-            '''необхоидмо прописать условия, так как пока я не работаю с бд'''
             if m[0] == 'give_options':
+                cur.execute("SELECT * FROM options")
+                axc = cur.fetchall()
                 self.wfile.write(
-                    '<body>'.encode() + '{"temperature": 30, "AIRhumidity": 60, "GROUNDhumidity": 70}'.encode() + '</body></html>'.encode())
+                    '<body>'.encode() + '{"temperature": '.encode() + str(axc[0][0]).encode() + ', "AIRhumidity": '.encode() + str(axc[0][1]).encode() +', "GROUNDhumidity": '.encode() + str(axc[0][2]).encode() +'}'.encode() + '</body></html>'.encode())
 
             # ЗАПРОС НА ПЕРЕДАЧУ ДАННЫХ С ТЕПЛИЦЫ
             elif m[0] == 'give_data':
@@ -254,15 +288,19 @@ def SERVER():
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ
             elif m[0] == 'open_windows':
-                try:
-                    k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/fork_drive/', params = {"state": 1})
-                except Exception:
-                    self.wfile.write('<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                cur.execute("SELECT * FROM options")
+                axc = cur.fetchall()
+                if axc[0][0] < sr_temp:
+                    try:
+                        k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/fork_drive/', params = {"state": 1})
+                    except Exception:
+                        self.wfile.write('<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                    else:
+                        self.wfile.write(
+                            '<body>'.encode() + '{"message": "Форточка открыта!"}'.encode() + '</body></html>'.encode())
                 else:
                     self.wfile.write(
-                        '<body>'.encode() + '{"message": "Форточка открыта!"}'.encode() + '</body></html>'.encode())
-                self.wfile.write(
-                    '<body>'.encode() + '{"message": "Форточка не может быть открыта в связи со слишком малой температурой в теплице!"}'.encode() + '</body></html>'.encode())
+                        '<body>'.encode() + '{"message": "Форточка не может быть открыта в связи со слишком малой температурой в теплице!"}'.encode() + '</body></html>'.encode())
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ЗАКРЫТИЯ ФОРТОЧКИ
             elif m[0] == 'close_windows':
@@ -275,21 +313,23 @@ def SERVER():
                     self.wfile.write(
                         '<body>'.encode() + '{"message": "Форточка закрыта!"}'.encode() + '</body></html>'.encode())
 
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
             elif m[0] == 'start_humidity_system':
-                # Отправка серверу теплицы запрос на включение системы увлажнения
-                '''Дописать проверку условия с параметрами из БД'''
-                try:
-                    k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 1})
-                except Exception:
-                    self.wfile.write('<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                cur.execute("SELECT * FROM options")
+                axc = cur.fetchall()
+                if axc[0][1] > sr_humidity_AIR:
+                    try:
+                        k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 1})
+                    except Exception:
+                        self.wfile.write('<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                    else:
+                        self.wfile.write(
+                            '<body>'.encode() + '{"message": "Система увлажнения включена!"}'.encode() + '</body></html>'.encode())
                 else:
                     self.wfile.write(
-                        '<body>'.encode() + '{"message": "Система увлажнения включена!"}'.encode() + '</body></html>'.encode())
-                self.wfile.write(
-                    '<body>'.encode() + '{"message": "Система увлажнения воздуха не может быть включена в связи с избыточной влажностью в теплице!"}'.encode() + '</body></html>'.encode())
+                        '<body>'.encode() + '{"message": "Система увлажнения воздуха не может быть включена в связи с избыточной влажностью в теплице!"}'.encode() + '</body></html>'.encode())
 
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
             elif m[0] == 'stop_humidity_system':
                 try:
                     k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 0})
@@ -300,12 +340,65 @@ def SERVER():
                     self.wfile.write(
                         '<body>'.encode() + '{"message": "Система увлажнения воздуха выключена!"}'.encode() + '</body></html>'.encode())
 
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ НАЧАЛА ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
             elif m[0] == 'start_wattering':
-                self.wfile.write(
-                    '<body>'.encode() + '{"message": "Система полива включена!"}'.encode() + '</body></html>'.encode())
-                self.wfile.write(
-                    '<body>'.encode() + '{"message": "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"}'.encode() + '</body></html>'.encode())
+                cur.execute("SELECT * FROM options")
+                axc = cur.fetchall()
+                if axc[0][2] > last_GROUND_humidity[(int(m[1])) - 1]:
+                    try:
+                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering', params={"id": int(m[1]), "state": 1})
+                    except Exception:
+                        self.wfile.write(
+                            '<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                    else:
+                        self.wfile.write(
+                            '<body>'.encode() + '{"message": "Система полива бороздки включена!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"}'.encode() + '</body></html>'.encode())
+
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ПРЕКРАЩЕНИЯ ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
+            elif m[0] == 'stop_wattering':
+                try:
+                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering', params={"id": int(m[1]), "state": 0})
+                except Exception:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Сервер теплицы не отвечает!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Система полива бороздки выключена!"}'.encode() + '</body></html>'.encode())
+
+            # СОХРАНЕНИЕ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ТЕМПЕРАТУРЫ ВОЗДУХА
+            elif m[0] == 'save_temperature':
+                if m[1].isdigit():
+                    temp_update(int(m[1]))
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Данные успешно сохранены!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Неверный формат ввода!"}'.encode() + '</body></html>'.encode())
+
+            # СОХРАНЕНИЕ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ВЛАЖНОСТИ ВОЗДУХА
+            elif m[0] == 'save_air_humidity':
+                if m[1].isdigit():
+                    air_update(int(m[1]))
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Данные успешно сохранены!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Неверный формат ввода!"}'.encode() + '</body></html>'.encode())
+
+            # СОХРАНЕНИЕ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ВЛАЖНОСТИ ПОЧВЫ
+            elif m[0] == 'save_ground_humidity':
+                if m[1].isdigit():
+                    gr_update(int(m[1]))
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Данные успешно сохранены!"}'.encode() + '</body></html>'.encode())
+                else:
+                    self.wfile.write(
+                        '<body>'.encode() + '{"message": "Неверный формат ввода!"}'.encode() + '</body></html>'.encode())
+
+            # ИНАЧЕ
             else:
                 self.wfile.write(
                     '<body>'.encode() + '{"message": "Неверная ссылка!"}'.encode() + '</body></html>'.encode())
