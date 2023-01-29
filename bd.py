@@ -1,6 +1,5 @@
 import json
 import sqlite3
-from os import system
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
 def perevod(air_mas, ground_mas):
