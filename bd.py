@@ -36,17 +36,38 @@ cur.execute("""CREATE TABLE IF NOT EXISTS newground(
    time TEXT);
 """)
 conn.commit()
-cur.execute("""CREATE TABLE IF NOT EXISTS last_parametr(
-   id INTEGER,
-   temperature INTEGER,
-   air_humidity INTEGER,
-   ground_humidity INTEGER
-   );
+cur.execute("""CREATE TABLE IF NOT EXISTS options(
+    temperature INTEGER,
+    air_hum INTEGER,
+    gr_hum INTEGER);
 """)
 conn.commit()
-p = (1,0,0,0)
-cur.execute("INSERT INTO last_parametr VALUES(?, ?, ?, ?);",p)
-conn.commit()
+def start_options():
+    cur.execute("SELECT * FROM options")
+    axc = cur.fetchall()
+    if len(axc) == 0:
+        cur.execute("INSERT INTO options VALUES (?,?,?)", (0,0,0))
+        conn.commit()
+    else:
+        return
+def temp_update(t):
+    cur.execute("UPDATE options SET temperature = :t",{"t": t})
+    conn.commit()
+
+def air_update(ah):
+    cur.execute("UPDATE options SET air_hum = :ah", {"ah": ah})
+    conn.commit()
+def gr_update(gh):
+    cur.execute("UPDATE options SET gr_hum = :gh", {"gh": gh})
+    conn.commit()
+
+start_options()
+temp_update(31)
+air_update(32)
+gr_update(48)
+cur.execute("SELECT * FROM options")
+axc = cur.fetchall()
+print(axc)
 #работа с кортежами для занесения данных в таблицу
 var1 = {'timeAIR': '2023-01-22 13:24:07',
        'timeGROUND': '2023-01-22 13:24:08',
@@ -109,18 +130,7 @@ def table_append(var):
             cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
-def last_par_air_hum(ah):
-    ahz = ah
-    cur.execute("UPDATE last_parametr SET air_humidity = ? WHERE id = ?",(ahz,1))
-    conn.commit()
-def last_par_ground_hum(gh):
-    ghz = gh
-    cur.execute("UPDATE last_parametr SET ground_humidity = ? WHERE id = ?", (ghz, 1))
-    conn.commit()
-def last_par_temp(t):
-    tz = t
-    cur.execute("UPDATE last_parametr SET temperature = ? WHERE id = ?", (tz, 1))
-    conn.commit()
+
 # #удаление
 # cur.execute("DELETE FROM newair;")
 # conn.commit()
