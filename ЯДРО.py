@@ -276,7 +276,7 @@ def SERVER():
 
             # ЗАПРОС НА ПЕРЕДАЧУ ПОСЛЕДНИХ НАСТРОЕК ПОЛЬЗОВАТЕЛЯ
             if m[0] == 'give_options':
-                cur.execute("SELECT * FROM options")
+                cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
                 self.wfile.write(
                     '<body>'.encode() + '{"temperature": '.encode() + str(axc[0][0]).encode() + ', "AIRhumidity": '.encode() + str(axc[0][1]).encode() +', "GROUNDhumidity": '.encode() + str(axc[0][2]).encode() +'}'.encode() + '</body></html>'.encode())
@@ -288,7 +288,7 @@ def SERVER():
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ
             elif m[0] == 'open_windows':
-                cur.execute("SELECT * FROM options")
+                cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
                 if axc[0][0] < sr_temp:
                     try:
@@ -315,7 +315,7 @@ def SERVER():
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
             elif m[0] == 'start_humidity_system':
-                cur.execute("SELECT * FROM options")
+                cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
                 if axc[0][1] > sr_humidity_AIR:
                     try:
@@ -342,7 +342,7 @@ def SERVER():
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ НАЧАЛА ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
             elif m[0] == 'start_wattering':
-                cur.execute("SELECT * FROM options")
+                cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
                 if axc[0][2] > last_GROUND_humidity[(int(m[1])) - 1]:
                     try:
