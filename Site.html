@@ -1,83 +1,86 @@
 <!DOCTYPE html>
 <html>
 <link rel="stylesheet" href="styles.css">
-<script src="script.js"></script>
 <head>
 <meta charset="UTF-8">
+<script src="script.js"></script>
+<title>Система управления</title>
 </head>
 <body>
       <fieldset>
         <legend align="center">Установка параметров</legend>
-		<form class="forma" id="setap" action="/apply/" method="POST">
+		<form class="forma" id="setap" onsubmit="return false">
 			  <label for="MaxT">Максимальная средняя температура в теплице</label>
 			 <input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
-			<div class="forma">
+			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
+		</form>
+		<form class="forma" id="setap" onsubmit="return false">
 			  <label for="MaxH">Максимальна средняя влажность воздуха в теплице(%)</label>
 			 <input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
-			</div>
-			<div class="forma">
+			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
+		</form>
+		<form class="forma" id="setap" onsubmit="return false">
 			  <label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
 			 <input type="number" id="MaxHb" name="maxHb" placeholder="Введите число" required />
-			</div>
-			<button type="submit">Отправить</button>
+			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
 		</form>
       </fieldset>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="settings">
+  <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Режим экстренного управления</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="settings" >
+  <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))"  >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Режим автоматического управления</span>
 </label>
 <h1>Исполнительные устройства</h1>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Форточка</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Система Увлажнения</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 1 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 2 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 3 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 4 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 5 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox">
+  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 6 Бороздки</span>
 </label>

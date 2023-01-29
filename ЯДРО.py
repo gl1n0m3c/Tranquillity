@@ -4,6 +4,142 @@ import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 from threading import *
 from time import *
+import sqlite3
+
+
+
+
+#                                                                   БАЗА ДАННЫХ
+# СОЗДАНИЕ ТАБЛИЦ AIR + GROUND
+conn = sqlite3.connect('data.db', check_same_thread = False)
+cur = conn.cursor()
+cur.execute("""CREATE TABLE IF NOT EXISTS newair(
+   result TEXT,
+   id INTEGER,
+   temperature REAL,
+   humidity REAL,
+   time TEXT);
+""")
+conn.commit()
+cur.execute("""CREATE TABLE IF NOT EXISTS newground(
+   result TEXT,
+   id TEXT,  
+   humidity TEXT,
+   time TEXT);
+""")
+conn.commit()
+
+# ФУНКЦИЯ ОБНУЛЕНИЯ ТАБЛИЦЫ
+def null():
+    cur.execute("DELETE FROM newair;")
+    conn.commit()
+    cur.execute("DELETE FROM newground;")
+    conn.commit()
+
+# ФУНКЦИЯ ЗАПРОСА ДАННЫХ ЗА ОПРЕДЕЛЕННЫЙ ПЕРИОД
+def time_period(n):
+    if isinstance(n, str):
+        if n == '30min':
+            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime') ORDER BY time,id")
+            air = cur.fetchall()
+            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime') ORDER BY time,id")
+            ground = cur.fetchall()
+            final_result = perevod(air, ground)
+        elif n == 'hour':
+            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime') ORDER BY time,id")
+            air = cur.fetchall()
+            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime') ORDER BY time,id")
+            ground = cur.fetchall()
+            final_result = perevod(air, ground)
+        elif n == '12hours':
+            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime') ORDER BY time,id")
+            air = cur.fetchall()
+            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime') ORDER BY time,id")
+            ground = cur.fetchall()
+            final_result = perevod(air, ground)
+        elif n == 'day':
+            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime') ORDER BY time,id")
+            air = cur.fetchall()
+            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime') ORDER BY time,id")
+            ground = cur.fetchall()
+            final_result = perevod(air, ground)
+        elif n == 'month':
+            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
+            air = cur.fetchall()
+            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
+            ground = cur.fetchall()
+            final_result = perevod(air,ground)
+        else:
+            return "Неизвестная дата"
+        return final_result
+    else:
+        return "Неверный формат"
+
+# ФУНКЦИЯ ЗАНЕСЕНИЯ ДАННЫХ В ТАБЛИЦУ
+def table_append(var):
+    # запись в таблицу air
+    for i in range(0,4):
+        if (str(var['data']['air'][i]['result']) == 'True'):
+            result = str(var['data']['air'][i]['result'])
+            id = var['data']['air'][i]['id']
+            temperature = float(var['data']['air'][i]['temperature'])
+            humidity = float(var['data']['air'][i]['humidity'])
+            time = str(var['timeAIR'])
+            aird = (result,id,temperature,humidity,time)
+            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+            conn.commit()
+            aird = ()
+        else:
+            result = str(var['data']['air'][i]['result'])
+            id = str(var['data']['air'][i]['id'])
+            temperature = 'NULL'
+            humidity = 'NULL'
+            time = var['timeAIR']
+            aird = (result,id,temperature,humidity,time)
+            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+            conn.commit()
+            aird = ()
+
+    # запись в таблицу ground
+    for i in range(0,6):
+        if (str(var['data']['ground'][i]['result']) == 'True'):
+            result = str(var['data']['ground'][i]['result'])
+            id = str(var['data']['ground'][i]['id'])
+            humidity = str(var['data']['ground'][i]['humidity'])
+            time = var['timeGROUND']
+            grd = (result,id,humidity,time)
+            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+            conn.commit()
+            grd = ()
+        else:
+            result = str(var['data']['ground'][i]['result'])
+            id = str(var['data']['ground'][i]['id'])
+            humidity = 'NULL'
+            time = var['timeAIR']
+            grd = (result,id,humidity,time)
+            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+            conn.commit()
+            grd = ()
+
+# ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
+def perevod(air_mas, ground_mas):
+    ra = 0
+    rg = 0
+    result = '{"DATA": [\n'
+    while ra < len(air_mas):
+        result += "{'timeAIR':" + str(air_mas[ra][4]) + ",'timeGROUND':" + str(ground_mas[rg][3]) + ",'data':{\n'air': ["
+        for r in range(ra,ra+4):
+            result += "{'result': " + str(air_mas[r][0]) + ",'id': "       + str(air_mas[r][1]) + ",'temperature': " + \
+                                        str(air_mas[r][2]) + ",'humidity': " + str(air_mas[r][3]) + "},\n"
+        ra += 4
+        result += "],\n'ground': [\n"
+        for r in range(rg,rg+6):
+            result += "{'result': " + ground_mas[r][0] + ",'id': " + ground_mas[r][1] + ",'humidity': " + ground_mas[r][2] + "},\n"
+        rg += 6
+        result += "]}},\n"
+    result += "]}"
+    return result
+
 
 
 #                                                                   ЧАСТЬ СО СЧИТЫВАНИЕМ ДАННЫХ С ТЕПЛИЦЫ
@@ -11,9 +147,6 @@ from time import *
 URL_Temperature_AirHumidity = 'https://dt.miet.ru/ppo_it/api/temp_hum/'
 # URL для дадчиков влажности почв
 URL_GroundHumidity = 'https://dt.miet.ru/ppo_it/api/hum/'
-# 'Массив' со всеми данными в формате json
-MAS_DATA = {"DATA": []}
-print(MAS_DATA['DATA'])
 timeout_for_sensors = 5  # таймаут для запросов на сервер теплицы
 time_for_reloading = 60  # интервал считывания данных
 sr_temp = 0  # средняя температура
@@ -82,10 +215,8 @@ def TEPLICA():
         sr_humidity_AIR = sr_humidity_AIR/count
         sr_temp = sr_temp/count
         print(data_per_5sec)
-        MAS_DATA["DATA"].append(data_per_5sec)
-        print(sr_humidity_AIR)
-        print(sr_temp)
-        print(last_GROUND_humidity)
+        # Заполнение БД данными за минуту
+        table_append(data_per_5sec)
         # Задача интервала
         sleep(time_for_reloading)
         # Возвращение параметров в исходное состояние
@@ -118,8 +249,8 @@ def SERVER():
 
             # ЗАПРОС НА ПЕРЕДАЧУ ДАННЫХ С ТЕПЛИЦЫ
             elif m[0] == 'give_data':
-                self.wfile.write(
-                    '<body>'.encode() + '{"DATA": [{"timeAIR": "2023-01-23 18:17:39", "timeGROUND": "2023-01-23 18:17:39", "data":{"air": [{"result": "True", "id": 1, "temperature": 27.85, "humidity": 46.92},{"result": "True", "id": 2, "temperature": 29.95, "humidity": 67.55},{"result": "True", "id": 3, "temperature": 29.1, "humidity": 72.91},{"result": "True", "id": 4, "temperature": 29.28, "humidity": 56.81}],"ground": [{"result": "True", "id": 1, "humidity": 72.02},{"result": "True", "id": 2, "humidity": 62.21},{"result": "True", "id": 3, "humidity": 74.5},{"result": "True", "id": 4, "humidity": 72.24},{"result": "True", "id": 5, "humidity": 70.33}, {"result": "True", "id": 6, "humidity": 72.16}]}},{"timeAIR": "2023-01-23 18:17:43", "timeGROUND": "2023-01-23 18:17:44", "data": {"air": [{"result": "True", "id": 1, "temperature": 27.16, "humidity": 47.93}, {"result": "True", "id": 2, "temperature": 29.9, "humidity": 49.35}, {"result": "True", "id": 3, "temperature": 29.31, "humidity": 60.92}, {"result": "True", "id": 4, "temperature": 29.54, "humidity": 81.54}], "ground": [{"result": "True", "id": 1, "humidity": 65.6}, {"result": "True", "id": 2, "humidity": 64.3}, {"result": "True", "id": 3, "humidity": 71.69}, {"result": "True", "id": 4, "humidity": 68.01}, {"result": "True", "id": 5, "humidity": 70.87}, {"result": "True", "id": 6, "humidity": 70.8}]}}, {"timeAIR": "2023-01-23 18:17:48", "timeGROUND": "2023-01-23 18:17:48", "data": {"air": [{"result": "True", "id": 1, "temperature": 27.21, "humidity": 70.57}, {"result": "True", "id": 2, "temperature": 31.63, "humidity": 43.44}, {"result": "True", "id": 3, "temperature": 30.38, "humidity": 56.67}, {"result": "True", "id": 4, "temperature": 29.3, "humidity": 50.43}], "ground": [{"result": "True", "id": 1, "humidity": 62.22}, {"result": "True", "id": 2, "humidity": 73.58}, {"result": "True", "id": 3, "humidity": 64.16}, {"result": "True", "id": 4, "humidity": 73.88}, {"result": "True", "id": 5, "humidity": 68.94}, {"result": "True", "id": 6, "humidity": 72.57}]}}, {"timeAIR": "2023-01-23 18:17:53", "timeGROUND": "2023-01-23 18:17:53", "data": {"air": [{"result": "True", "id": 1, "temperature": 28.28, "humidity": 51.25}, {"result": "True", "id": 2, "temperature": 28.62, "humidity": 80.65}, {"result": "True", "id": 3, "temperature": 28.63, "humidity": 67.72}, {"result": "True", "id": 4, "temperature": 29.8, "humidity": 64.11}], "ground": [{"result": "True", "id": 1, "humidity": 62.54}, {"result": "True", "id": 2, "humidity": 74.42}, {"result": "True", "id": 3, "humidity": 67.02}, {"result": "True", "id": 4, "humidity": 75.1}, {"result": "True", "id": 5, "humidity": 73.04}, {"result": "True", "id": 6, "humidity": 70.7}]}},{"timeAIR": "2023-01-23 18:17:53", "timeGROUND": "2023-01-23 18:17:53", "data": {"air": [{"result": "True", "id": 1, "temperature": 28.28, "humidity": 51.25}, {"result": "True", "id": 2, "temperature": 28.62, "humidity": 80.65}, {"result": "True", "id": 3, "temperature": 28.63, "humidity": 67.72}, {"result": "True", "id": 4, "temperature": 29.8, "humidity": 64.11}], "ground": [{"result": "True", "id": 1, "humidity": 62.54}, {"result": "True", "id": 2, "humidity": 74.42}, {"result": "True", "id": 3, "humidity": 67.02}, {"result": "True", "id": 4, "humidity": 75.1}, {"result": "True", "id": 5, "humidity": 73.04}, {"result": "True", "id": 6, "humidity": 70.7}]}}, {"timeAIR": "2023-01-23 18:17:57", "timeGROUND": "2023-01-23 18:17:57", "data": {"air": [{"result": "True", "id": 1, "temperature": 32.98, "humidity": 42.82}, {"result": "True", "id": 2, "temperature": 30.12, "humidity": 49.43}, {"result": "True", "id": 3, "temperature": 29.38, "humidity": 48.58}, {"result": "True", "id": 4, "temperature": 29.1, "humidity": 82.99}], "ground": [{"result": "True", "id": 1, "humidity": 62.2}, {"result": "True", "id": 2, "humidity": 66.91}, {"result": "True", "id": 3, "humidity": 70.06}, {"result": "True", "id": 4, "humidity": 64.83}, {"result": "True", "id": 5, "humidity": 73.31}, {"result": "True", "id": 6, "humidity": 70.36}]}}, {"timeAIR": "2023-01-23 18:18:02", "timeGROUND": "2023-01-23 18:18:02", "data": {"air": [{"result": "True", "id": 1, "temperature": 30.13, "humidity": 50.93}, {"result": "True", "id": 2, "temperature": 27.7, "humidity": 46.62}, {"result": "True", "id": 3, "temperature": 28.48, "humidity": 62.15}, {"result": "True", "id": 4, "temperature": 29.4, "humidity": 51.31}], "ground": [{"result": "True", "id": 1, "humidity": 77.52}, {"result": "True", "id": 2, "humidity": 76.73}, {"result": "True", "id": 3, "humidity": 68.87}, {"result": "True", "id": 4, "humidity": 65.83}, {"result": "True", "id": 5, "humidity": 74.84}, {"result": "True", "id": 6, "humidity": 70.53}]}}, {"timeAIR": "2023-01-23 18:18:06", "timeGROUND": "2023-01-23 18:18:06", "data": {"air": [{"result": "True", "id": 1, "temperature": 29.21, "humidity": 43.78}, {"result": "True", "id": 2, "temperature": 29.09, "humidity": 80.03}, {"result": "True", "id": 3, "temperature": 28.13, "humidity": 79.29}, {"result": "True", "id": 4, "temperature": 29.85, "humidity": 75.63}], "ground": [{"result": "True", "id": 1, "humidity": 65.68}, {"result": "True", "id": 2, "humidity": 72.53}, {"result": "True", "id": 3, "humidity": 76.46}, {"result": "True", "id": 4, "humidity": 65.98}, {"result": "True", "id": 5, "humidity": 66.78}, {"result": "True", "id": 6, "humidity": 73.31}]}}, {"timeAIR": "2023-01-23 18:18:11", "timeGROUND": "2023-01-23 18:18:11", "data": {"air": [{"result": "False", "id": 1}, {"result": "True", "id": 2, "temperature": 28.56, "humidity": 70.73}, {"result": "True", "id": 3, "temperature": 30.31, "humidity": 45.91}, {"result": "True", "id": 4, "temperature": 29.96, "humidity": 78.8}], "ground": [{"result": "True", "id": 1, "humidity": 62.4}, {"result": "True", "id": 2, "humidity": 77.44}, {"result": "True", "id": 3, "humidity": 71.86}, {"result": "True", "id": 4, "humidity": 71.43}, {"result": "True", "id": 5, "humidity": 69.63}, {"result": "True", "id": 6, "humidity": 69.75}]}}, {"timeAIR": "2023-01-23 18:18:15", "timeGROUND": "2023-01-23 18:18:15", "data": {"air": [{"result": "True", "id": 1, "temperature": 31.64, "humidity": 63.1}, {"result": "True", "id": 2, "temperature": 30.6, "humidity": 64.13}, {"result": "True", "id": 3, "temperature": 30.44, "humidity": 77.35}, {"result": "False", "id": 4}], "ground": [{"result": "True", "id": 1, "humidity": 67.29}, {"result": "True", "id": 2, "humidity": 69.78}, {"result": "True", "id": 3, "humidity": 69.06}, {"result": "True", "id": 4, "humidity": 64.29}, {"result": "True", "id": 5, "humidity": 73.23}]}}]}'.encode() + '</body></html>'.encode())
+                self.wfile.write('<body>'.encode() + time_period(m[1]).encode() + '</body></html>'.encode())
+
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ
             elif m[0] == 'open_windows':
@@ -143,7 +274,6 @@ def SERVER():
                 else:
                     self.wfile.write(
                         '<body>'.encode() + '{"message": "Форточка закрыта!"}'.encode() + '</body></html>'.encode())
-                    print(sr_temp, last_GROUND_humidity, sr_humidity_AIR)
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
             elif m[0] == 'start_humidity_system':
@@ -160,7 +290,7 @@ def SERVER():
                     '<body>'.encode() + '{"message": "Система увлажнения воздуха не может быть включена в связи с избыточной влажностью в теплице!"}'.encode() + '</body></html>'.encode())
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ В ТЕПЛИЦЕ
-            elif m[0] == 'off_humidity_system':
+            elif m[0] == 'stop_humidity_system':
                 try:
                     k = requests.patch(url = 'https://dt.miet.ru/ppo_it/api/total_hum', params = {"state": 0})
                 except Exception:
