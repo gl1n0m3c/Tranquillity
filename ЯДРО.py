@@ -266,7 +266,7 @@ def SERVER():
         def do_GET(self):
             # Основные настройки сервера
             self.send_response(200)
-            self.send_header("Content-type", "text/html")
+            self.send_header("Content-type", "text/html", "Access-Control-Allow-Origin")
             self.end_headers()
             self.wfile.write('<html><head><meta charset="utf-8">'.encode())
             self.wfile.write('<title>Локальный сервер для передачи данных!</title></head>'.encode())
