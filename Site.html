@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <title>Система управления</title>
 </head>
 <body>
@@ -84,5 +85,24 @@
   <div class="toggle-switch"></div>
   <span class="toggle-label">Автополив 6 Бороздки</span>
 </label>
+	<div class="timer">
+	<button id="time" type="submit" onclick="getResourse('localhost:8800/time/30min').then((data) => console.log(data))" >30 минут</button>
+	<button id="time" type="submit" onclick="" >1 час</button>
+	<button id="time" type="submit" onclick="" >12 часов</button>
+	<button id="time" type="submit" onclick="" >1 день</button>
+	<button id="time" type="submit" onclick="" >1 месяц</button>
+	</div>
+    <div class='tablitza'>
+        <canvas id="line-chart" width="900" height="450"></canvas>
+        <script src="BD_test.js"></script>
+    </div>
+    <div class='tablitza'>
+        <canvas id="humidity-chart" width="900" height="450"></canvas>
+        <script src="BD_dia2.js"></script>
+    </div>
+    <div class='tablitza'>
+        <canvas id="last-chart" width="900" height="450"></canvas>
+        <script src="BD_dia3.js"></script>
+    </div>
 </body>
 </html>
