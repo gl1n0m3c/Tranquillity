@@ -8,11 +8,11 @@
 <title>Система управления</title>
 </head>
 <body>
-      <fieldset>
-        <legend align="center">Установка параметров</legend>
+<fieldset>
+<legend align="center">Установка параметров</legend>
 		<form class="forma" id="setap" onsubmit="return false">
-			  <label for="MaxT">Максимальная средняя температура в теплице</label>
-			 <input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
+			  <label for="MaxH">Максимальная средняя температура</label>
+			 <input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
 			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
 		</form>
 		<form class="forma" id="setap" onsubmit="return false">
