@@ -175,6 +175,13 @@ def table_append(var):
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
 def perevod(air_mas, ground_mas):
+    print(len(air_mas), air_mas[-1][1])
+    print(len(ground_mas), ground_mas[-1][1])
+    # ПРОВЕРКА НА НЕДОСТАЮЩИЕ ДАННЫЕ С ДАТЧИКОВ, КОТОРЫЕ МОГЛИ НЕДОПИСАТЬСЯ ВСЛЕДСТВИЕ ПРЕКРАЩЕНИЯ ПРОГРАММЫ
+    if int(air_mas[-1][1]) != 4 or int(ground_mas[-1][1]) != 6:
+        # ВЫЗЫВАЕМ ФУНКЦИЮ
+        print("ПРОБЛЕМКА")
+        return '{"message": "Проблемка!"}'
     ra = 0
     rg = 0
     result = '{"DATA": ['
@@ -363,8 +370,8 @@ def SERVER():
                 axc = cur.fetchall()
                 if axc[0][2] > last_GROUND_humidity[(int(m[1])) - 1]:
                     try:
-                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',params={"id": int(m[1]), "state": 1})
-
+                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
+                                           params={"id": int(m[1]), "state": 1})
                     except Exception:
                         self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
                     else:
