@@ -19,6 +19,13 @@ def perevod(air_mas, ground_mas):
         result += "]}},\n"
     result += "]}"
     return result
+def break_delete(air_time, air_mas, ground_time, ground_mas):
+    at_del = air_time
+    gt_del = ground_time
+    cur.execute("DELETE FROM newair where time = :at_del",{"at_del": at_del})
+    conn.commit()
+    cur.execute("DELETE FROM newground where time = :gt_del", {"gt_del": gt_del})
+    conn.commit()
 #создание таблиц air, ground, last_parametr
 cur.execute("""CREATE TABLE IF NOT EXISTS newair(
    result TEXT,
@@ -187,6 +194,5 @@ def time_period(n):
         return final_result
     else:
         return "Неверный формат"
-table_append(var1)
 print(time_period('month'))
 
