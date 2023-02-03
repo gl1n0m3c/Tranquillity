@@ -19,12 +19,12 @@ def perevod(air_mas, ground_mas):
         result += "]}},\n"
     result += "]}"
     return result
-def break_delete(air_time, air_mas, ground_time, ground_mas):
+def break_delete(air_time,ground_time):
     at_del = air_time
-    gt_del = ground_time
+    gt = ground_time
     cur.execute("DELETE FROM newair where time = :at_del",{"at_del": at_del})
     conn.commit()
-    cur.execute("DELETE FROM newground where time = :gt_del", {"gt_del": gt_del})
+    cur.execute("DELETE FROM newground WHERE time = :gt", {"gt": gt})
     conn.commit()
 #создание таблиц air, ground, last_parametr
 cur.execute("""CREATE TABLE IF NOT EXISTS newair(
@@ -71,9 +71,6 @@ start_options()
 temp_update(31)
 air_update(32)
 gr_update(48)
-cur.execute("SELECT * FROM options")
-axc = cur.fetchall()
-print(axc)
 #работа с кортежами для занесения данных в таблицу
 var1 = {'timeAIR': '2023-01-22 13:24:07',
        'timeGROUND': '2023-01-22 13:24:08',
@@ -90,6 +87,8 @@ var1 = {'timeAIR': '2023-01-22 13:24:07',
                {'result': True, 'id': 4, 'humidity': 70.94},
                {'result': False, 'id': 5},
                {'result': False, 'id': 6}]}}
+
+
 
 def table_append(var):
     # запись в таблицу air
@@ -131,13 +130,13 @@ def table_append(var):
             result = str(var['data']['ground'][i]['result'])
             id = str(var['data']['ground'][i]['id'])
             humidity = 'NULL'
-            time = var['timeAIR']
+            time = var['timeGROUND']
             grd = (result,id,humidity,time)
             cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
 
-# #удаление
+# # #удаление
 # cur.execute("DELETE FROM newair;")
 # conn.commit()
 # cur.execute("DELETE FROM newground;")
@@ -180,19 +179,33 @@ def time_period(n):
             cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime') ORDER BY time,id")
             ground = cur.fetchall()
             final_result = perevod(air,ground)
-            cur.close()
+
         elif n == 'month':
             cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
             air = cur.fetchall()
             cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
             ground = cur.fetchall()
+            print(air)
+            print(ground)
             final_result = perevod(air,ground)
-            cur.close()
+
 
         else:
             return "Неизвестная дата"
         return final_result
     else:
         return "Неверный формат"
-print(time_period('month'))
 
+table_append(var1)
+print(time_period('month'))
+cur.execute("SELECT * from newair")
+air = cur.fetchall()
+cur.execute("SELECT * from newground")
+ground = cur.fetchall()
+break_delete('2023-01-22 13:24:07','2023-01-22 13:24:08')
+cur.execute("SELECT * from newair")
+air1 = cur.fetchall()
+cur.execute("SELECT * from newground")
+ground1 = cur.fetchall()
+print(air1)
+print(ground1)
