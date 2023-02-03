@@ -44,8 +44,6 @@ def start_options():
     if len(axc) == 0:
         cur.execute("INSERT INTO options VALUES (?,?,?)", (0, 0, 0))
         conn.commit()
-
-
 start_options()
 
 
@@ -67,13 +65,23 @@ def gr_update(gh):
     conn.commit()
 
 
-# ФУНКЦИЯ ОБНУЛЕНИЯ ТАБЛИЦЫ
+# ФУНКЦИЯ ОБНУЛЕНИЯ ВСЕЙ БД
 def null():
     cur.execute("DELETE FROM newair;")
     conn.commit()
     cur.execute("DELETE FROM newground;")
     conn.commit()
     cur.execute("DELETE FROM options;")
+
+
+# ФУНКЦИЯ УДАЛЕНИЯ ПОСЛЕДНИХ ДАННЫХ, ИСПОЛЬЗУЕМАЯ В СЛУЧАЕ, ЕСЛИ ПРИЛОЖЕНИЕ ЗАКРЫЛОСЬ И ДАННЫЕ В БД ЗАПИСАЛИСЬ НЕ В ПОЛНОМ ОБЪЕМЕ
+def deleter(air_time,ground_time):
+    at_del = air_time
+    gt = ground_time
+    cur.execute("DELETE FROM newair where time = :at_del",{"at_del": at_del})
+    conn.commit()
+    cur.execute("DELETE FROM newground WHERE time = :gt", {"gt": gt})
+    conn.commit()
 
 
 # ФУНКЦИЯ ЗАПРОСА ДАННЫХ ЗА ОПРЕДЕЛЕННЫЙ ПЕРИОД
@@ -166,7 +174,7 @@ def table_append(var):
             result = str(var['data']['ground'][i]['result'])
             id = str(var['data']['ground'][i]['id'])
             humidity = 'NULL'
-            time = var['timeAIR']
+            time = var['timeGROUND']
             grd = (result, id, humidity, time)
             cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
@@ -175,15 +183,10 @@ def table_append(var):
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
 def perevod(air_mas, ground_mas):
-    print(len(air_mas), air_mas[-1][1])
-    print(len(ground_mas), ground_mas[-1][1])
-    # ПРОВЕРКА НА НЕДОСТАЮЩИЕ ДАННЫЕ С ДАТЧИКОВ, КОТОРЫЕ МОГЛИ НЕДОПИСАТЬСЯ ВСЛЕДСТВИЕ ПРЕКРАЩЕНИЯ ПРОГРАММЫ
-    if int(air_mas[-1][1]) != 4 or int(ground_mas[-1][1]) != 6:
-        # ВЫЗЫВАЕМ ФУНКЦИЮ
-        print("ПРОБЛЕМКА")
-        return '{"message": "Проблемка!"}'
     ra = 0
     rg = 0
+    if len(air_mas) == len(ground_mas) == 0:
+        return '{"DATA": []}'
     result = '{"DATA": ['
     while ra < len(air_mas):
         result += '{"timeAIR": \"' + str(air_mas[ra][4]) + '\", "timeGROUND": \"' + str(
@@ -206,6 +209,24 @@ def perevod(air_mas, ground_mas):
     result = result[:len(result) - 1]
     result += "]}"
     return result
+
+
+# ФУНКЦИЯ ПРОВЕРКИ ЦЕЛОСТНОСТИ ПОСЛЕДНЕЙ ЗАПИСИ (ВОЗМОЖНО ПРОГРАММА ПРЕКРАТИЛА РАБОТУ, НЕ УСПЕВ ЗАНЕСТИ ВСЕ ЗНАЧЕНИЯ В БД)
+def proverka_last_data():
+    cur.execute("SELECT * FROM newair")
+    last_air = cur.fetchall()
+    cur.execute("SELECT * FROM newground")
+    last_ground = cur.fetchall()
+    if len(last_air) == len(last_ground) == 0:
+        return False
+    print(last_air[-1], last_air[-1][4])
+    print(last_ground[-1], last_ground[-1][3])
+    # ПРОВЕРКА НА НЕДОСТАЮЩИЕ ДАННЫЕ С ДАТЧИКОВ, КОТОРЫЕ МОГЛИ НЕДОПИСАТЬСЯ ВСЛЕДСТВИЕ ПРЕКРАЩЕНИЯ ПРОГРАММЫ
+    if int(last_air[-1][1]) != 4 or int(last_ground[-1][1]) != 6:
+        deleter(last_air[-1][4], last_ground[-1][3])
+        print('Человечность данных восcтановлена!')
+    else:
+        print('С данными все хорошо!')
 
 
 #                                                                   ЧАСТЬ СО СЧИТЫВАНИЕМ ДАННЫХ С ТЕПЛИЦЫ
@@ -423,9 +444,14 @@ def SERVER():
     httpd.serve_forever()
 
 
+# ПРОВЕРЯЕМ НА ЦЕЛОСТНОСТЬ ПОСЛЕДНЕЙ ЗАПИСИ (4 ПОКАЗАНИЯ С ВОЗДУХА И 6 С ЗЕМЛИ)
+proverka_last_data()
+
+
 # ОБОЗНАЧЕНИЯ ПОТОКОВ
 t1 = Thread(target=TEPLICA, args=())
 t2 = Thread(target=SERVER, args=())
+
 
 # ЗАПУСК ПОТОКОВ
 t1.start()
