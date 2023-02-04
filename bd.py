@@ -2,14 +2,30 @@ import json
 import sqlite3
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
+# def perevod(air_mas, ground_mas):
+#     ra = 0
+#     rg = 0
+#     result = '{"DATA": [\n'
+#     while ra < len(air_mas):
+#         result += "{'timeAIR':" + air_mas[ra][4] + ",'timeGROUND':" + ground_mas[rg][3] + ",'data':{\n'air': ["
+#         for r in range(ra,ra+4):
+#             result += "{'result': " + air_mas[r][0] + ",'id': "       + air_mas[r][1] + ",'temperature': " + \
+#                                       air_mas[r][2] + ",'humidity': " + air_mas[r][3] + "},\n"
+#         ra += 4
+#         result += "],\n'ground': [\n"
+#         for r in range(rg,rg+6):
+#             result += "{'result': " + ground_mas[r][0] + ",'id': " + ground_mas[r][1] + ",'humidity': " + ground_mas[r][2] + "},\n"
+#         rg += 6
+#         result += "]}},\n"
+#     result += "]}"
+#     return result
 def perevod(air_mas, ground_mas):
     ra = 0
     rg = 0
-    result = '{"DATA": [\n'
+    result = "{" + "\n" + "air: ["
     while ra < len(air_mas):
-        result += "{'timeAIR':" + air_mas[ra][4] + ",'timeGROUND':" + ground_mas[rg][3] + ",'data':{\n'air': ["
         for r in range(ra,ra+4):
-            result += "{'result': " + air_mas[r][0] + ",'id': "       + air_mas[r][1] + ",'temperature': " + \
+            result += "{dt:" +air_mas[r][4] + ",'temperature': " + \
                                       air_mas[r][2] + ",'humidity': " + air_mas[r][3] + "},\n"
         ra += 4
         result += "],\n'ground': [\n"
@@ -196,16 +212,4 @@ def time_period(n):
     else:
         return "Неверный формат"
 
-table_append(var1)
 print(time_period('month'))
-cur.execute("SELECT * from newair")
-air = cur.fetchall()
-cur.execute("SELECT * from newground")
-ground = cur.fetchall()
-break_delete('2023-01-22 13:24:07','2023-01-22 13:24:08')
-cur.execute("SELECT * from newair")
-air1 = cur.fetchall()
-cur.execute("SELECT * from newground")
-ground1 = cur.fetchall()
-print(air1)
-print(ground1)
