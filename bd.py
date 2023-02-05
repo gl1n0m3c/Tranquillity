@@ -22,18 +22,29 @@ cur = conn.cursor()
 def perevod(air_mas, ground_mas):
     ra = 0
     rg = 0
-    result = "{" + "\n" + "air: ["
+    result = ""
+    result_air = ""
+    result_ground = ""
+    x = 0
+    y = 0
     while ra < len(air_mas):
+        result_air += "{dt:" + air_mas[ra][4]
         for r in range(ra,ra+4):
-            result += "{dt:" +air_mas[r][4] + ",'temperature': " + \
-                                      air_mas[r][2] + ",'humidity': " + air_mas[r][3] + "},\n"
+            result_air += ", t" + str(x+1) + ":" + air_mas[r][2] + ", h" + str(x+1) + ":" + air_mas[r][3]
+            x+=1
+        result_air += "},\n"
         ra += 4
-        result += "],\n'ground': [\n"
+        x = 0
+
+    while rg < len(ground_mas):
+        result_ground += "{dt:" + ground_mas[rg][3]
         for r in range(rg,rg+6):
-            result += "{'result': " + ground_mas[r][0] + ",'id': " + ground_mas[r][1] + ",'humidity': " + ground_mas[r][2] + "},\n"
+            result_ground += ", h" + str(y+1) + ":" + ground_mas[r][2]
+            y+=1
         rg += 6
-        result += "]}},\n"
-    result += "]}"
+        y = 0
+        result_ground += "},\n"
+    result += "{\n air: [\n" + result_air + "],\n ground: [" + result_ground + "]}"
     return result
 def break_delete(air_time,ground_time):
     at_del = air_time
@@ -123,8 +134,8 @@ def table_append(var):
         else:
             result = str(var['data']['air'][i]['result'])
             id = str(var['data']['air'][i]['id'])
-            temperature = 'NULL'
-            humidity = 'NULL'
+            temperature = 'null'
+            humidity = 'null'
             time = var['timeAIR']
             aird = (result,id,temperature,humidity,time)
             cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
@@ -145,7 +156,7 @@ def table_append(var):
         else:
             result = str(var['data']['ground'][i]['result'])
             id = str(var['data']['ground'][i]['id'])
-            humidity = 'NULL'
+            humidity = 'null'
             time = var['timeGROUND']
             grd = (result,id,humidity,time)
             cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
