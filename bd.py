@@ -1,5 +1,7 @@
 import json
 import sqlite3
+import datetime as DT
+from time import *
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
 # def perevod(air_mas, ground_mas):
@@ -28,7 +30,9 @@ def perevod(air_mas, ground_mas):
     x = 0
     y = 0
     while ra < len(air_mas):
-        result_air += '{"dt": ' + str(air_mas[ra][4])
+        dt = DT.datetime.strptime(air_mas[ra][4], '%Y-%m-%d %H:%M:%S')
+
+        result_air += '{"dt": ' + str(dt.timestamp())[:-2]
         for r in range(ra,ra+4):
             result_air += ',\n "t' + str(x+1) + '": ' + str(air_mas[r][2]) + ',\n "h' + str(x+1) + '": ' + str(air_mas[r][3])
             x+=1
@@ -37,7 +41,8 @@ def perevod(air_mas, ground_mas):
         x = 0
 
     while rg < len(ground_mas):
-        result_ground += '{"dt": ' + str(ground_mas[rg][3])
+        dtg = DT.datetime.strptime(ground_mas[rg][3], '%Y-%m-%d %H:%M:%S')
+        result_ground += '{"dt": ' + str(dtg.timestamp())[:-2]
         for r in range(rg,rg+6):
             result_ground += ',\n "h' + str(y+1) + '": ' + str(ground_mas[r][2])
             y+=1
@@ -59,14 +64,14 @@ cur.execute("""CREATE TABLE IF NOT EXISTS air(
    id INTEGER,
    temperature REAL,
    humidity REAL,
-   time INTEGER);
+   time TEXT);
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS ground(
    result TEXT,
    id INTEGER,  
    humidity REAL,
-   time INTEGER);
+   time TEXT);
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS options(
@@ -153,25 +158,22 @@ def table_append(var):
     # запись в таблицу air
 
     for i in range(0,4):
-        print("pizda")
         if (str(var['data']['air'][i]['result']) == 'True'):
             result = str(var['data']['air'][i]['result'])
             id = int(var['data']['air'][i]['id'])
             temperature = float(var['data']['air'][i]['temperature'])
             humidity = float(var['data']['air'][i]['humidity'])
-            time = int(var['timeAIR'])
+            time = var['timeAIR']
             aird = (result,id,temperature,humidity,time)
             cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
             aird = ()
-            print("dildo")
         else:
-            print("zhopa")
             result = str(var['data']['air'][i]['result'])
             id = int(var['data']['air'][i]['id'])
             temperature = 'null'
             humidity = 'null'
-            time = int(var['timeAIR'])
+            time = var['timeAIR']
             aird = (result,id,temperature,humidity,time)
             cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
@@ -179,33 +181,31 @@ def table_append(var):
 
         #запись в таблицу ground
     for i in range(0,6):
-        print("penis")
+
         if (str(var['data']['ground'][i]['result']) == 'True'):
-            print("anal")
             result = str(var['data']['ground'][i]['result'])
             id = int(var['data']['ground'][i]['id'])
             humidity = float(var['data']['ground'][i]['humidity'])
-            time = int(var['timeGROUND'])
+            time = var['timeGROUND']
             grd = (result,id,humidity,time)
             cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
         else:
-            print("churban")
             result = str(var['data']['ground'][i]['result'])
             id = int(var['data']['ground'][i]['id'])
             humidity = 'null'
-            time = int(var['timeGROUND'])
+            time = var['timeGROUND']
             grd = (result,id,humidity,time)
             cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
 
 # # #удаление
-# cur.execute("DELETE FROM newair;")
-# conn.commit()
-# cur.execute("DELETE FROM newground;")
-# conn.commit()
+cur.execute("DELETE FROM air;")
+conn.commit()
+cur.execute("DELETE FROM ground;")
+conn.commit()
 # #вывод данных за определённый промежуток(минута, 10 минут, 30 минут, 1 час, 12 часов, 1 день, 1 месяц)
 
 def time_period(n):
@@ -246,12 +246,10 @@ def time_period(n):
             final_result = perevod(air,ground)
 
         elif n == 'month':
-            cur.execute("SELECT * FROM air")
+            cur.execute("SELECT * FROM air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             airq = cur.fetchall()
-            cur.execute("SELECT * FROM ground")
+            cur.execute("SELECT * FROM ground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             groundq = cur.fetchall()
-            print(airq)
-            print(groundq)
             final_result = perevod(airq,groundq)
 
 
@@ -260,11 +258,6 @@ def time_period(n):
         return final_result
     else:
         return "Неверный формат"
-table_append(var3)
-cur.execute("SELECT * FROM air")
-air = cur.fetchall()
-cur.execute("SELECT * FROM ground")
-ground = cur.fetchall()
-print(air)
-print(ground)
+table_append(var2)
+table_append(var1)
 print(time_period('month'))
