@@ -54,19 +54,19 @@ def break_delete(air_time,ground_time):
     cur.execute("DELETE FROM newground WHERE time = :gt", {"gt": gt})
     conn.commit()
 #создание таблиц air, ground, last_parametr
-cur.execute("""CREATE TABLE IF NOT EXISTS newair(
+cur.execute("""CREATE TABLE IF NOT EXISTS air(
    result TEXT,
    id INTEGER,
    temperature REAL,
    humidity REAL,
-   time TEXT);
+   time INTEGER);
 """)
 conn.commit()
-cur.execute("""CREATE TABLE IF NOT EXISTS newground(
+cur.execute("""CREATE TABLE IF NOT EXISTS ground(
    result TEXT,
-   id TEXT,  
-   humidity TEXT,
-   time TEXT);
+   id INTEGER,  
+   humidity REAL,
+   time INTEGER);
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS options(
@@ -130,6 +130,21 @@ var2 = {'timeAIR': '2023-01-22 13:24:07',
                {'result': True, 'id': 4, 'humidity': 70.94},
                {'result': False, 'id': 5},
                {'result': False, 'id': 6}]}}
+var3 = {'timeAIR': 1675711739,
+        'timeGROUND': 1675711741,
+        'data': {
+            'air': [
+                {'result': True, 'id': 1, 'temperature': 32.29, 'humidity': 73.21},
+                {'result': True, 'id': 2, 'temperature': 31.21, 'humidity': 71.9},
+                {'result': True, 'id': 3, 'temperature': 29.22, 'humidity': 57.26},
+                {'result': True, 'id': 4, 'temperature': 29.78, 'humidity': 46.96}],
+            'ground': [
+                {'result': True, 'id': 1, 'humidity': 69.75},
+                {'result': True, 'id': 2, 'humidity': 73.17},
+                {'result': True, 'id': 3, 'humidity': 67.58},
+                {'result': True, 'id': 4, 'humidity': 64.8},
+                {'result': True, 'id': 5, 'humidity': 74.02},
+                {'result': True, 'id': 6, 'humidity': 71.62}]}}
 
 
 
@@ -138,45 +153,51 @@ def table_append(var):
     # запись в таблицу air
 
     for i in range(0,4):
+        print("pizda")
         if (str(var['data']['air'][i]['result']) == 'True'):
             result = str(var['data']['air'][i]['result'])
-            id = var['data']['air'][i]['id']
+            id = int(var['data']['air'][i]['id'])
             temperature = float(var['data']['air'][i]['temperature'])
             humidity = float(var['data']['air'][i]['humidity'])
-            time = str(var['timeAIR'])
+            time = int(var['timeAIR'])
             aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
             aird = ()
+            print("dildo")
         else:
+            print("zhopa")
             result = str(var['data']['air'][i]['result'])
-            id = str(var['data']['air'][i]['id'])
+            id = int(var['data']['air'][i]['id'])
             temperature = 'null'
             humidity = 'null'
-            time = var['timeAIR']
+            time = int(var['timeAIR'])
             aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
             aird = ()
 
         #запись в таблицу ground
     for i in range(0,6):
+        print("penis")
         if (str(var['data']['ground'][i]['result']) == 'True'):
+            print("anal")
             result = str(var['data']['ground'][i]['result'])
-            id = str(var['data']['ground'][i]['id'])
-            humidity = str(var['data']['ground'][i]['humidity'])
-            time = var['timeGROUND']
+            id = int(var['data']['ground'][i]['id'])
+            humidity = float(var['data']['ground'][i]['humidity'])
+            time = int(var['timeGROUND'])
             grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
         else:
+            print("churban")
             result = str(var['data']['ground'][i]['result'])
-            id = str(var['data']['ground'][i]['id'])
+            id = int(var['data']['ground'][i]['id'])
             humidity = 'null'
-            time = var['timeGROUND']
+            time = int(var['timeGROUND'])
             grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
 
@@ -190,44 +211,44 @@ def table_append(var):
 def time_period(n):
     if isinstance(n, str):
         if n == '30min':
-            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
             cur.close()
         elif n == 'hour':
-            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
             cur.close()
         elif n == '12hours':
-            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
             cur.close()
         elif n == 'day':
-            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
             cur.close()
         elif n == 'week':
-            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air,ground)
 
         elif n == 'month':
-            cur.execute("SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             print(air)
             print(ground)
@@ -239,7 +260,6 @@ def time_period(n):
         return final_result
     else:
         return "Неверный формат"
-table_append(var1)
-table_append(var2)
-print(len(var1))
+table_append(var3)
+
 print(time_period('month'))
