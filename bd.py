@@ -37,7 +37,7 @@ def perevod(air_mas, ground_mas):
         x = 0
 
     while rg < len(ground_mas):
-        result_ground += '{"dt": ' + ground_mas[rg][3]
+        result_ground += '{"dt": ' + str(ground_mas[rg][3])
         for r in range(rg,rg+6):
             result_ground += ',\n "h' + str(y+1) + '": ' + str(ground_mas[r][2])
             y+=1
@@ -216,28 +216,28 @@ def time_period(n):
             cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
-            cur.close()
+
         elif n == 'hour':
             cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             air = cur.fetchall()
             cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
-            cur.close()
+
         elif n == '12hours':
             cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             air = cur.fetchall()
             cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
-            cur.close()
+
         elif n == 'day':
             cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             air = cur.fetchall()
             cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
-            cur.close()
+
         elif n == 'week':
             cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
             air = cur.fetchall()
@@ -246,13 +246,13 @@ def time_period(n):
             final_result = perevod(air,ground)
 
         elif n == 'month':
-            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
-            air = cur.fetchall()
-            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
-            ground = cur.fetchall()
-            print(air)
-            print(ground)
-            final_result = perevod(air,ground)
+            cur.execute("SELECT * FROM air")
+            airq = cur.fetchall()
+            cur.execute("SELECT * FROM ground")
+            groundq = cur.fetchall()
+            print(airq)
+            print(groundq)
+            final_result = perevod(airq,groundq)
 
 
         else:
@@ -261,5 +261,10 @@ def time_period(n):
     else:
         return "Неверный формат"
 table_append(var3)
-
+cur.execute("SELECT * FROM air")
+air = cur.fetchall()
+cur.execute("SELECT * FROM ground")
+ground = cur.fetchall()
+print(air)
+print(ground)
 print(time_period('month'))
