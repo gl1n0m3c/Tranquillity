@@ -457,10 +457,3 @@ t2 = Thread(target=SERVER, args=())
 # ЗАПУСК ПОТОКОВ
 t1.start()
 t2.start()
-
-cur.execute("SELECT * FROM newair")
-air = cur.fetchall()
-cur.execute("SELECT * FROM newground")
-ground = cur.fetchall()
-print(air)
-print(ground)
