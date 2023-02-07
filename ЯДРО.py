@@ -5,6 +5,7 @@ from threading import *
 from time import *
 import sqlite3
 import json
+import datetime as DT
 
 
 
@@ -12,7 +13,8 @@ import json
 # СОЗДАНИЕ ТАБЛИЦ AIR + GROUND
 conn = sqlite3.connect('data.db', check_same_thread=False)
 cur = conn.cursor()
-cur.execute("""CREATE TABLE IF NOT EXISTS newair(
+# создание таблиц air, ground, last_parametr
+cur.execute("""CREATE TABLE IF NOT EXISTS air(
    result TEXT,
    id INTEGER,
    temperature REAL,
@@ -20,15 +22,13 @@ cur.execute("""CREATE TABLE IF NOT EXISTS newair(
    time TEXT);
 """)
 conn.commit()
-
-cur.execute("""CREATE TABLE IF NOT EXISTS newground(
+cur.execute("""CREATE TABLE IF NOT EXISTS ground(
    result TEXT,
-   id TEXT,  
-   humidity TEXT,
+   id INTEGER,  
+   humidity REAL,
    time TEXT);
 """)
 conn.commit()
-
 cur.execute("""CREATE TABLE IF NOT EXISTS options(
     temperature INTEGER,
     air_hum INTEGER,
@@ -36,6 +36,14 @@ cur.execute("""CREATE TABLE IF NOT EXISTS options(
 """)
 conn.commit()
 
+# ФУНКЦИЯ ОБНУЛЕНИЯ ВСЕЙ БД
+def null():
+    cur.execute("DELETE FROM newair;")
+    conn.commit()
+    cur.execute("DELETE FROM newground;")
+    conn.commit()
+    cur.execute("DELETE FROM options;")
+null()
 
 # ЕСЛИ БД ПУСТА, ТО ЗАПОЛНИТЬ ЕЕ НУЛЯМИ
 def start_options():
@@ -65,22 +73,13 @@ def gr_update(gh):
     conn.commit()
 
 
-# ФУНКЦИЯ ОБНУЛЕНИЯ ВСЕЙ БД
-def null():
-    cur.execute("DELETE FROM newair;")
-    conn.commit()
-    cur.execute("DELETE FROM newground;")
-    conn.commit()
-    cur.execute("DELETE FROM options;")
-
-
 # ФУНКЦИЯ УДАЛЕНИЯ ПОСЛЕДНИХ ДАННЫХ, ИСПОЛЬЗУЕМАЯ В СЛУЧАЕ, ЕСЛИ ПРИЛОЖЕНИЕ ЗАКРЫЛОСЬ И ДАННЫЕ В БД ЗАПИСАЛИСЬ НЕ В ПОЛНОМ ОБЪЕМЕ
-def deleter(air_time,ground_time):
+def break_delete(air_time,ground_time):
     at_del = air_time
     gt = ground_time
-    cur.execute("DELETE FROM newair where time = :at_del",{"at_del": at_del})
+    cur.execute("DELETE FROM air where time = :at_del",{"at_del": at_del})
     conn.commit()
-    cur.execute("DELETE FROM newground WHERE time = :gt", {"gt": gt})
+    cur.execute("DELETE FROM ground WHERE time = :gt", {"gt": gt})
     conn.commit()
 
 
@@ -88,126 +87,128 @@ def deleter(air_time,ground_time):
 def time_period(n):
     if isinstance(n, str):
         if n == '30min':
-            cur.execute(
-                "SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute(
-                "SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
+
         elif n == 'hour':
-            cur.execute(
-                "SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute(
-                "SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
+
         elif n == '12hours':
-            cur.execute(
-                "SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute(
-                "SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
+
         elif n == 'day':
-            cur.execute(
-                "SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute(
-                "SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime') ORDER BY time,id")
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
+
+        elif n == 'week':
+            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
+            air = cur.fetchall()
+            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
+            ground = cur.fetchall()
+            final_result = perevod(air,ground)
+
         elif n == 'month':
-            cur.execute(
-                "SELECT * from newair WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
-            air = cur.fetchall()
-            cur.execute(
-"SELECT * from newground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime') ORDER BY time,id")
-            ground = cur.fetchall()
-            final_result = perevod(air, ground)
+            cur.execute("SELECT * FROM air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+            airq = cur.fetchall()
+            cur.execute("SELECT * FROM ground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+            groundq = cur.fetchall()
+            final_result = perevod(airq,groundq)
         else:
             return "Неизвестная дата"
         return final_result
     else:
         return "Неверный формат"
 
-
 # ФУНКЦИЯ ЗАНЕСЕНИЯ ДАННЫХ В ТАБЛИЦУ
 def table_append(var):
     # запись в таблицу air
-    for i in range(0, 4):
+    for i in range(0,4):
         if (str(var['data']['air'][i]['result']) == 'True'):
             result = str(var['data']['air'][i]['result'])
-            id = var['data']['air'][i]['id']
+            id = int(var['data']['air'][i]['id'])
             temperature = float(var['data']['air'][i]['temperature'])
             humidity = float(var['data']['air'][i]['humidity'])
-            time = str(var['timeAIR'])
-            aird = (result, id, temperature, humidity, time)
-            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+            time = var['timeAIR']
+            aird = (result,id,temperature,humidity,time)
+            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
             aird = ()
         else:
             result = str(var['data']['air'][i]['result'])
-            id = str(var['data']['air'][i]['id'])
-            temperature = 'NULL'
-            humidity = 'NULL'
+            id = int(var['data']['air'][i]['id'])
+            temperature = 'null'
+            humidity = 'null'
             time = var['timeAIR']
-            aird = (result, id, temperature, humidity, time)
-            cur.execute("INSERT INTO newair VALUES(?, ?, ?, ?, ?);", aird)
+            aird = (result,id,temperature,humidity,time)
+            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
             aird = ()
-
-    # запись в таблицу ground
-    for i in range(0, 6):
+        #запись в таблицу ground
+    for i in range(0,6):
         if (str(var['data']['ground'][i]['result']) == 'True'):
             result = str(var['data']['ground'][i]['result'])
-            id = str(var['data']['ground'][i]['id'])
-            humidity = str(var['data']['ground'][i]['humidity'])
+            id = int(var['data']['ground'][i]['id'])
+            humidity = float(var['data']['ground'][i]['humidity'])
             time = var['timeGROUND']
-            grd = (result, id, humidity, time)
-            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+            grd = (result,id,humidity,time)
+            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
         else:
             result = str(var['data']['ground'][i]['result'])
-            id = str(var['data']['ground'][i]['id'])
-            humidity = 'NULL'
+            id = int(var['data']['ground'][i]['id'])
+            humidity = 'null'
             time = var['timeGROUND']
-            grd = (result, id, humidity, time)
-            cur.execute("INSERT INTO newground VALUES(?, ?, ?, ?);", grd)
+            grd = (result,id,humidity,time)
+            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
             conn.commit()
             grd = ()
 
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
+
 def perevod(air_mas, ground_mas):
     ra = 0
     rg = 0
-    if len(air_mas) == len(ground_mas) == 0:
-        return '{"DATA": []}'
-    result = '{"DATA": ['
+    result = ""
+    result_air = ""
+    result_ground = ""
+    x = 0
+    y = 0
     while ra < len(air_mas):
-        result += '{"timeAIR": \"' + str(air_mas[ra][4]) + '\", "timeGROUND": \"' + str(
-            ground_mas[rg][3]) + '\", "data": {"air": ['
-
-        for r in range(ra, ra + 4):
-            result += "{\"result\": \"" + str(air_mas[r][0]) + "\", \"id\": " + str(
-                air_mas[r][1]) + ", \"temperature\": " + str(
-                air_mas[r][2]) + ", \"humidity\": " + str(air_mas[r][3]) + '}, '
-
-        result = result[:len(result) - 2]
+        dt = DT.datetime.strptime(air_mas[ra][4], '%Y-%m-%d %H:%M:%S')
+        result_air += '{"dt": ' + str(dt.timestamp())[:-2]
+        for r in range(ra,ra+4):
+            result_air += ',\n "t' + str(x+1) + '": ' + str(air_mas[r][2]) + ',\n "h' + str(x+1) + '": ' + str(air_mas[r][3])
+            x+=1
+        result_air += "},\n"
         ra += 4
-        result += '],"ground": ['
-        for r in range(rg, rg + 6):
-            result += "{\"result\": \"" + ground_mas[r][0] + "\", \"id\": " + ground_mas[r][1] + ", \"humidity\": " + \
-                      ground_mas[r][2] + '}, '
-        result = result[:len(result) - 2]
+        x = 0
+
+    while rg < len(ground_mas):
+        dtg = DT.datetime.strptime(ground_mas[rg][3], '%Y-%m-%d %H:%M:%S')
+        result_ground += '{"dt": ' + str(dtg.timestamp())[:-2]
+        for r in range(rg,rg+6):
+            result_ground += ',\n "h' + str(y+1) + '": ' + str(ground_mas[r][2])
+            y+=1
         rg += 6
-        result += "]}},"
-    result = result[:len(result) - 1]
-    result += "]}"
+        y = 0
+        result_ground += "},\n"
+    result += "{\nair: [\n" + result_air + "],\nground: [\n" + result_ground + "]}"
     return result
 
 
@@ -235,7 +236,7 @@ URL_Temperature_AirHumidity = 'https://dt.miet.ru/ppo_it/api/temp_hum/'
 # URL для дадчиков влажности почв
 URL_GroundHumidity = 'https://dt.miet.ru/ppo_it/api/hum/'
 timeout_for_sensors = 5  # таймаут для запросов на сервер теплицы
-time_for_reloading = 60  # интервал считывания данных
+time_for_reloading = 20  # интервал считывания данных
 sr_temp = 0  # средняя температура
 sr_humidity_AIR = 0  # средняя влажность воздуха
 last_GROUND_humidity = [0, 0, 0, 0, 0, 0]  # массив с последними показаниями с датчиков влажности почв
@@ -456,3 +457,10 @@ t2 = Thread(target=SERVER, args=())
 # ЗАПУСК ПОТОКОВ
 t1.start()
 t2.start()
+
+cur.execute("SELECT * FROM newair")
+air = cur.fetchall()
+cur.execute("SELECT * FROM newground")
+ground = cur.fetchall()
+print(air)
+print(ground)
