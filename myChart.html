@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Пример графика с временным рядом</title>
+  <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
+  <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
+  <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
+  <style>
+    @font-face {
+      font-family: GOST;
+      src: url(./fonts/MipGostZero.ttf);
+    }
+    body {
+      font-family: GOST;
+      font-size: 16pt;
+    }
+  </style>
+</head>
+<body>
+<section></section>
+<hr>
+<header></header>
+
+<input id="ChartRefresh1" value="Обновить показания датчиков (запрос на сервер)" type="button">
+<canvas id="chart1" width="800" height="250"></canvas>
+
+<script src="chart.js"></script>
+
+</body>
+</html>
