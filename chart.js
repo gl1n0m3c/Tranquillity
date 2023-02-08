@@ -1,5 +1,7 @@
 const URL = "http://localhost:8000/give_data/30min";
-var Chart1;							
+var Chart1;		
+var Chart2; 
+var Chart3;					
 moment.locale('ru');
 
 //Обработка нажатий
@@ -69,6 +71,7 @@ async function DataFetch(strURL) {
         title: {
             display: true,
             text: 'Датчики температуры',
+            color: "#000000"
           },
         legend: {
             labels: {
@@ -90,6 +93,7 @@ async function DataFetch(strURL) {
 	    title: {
   	    display: true,
   	    text: "Время",
+        color: "#000000"
 	    },
             time: {
 	    isoWeekday: true,
@@ -97,7 +101,7 @@ async function DataFetch(strURL) {
                 displayFormats: {				
   	        millisecond: 'mm:ss.SSS',
   	        second: 'hh:mm:ss',
-	        minute: 'D hh:mm',
+	        minute: 'hh:mm',
 	        hour: 'D MMM hh:mm',
 	        day: 'D MMM hh:mm',
 	        week: 'D MMM hh:mm',
@@ -141,4 +145,290 @@ async function DataFetch(strURL) {
             }
         }}}});
     }
+
+    if (Chart2 != undefined) {				
+        Chart2.data.datasets.forEach(dataset => {
+            dataset.data = Sensor.air;			
+        });
+        Chart2.update("resize");			
+        } else {
+            Chart2 = new Chart('chart2', {			
+            type: 'line',
+            data: {
+                datasets: [
+            {
+                label: 'Первый',
+                data: Sensor.air,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h1"},	
+                showLine: true,
+                hidden: false,
+                lineTension: 0.3,
+                color: "#FF0000"},
+            {
+                label: 'Второй',
+                data: Sensor.air,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h2"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#00FF00"
+            },
+            {
+                label: 'Третий',
+                data: Sensor.air,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h3"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#0000FF"
+            },
+            {
+                label: 'Четвертый',
+                data: Sensor.air,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h4"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#FF00FF"
+            }],
+    },
+        options: {
+            locale: "ru-RU",
+            animation: true,
+            plugins: {
+        title: {
+            display: true,
+            text: 'Датчики влажности воздуха',
+            color: "#000000"
+          },
+        legend: {
+            labels: {
+                font: {
+	        family: "GOST",				
+                size: 14
+                }
+              }
+            }	  
+        },
+        layout: {
+            padding: {
+                top: 80
+            }
+        },
+        scales: {
+            x: {
+                type: 'time',
+	    title: {
+  	    display: true,
+  	    text: "Время",
+        color: "#000000"
+	    },
+            time: {
+	    isoWeekday: true,
+	    minUnit: 'minute',
+                displayFormats: {				
+  	        millisecond: 'mm:ss.SSS',
+  	        second: 'hh:mm:ss',
+	        minute: 'hh:mm',
+	        hour: 'D MMM hh:mm',
+	        day: 'D MMM hh:mm',
+	        week: 'D MMM hh:mm',
+	        month: 'D MMM yyyy',
+	        quarter: 'D MMM yyyy',
+	        year: 'D MMM yyyy'
+              }
+            },
+            ticks: {
+                source: "data",
+                color: "black",
+	        display: true,
+                font: {
+	      },
+            },
+            grid: {
+                drawTicks: true,
+                borderColor: "black",
+	      enabled: true,
+	      drawTicks: true,
+	      lineWidth: 1,					
+            },
+          },
+        y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+	    border: {
+  	    color: "#000000",
+	    },
+            ticks: {
+                color: "#000000",
+	    },
+	    title: {
+  	    display: true,
+  	    color: "#000000",
+	        text: "Температура",
+	    },  
+        grid: {
+            color: "#000000",
+            }
+        }}}});
+    }
+
+
+    if (Chart3 != undefined) {				
+        Chart3.data.datasets.forEach(dataset => {
+            dataset.data = Sensor.ground;			
+        });
+        Chart3.update("resize");			
+        } else {
+            Chart3 = new Chart('chart3', {			
+            type: 'line',
+            data: {
+                datasets: [
+            {
+                label: 'Первый',
+                data: Sensor.ground,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h1"},	
+                showLine: true,
+                hidden: false,
+                lineTension: 0.3,
+                color: "#FF0000"},
+            {
+                label: 'Второй',
+                data: Sensor.ground,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h2"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#00FF00"
+            },
+            {
+                label: 'Третий',
+                data: Sensor.ground,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h3"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#0000FF"
+            },
+            {
+                label: 'Четвертый',
+                data: Sensor.ground,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h4"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#FF00FF"
+            },
+            {
+                label: 'Пятый',
+                data: Sensor.ground,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h5"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#FF00FF"
+            },
+            {
+                label: 'Шестой',
+                data: Sensor.ground,
+                yAxisID: 'y',
+                parsing: {xAxisKey: "dt", yAxisKey: "h6"},
+                showLine: true,
+                hidden: true,
+                lineTension: 0.3,
+                color: "#FF00FF"
+            }],
+    },
+        options: {
+            locale: "ru-RU",
+            animation: true,
+            plugins: {
+        title: {
+            display: true,
+            text: 'Датчики влажности почвы',
+            color: "#000000"
+          },
+        legend: {
+            labels: {
+                font: {
+	        family: "GOST",				
+                size: 14
+                }
+              }
+            }	  
+        },
+        layout: {
+            padding: {
+                top: 80
+            }
+        },
+        scales: {
+            x: {
+                type: 'time',
+	    title: {
+  	    display: true,
+  	    text: "Время",
+        color: "#000000"
+	    },
+            time: {
+	    isoWeekday: true,
+	    minUnit: 'minute',
+                displayFormats: {				
+  	        millisecond: 'mm:ss.SSS',
+  	        second: 'hh:mm:ss',
+	        minute: 'hh:mm',
+	        hour: 'D MMM hh:mm',
+	        day: 'D MMM hh:mm',
+	        week: 'D MMM hh:mm',
+	        month: 'D MMM yyyy',
+	        quarter: 'D MMM yyyy',
+	        year: 'D MMM yyyy'
+              }
+            },
+            ticks: {
+                source: "data",
+                color: "black",
+	        display: true,
+                font: {
+	      },
+            },
+            grid: {
+                drawTicks: true,
+                borderColor: "black",
+	      enabled: true,
+	      drawTicks: true,
+	      lineWidth: 1,					
+            },
+          },
+        y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+	    border: {
+  	    color: "#000000",
+	    },
+            ticks: {
+                color: "#000000",
+	    },
+	    title: {
+  	    display: true,
+  	    color: "#000000",
+	        text: "Температура",
+	    },  
+        grid: {
+            color: "#000000",
+            }
+        }}}});
+    }
+
   }
