@@ -32,7 +32,6 @@
   <div class="toggle-switch"></div>
   <span class="toggle-label">Режим экстренного управления</span>
 </label>
-<br>
 <label class="toggle">
   <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))"  >
   <div class="toggle-switch"></div>
@@ -43,51 +42,91 @@
 <h1>Исполнительные устройства</h1>
 <div class="switch-btn switch-on">
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="fort" onclick="knopki(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Форточка</span>
+  <span class="toggle-label">Закрытие форточки</span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="fort" onclick="knopki(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Открытие форточки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki2('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="yvl" onclick="knopki2(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Система Увлажнения</span>
+  <span class="toggle-label">Выключить увлажнение </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="yvl" onclick="knopki2(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить увлажнение</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki3('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="auto1" onclick="knopki3(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 1 Бороздки</span>
+  <span class="toggle-label">Выключить Автополив 1 Бороздки </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="auto1" onclick="knopki3(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить Автополив 1 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki4('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="auto2" onclick="knopki4(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 2 Бороздки</span>
+  <span class="toggle-label">Выключить Автополив 2 Бороздки </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="auto2" onclick="knopki4(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить Автополив 2 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki5('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="auto3" onclick="knopki5(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 3 Бороздки</span>
+  <span class="toggle-label">Выключить Автополив 3 Бороздки </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="auto3" onclick="knopki5(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить Автополив 3 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki6('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="auto4" onclick="knopki6(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 4 Бороздки</span>
+  <span class="toggle-label">Выключить Автополив 4 Бороздки </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="auto4" onclick="knopki6(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить Автополив 4 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki7('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="auto5" onclick="knopki7(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 5 Бороздки</span>
+  <span class="toggle-label">Выключить Автополив 5 Бороздки </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="auto5" onclick="knopki7(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить Автополив 5 Бороздки</span>
 </label>
 <br>
 <label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="knopki8('http://localhost:8000')" >
+  <input class="toggle-checkbox" type="radio" name="auto6" onclick="knopki8(0)" checked>
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 6 Бороздки</span>
+  <span class="toggle-label">Выключить Автополив 6 Бороздки </span>
+</label>
+<label class="toggle">
+  <input class="toggle-checkbox" type="radio" name="auto6" onclick="knopki8(1)" >
+  <div class="toggle-switch"></div>
+  <span class="toggle-label">Включить Автополив 6 Бороздки</span>
 </label>
 </div>
 </fieldset>
