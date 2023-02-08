@@ -6,25 +6,21 @@
   <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
   <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
   <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
+  <link rel="stylesheet" href="CSS.css">
   <style>
-    @font-face {
-      font-family: GOST;
-      src: url(./fonts/MipGostZero.ttf);
-    }
-    body {
-      font-family: GOST;
-      font-size: 16pt;
-    }
   </style>
 </head>
 <body>
-<section></section>
-<hr>
-<header></header>
+<div>
+    <input id="30min" value="30 минут" type="button">
+    <input id="hour" value="1 час" type="button">
+    <input id="12hours" value="12 часов" type="button">
+    <input id="day" value="1 день" type="button">
+    <input id="month" value="1 месяц" type="button">
+    <input id="ChartRefresh1" value="Обновить показания датчиков" type="button">
+</div>
 
-<input id="ChartRefresh1" value="Обновить показания датчиков (запрос на сервер)" type="button">
 <canvas id="chart1" width="800" height="250"></canvas>
-
 <script src="chart.js"></script>
 
 </body>
