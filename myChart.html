@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title>Пример графика с временным рядом</title>
-  <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
-  <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
-  <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
-  <link rel="stylesheet" href="CSS.css">
-  <style>
-  </style>
+    <meta charset="utf-8">
+    <title>Пример графика с временным рядом</title>
+    <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
+    <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
+    <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
+    <link rel="stylesheet" href="CSS.css">
+    <style>
+    </style>
 </head>
 <body>
 <div>
-    <input id="30min" value="30 минут" type="button">
-    <input id="hour" value="1 час" type="button">
-    <input id="12hours" value="12 часов" type="button">
-    <input id="day" value="1 день" type="button">
-    <input id="month" value="1 месяц" type="button">
-    <input id="ChartRefresh1" value="Обновить показания датчиков" type="button">
+    <button id="30min" type="submit">30 минут</button>
+    <button id="hour">1 час</button>
+    <button id="12hours">12 часов</button>
+    <button id="day">1 день</button>
+    <button id="month">1 месяц</button>
+    <button id="ChartRefresh1">Обновить показания датчиков</button>
 </div>
 
 <canvas id="chart1" width="800" height="250"></canvas>
+<canvas id="chart2" width="800" height="250"></canvas>
+<canvas id="chart3" width="800" height="250"></canvas>
 <script src="chart.js"></script>
 
 </body>
