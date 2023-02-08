@@ -38,12 +38,12 @@ conn.commit()
 
 # ФУНКЦИЯ ОБНУЛЕНИЯ ВСЕЙ БД
 def null():
-    cur.execute("DELETE FROM newair;")
+    cur.execute("DELETE FROM air;")
     conn.commit()
-    cur.execute("DELETE FROM newground;")
+    cur.execute("DELETE FROM ground;")
     conn.commit()
     cur.execute("DELETE FROM options;")
-null()
+
 
 # ЕСЛИ БД ПУСТА, ТО ЗАПОЛНИТЬ ЕЕ НУЛЯМИ
 def start_options():
@@ -74,7 +74,7 @@ def gr_update(gh):
 
 
 # ФУНКЦИЯ УДАЛЕНИЯ ПОСЛЕДНИХ ДАННЫХ, ИСПОЛЬЗУЕМАЯ В СЛУЧАЕ, ЕСЛИ ПРИЛОЖЕНИЕ ЗАКРЫЛОСЬ И ДАННЫЕ В БД ЗАПИСАЛИСЬ НЕ В ПОЛНОМ ОБЪЕМЕ
-def break_delete(air_time,ground_time):
+def deleter(air_time,ground_time):
     at_del = air_time
     gt = ground_time
     cur.execute("DELETE FROM air where time = :at_del",{"at_del": at_del})
@@ -133,6 +133,7 @@ def time_period(n):
     else:
         return "Неверный формат"
 
+
 # ФУНКЦИЯ ЗАНЕСЕНИЯ ДАННЫХ В ТАБЛИЦУ
 def table_append(var):
     # запись в таблицу air
@@ -157,7 +158,7 @@ def table_append(var):
             cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
             conn.commit()
             aird = ()
-        #запись в таблицу ground
+    # Запись в таблицу ground
     for i in range(0,6):
         if (str(var['data']['ground'][i]['result']) == 'True'):
             result = str(var['data']['ground'][i]['result'])
@@ -180,8 +181,9 @@ def table_append(var):
 
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
-
 def perevod(air_mas, ground_mas):
+    print(len(air_mas))
+    print(len(ground_mas))
     ra = 0
     rg = 0
     result = ""
@@ -214,11 +216,12 @@ def perevod(air_mas, ground_mas):
 
 # ФУНКЦИЯ ПРОВЕРКИ ЦЕЛОСТНОСТИ ПОСЛЕДНЕЙ ЗАПИСИ (ВОЗМОЖНО ПРОГРАММА ПРЕКРАТИЛА РАБОТУ, НЕ УСПЕВ ЗАНЕСТИ ВСЕ ЗНАЧЕНИЯ В БД)
 def proverka_last_data():
-    cur.execute("SELECT * FROM newair")
+    cur.execute("SELECT * FROM air")
     last_air = cur.fetchall()
-    cur.execute("SELECT * FROM newground")
+    cur.execute("SELECT * FROM ground")
     last_ground = cur.fetchall()
     if len(last_air) == len(last_ground) == 0:
+        print('БД пуста')
         return False
     print(last_air[-1], last_air[-1][4])
     print(last_ground[-1], last_ground[-1][3])
@@ -236,7 +239,7 @@ URL_Temperature_AirHumidity = 'https://dt.miet.ru/ppo_it/api/temp_hum/'
 # URL для дадчиков влажности почв
 URL_GroundHumidity = 'https://dt.miet.ru/ppo_it/api/hum/'
 timeout_for_sensors = 5  # таймаут для запросов на сервер теплицы
-time_for_reloading = 20  # интервал считывания данных
+time_for_reloading = 60  # интервал считывания данных
 sr_temp = 0  # средняя температура
 sr_humidity_AIR = 0  # средняя влажность воздуха
 last_GROUND_humidity = [0, 0, 0, 0, 0, 0]  # массив с последними показаниями с датчиков влажности почв
