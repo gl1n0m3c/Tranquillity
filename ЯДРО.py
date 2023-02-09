@@ -1,10 +1,9 @@
 import requests
 import datetime
-from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import *
 from time import *
 import sqlite3
-import json
 import datetime as DT
 
 
@@ -182,8 +181,6 @@ def table_append(var):
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
 def perevod(air_mas, ground_mas):
-    print(len(air_mas))
-    print(len(ground_mas))
     ra = 0
     rg = 0
     result = ""
@@ -193,24 +190,25 @@ def perevod(air_mas, ground_mas):
     y = 0
     while ra < len(air_mas):
         dt = DT.datetime.strptime(air_mas[ra][4], '%Y-%m-%d %H:%M:%S')
-        result_air += '{"dt": ' + str(dt.timestamp())[:-2]
-        for r in range(ra,ra+4):
+        result_air += '{"dt": ' + str(int(dt.timestamp()) * 1000)
+        for r in range(ra, ra+4):
             result_air += ',\n "t' + str(x+1) + '": ' + str(air_mas[r][2]) + ',\n "h' + str(x+1) + '": ' + str(air_mas[r][3])
-            x+=1
+            x += 1
         result_air += "},\n"
         ra += 4
         x = 0
-
+    result_air = result_air[:-2]
     while rg < len(ground_mas):
         dtg = DT.datetime.strptime(ground_mas[rg][3], '%Y-%m-%d %H:%M:%S')
-        result_ground += '{"dt": ' + str(dtg.timestamp())[:-2]
-        for r in range(rg,rg+6):
+        result_ground += '{"dt": ' + str(int(dtg.timestamp()) * 1000)
+        for r in range(rg, rg+6):
             result_ground += ',\n "h' + str(y+1) + '": ' + str(ground_mas[r][2])
-            y+=1
+            y += 1
         rg += 6
         y = 0
         result_ground += "},\n"
-    result += "{\nair: [\n" + result_air + "],\nground: [\n" + result_ground + "]}"
+    result_ground = result_ground[:-2]
+    result += "{\n\"air\": [\n" + result_air + "],\n\"ground\": [\n" + result_ground + "]}"
     return result
 
 
