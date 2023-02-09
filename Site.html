@@ -3,27 +3,26 @@
 <link rel="stylesheet" href="styles.css">
 <head>
 <meta charset="UTF-8">
-<script src="script.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <title>Система управления</title>
 </head>
 <body>
 <fieldset>
 <legend align="center">Установка параметров</legend>
-		<form class="forma" id="setap" onsubmit="return false">
-			  <label for="MaxH">Максимальная средняя температура воздуха в теплице(°C)</label>
-			 <input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
-			 <button id="send" type="submit" onclick="get(1);">Отправить</button>
+		<form class="forma" onsubmit="return false" id="form1">
+			  <label for="MaxT">Максимальная средняя температура воздуха в теплице(°C)</label>
+			 <input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
+			 <button id="send1" type="submit" onclick="get(1)" >Отправить</button>
 		</form>
-		<form class="forma" id="setap" onsubmit="return false">
+		<form class="forma"  onsubmit="return false" id="form2">
 			  <label for="MaxH">Максимальная средняя влажность воздуха в теплице(%)</label>
 			 <input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
-			 <button id="send" type="submit" onclick="get(2);" >Отправить</button>
+			 <button id="send2" type="submit" onclick="get(2)" >Отправить</button>
 		</form>
-		<form class="forma" id="setap" onsubmit="return false">
+		<form class="forma"  onsubmit="return false" id="form3">
 			  <label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
 			 <input type="number" id="MaxHb" name="maxHb" placeholder="Введите число" required />
-			 <button class="switch-btn switch-on"id="send" type="submit" onclick="get(3);" >Отправить</button>
+			 <button id="send3" type="submit"onclick="get(3)" >Отправить</button>
 		</form>
 </fieldset>
 <fieldset>
@@ -139,17 +138,7 @@
 	<button id="time" type="submit" onclick="" >1 месяц</button>
 	</div>
 </fieldset>
-    <div class='tablitza'>
-        <canvas id="line-chart" width="900" height="450"></canvas>
-        <script src="BD_test.js"></script>
-    </div>
-    <div class='tablitza'>
-        <canvas id="humidity-chart" width="900" height="450"></canvas>
-        <script src="BD_dia2.js"></script>
-    </div>
-    <div class='tablitza'>
-        <canvas id="last-chart" width="900" height="450"></canvas>
-        <script src="BD_dia3.js"></script>
-    </div>
+
+<script src="script.js"></script>
 </body>
 </html>

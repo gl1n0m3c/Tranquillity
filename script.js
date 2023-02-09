@@ -1,97 +1,32 @@
-const getResourse = async(url) => {
-    const response = await fetch(url);
-    return await response.json();
-};
-
-getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))
+//const getResourse = async(url) => {
+//    const response = await fetch(url);
+//    return await response.json();
+//};
+//
+//getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))
 
 async function zapros(n){
     const Requ = new Request(n)
     const Resp = await fetch(Requ);
     const D = await Resp.json()
 };
-
-
-
-
-async function get(num){
-    if (num==1){
-    
-        const ajaxSend = async (formData) => {
-            const response = await fetch("http://localhost:8000/save_temperature/", {
-                method: "GET",
-            });
-        };
-    
-        if (document.querySelector("form")) {
-            const forms = document.querySelectorAll("form");
-    
-            forms.forEach(form => {
-                form.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
-    
-                    ajaxSend(formData)
-                        .then((response) => {
-                            console.log('hi');
-                            form.reset();
-                        })
-                });
-            });
-        }
-
-        
-    } if (num==2){
-                const ajaxSend = async (formData) => {
-                const response = await fetch("http://localhost:8000/save_air_humidity/", {
-                    method: "GET",
-                });
-            };
-
-            if (document.querySelector("form")) {
-                const forms = document.querySelectorAll("form");
-
-                forms.forEach(form => {
-                    form.addEventListener("submit", function (e) {
-                        e.preventDefault();
-                        const formData = new FormData(this);
-
-                        ajaxSend(formData)
-                            .then((response) => {
-                                console.log('hello');
-                                form.reset(); 
-
-                            })
-                    });
-                });
-            }
-        } if(num==3){
-
-
-            
-                const ajaxSend = async (formData) => {
-                    const response = await fetch("http://localhost:8000/save_ground_humidity/", {
-                        method: "GET",
-                    });
-                };
-                
-                if (document.querySelector("form")) {
-                    const forms = document.querySelectorAll("form");
-                
-                    forms.forEach(form => {
-                        form.addEventListener("submit", function (e) {
-                            e.preventDefault();
-                            const formData = new FormData(this);
-                
-                            ajaxSend(formData)
-                                .then((response) => {
-                                    console.log('gutentag');
-                                    form.reset();
-                                })
-                        });
-                    });
-                } 
-        }};
+function get(n){
+if (n==1){
+  let input1 = document.getElementById('MaxT')
+  zapros('http://localhost:8000/save_temperature/'+input1)
+  console.log(input1.value);
+}
+if (n==2){
+    let input2 = document.getElementById('MaxH')
+    zapros('http://localhost:8000/save_air_humidity/'+input2)
+    console.log(input2.value);
+}
+if (n==3){
+    let input3 = document.getElementById('MaxHb')
+    zapros('http://localhost:8000/save_ground_humidity/'+input3)
+    console.log(input3.value);
+}
+};
 function knopki(n){
     if (n==1){
         zapros('http://localhost:8000/open_windows')
@@ -167,5 +102,3 @@ function knopki8(n){
         console.log('Stop wattering 6')
 }
 }
-
-document.getElementById("checkBox").disabled=true;
