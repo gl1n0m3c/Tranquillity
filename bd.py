@@ -5,22 +5,7 @@ from time import *
 conn = sqlite3.connect('data.db')
 cur = conn.cursor()
 # def perevod(air_mas, ground_mas):
-#     ra = 0
-#     rg = 0
-#     result = '{"DATA": [\n'
-#     while ra < len(air_mas):
-#         result += "{'timeAIR':" + air_mas[ra][4] + ",'timeGROUND':" + ground_mas[rg][3] + ",'data':{\n'air': ["
-#         for r in range(ra,ra+4):
-#             result += "{'result': " + air_mas[r][0] + ",'id': "       + air_mas[r][1] + ",'temperature': " + \
-#                                       air_mas[r][2] + ",'humidity': " + air_mas[r][3] + "},\n"
-#         ra += 4
-#         result += "],\n'ground': [\n"
-#         for r in range(rg,rg+6):
-#             result += "{'result': " + ground_mas[r][0] + ",'id': " + ground_mas[r][1] + ",'humidity': " + ground_mas[r][2] + "},\n"
-#         rg += 6
-#         result += "]}},\n"
-#     result += "]}"
-#     return result
+
 def perevod(air_mas, ground_mas):
     ra = 0
     rg = 0
@@ -32,31 +17,32 @@ def perevod(air_mas, ground_mas):
     while ra < len(air_mas):
         dt = DT.datetime.strptime(air_mas[ra][4], '%Y-%m-%d %H:%M:%S')
 
-        result_air += '{"dt": ' + str(dt.timestamp())[:-2]
+        result_air += '{"dt": ' + str(dt.timestamp())
         for r in range(ra,ra+4):
-            result_air += ',\n "t' + str(x+1) + '": ' + str(air_mas[r][2]) + ',\n "h' + str(x+1) + '": ' + str(air_mas[r][3])
+            result_air += ',"t' + str(x+1) + '": ' + str(air_mas[r][2]) + ',"h' + str(x+1) + '": ' + str(air_mas[r][3])
             x+=1
         result_air += "},\n"
         ra += 4
         x = 0
-
+    result_air = result_air[:-2]
     while rg < len(ground_mas):
         dtg = DT.datetime.strptime(ground_mas[rg][3], '%Y-%m-%d %H:%M:%S')
-        result_ground += '{"dt": ' + str(dtg.timestamp())[:-2]
+        result_ground += '{"dt": ' + str(dtg.timestamp())
         for r in range(rg,rg+6):
-            result_ground += ',\n "h' + str(y+1) + '": ' + str(ground_mas[r][2])
+            result_ground += ',"h' + str(y+1) + '": ' + str(ground_mas[r][2])
             y+=1
         rg += 6
         y = 0
         result_ground += "},\n"
+    result_ground = result_ground[:-2]
     result += "{\nair: [\n" + result_air + "],\nground: [\n" + result_ground + "]}"
     return result
 def break_delete(air_time,ground_time):
     at_del = air_time
     gt = ground_time
-    cur.execute("DELETE FROM newair where time = :at_del",{"at_del": at_del})
+    cur.execute("DELETE FROM air where time = :at_del",{"at_del": at_del})
     conn.commit()
-    cur.execute("DELETE FROM newground WHERE time = :gt", {"gt": gt})
+    cur.execute("DELETE FROM ground WHERE time = :gt", {"gt": gt})
     conn.commit()
 #создание таблиц air, ground, last_parametr
 cur.execute("""CREATE TABLE IF NOT EXISTS air(
@@ -64,7 +50,8 @@ cur.execute("""CREATE TABLE IF NOT EXISTS air(
    id INTEGER,
    temperature REAL,
    humidity REAL,
-   time TEXT);
+   time TEXT
+   );
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS ground(
@@ -80,6 +67,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS options(
     gr_hum INTEGER);
 """)
 conn.commit()
+# time,id,type,result,
 def start_options():
     cur.execute("SELECT * FROM options")
     axc = cur.fetchall()
@@ -135,6 +123,8 @@ var2 = {'timeAIR': '2023-01-22 13:24:07',
                {'result': True, 'id': 4, 'humidity': 70.94},
                {'result': False, 'id': 5},
                {'result': False, 'id': 6}]}}
+print(len(var2['data']['air']))
+print(len(var2['data']['ground']))
 var3 = {'timeAIR': 1675711739,
         'timeGROUND': 1675711741,
         'data': {
@@ -152,54 +142,108 @@ var3 = {'timeAIR': 1675711739,
                 {'result': True, 'id': 6, 'humidity': 71.62}]}}
 
 
-
-
 def table_append(var):
     # запись в таблицу air
+    try:
+        for i in range(0,4):
+            if (str(var['data']['air'][i]['result']) == 'True'):
+                result = str(var['data']['air'][i]['result'])
+                id = int(var['data']['air'][i]['id'])
+                temperature = float(var['data']['air'][i]['temperature'])
+                humidity = float(var['data']['air'][i]['humidity'])
+                time = var['timeAIR']
+                aird = (result,id,temperature,humidity,time)
 
-    for i in range(0,4):
-        if (str(var['data']['air'][i]['result']) == 'True'):
-            result = str(var['data']['air'][i]['result'])
-            id = int(var['data']['air'][i]['id'])
-            temperature = float(var['data']['air'][i]['temperature'])
-            humidity = float(var['data']['air'][i]['humidity'])
-            time = var['timeAIR']
-            aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
-            conn.commit()
-            aird = ()
-        else:
-            result = str(var['data']['air'][i]['result'])
-            id = int(var['data']['air'][i]['id'])
-            temperature = 'null'
-            humidity = 'null'
-            time = var['timeAIR']
-            aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
-            conn.commit()
-            aird = ()
+                cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
+                    # conn.commit()
+                aird = ()
+            else:
+                result = str(var['data']['air'][i]['result'])
+                id = int(var['data']['air'][i]['id'])
+                temperature = 'null'
+                humidity = 'null'
+                time = var['timeAIR']
+                aird = (result,id,temperature,humidity,time)
+                cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
+            #    conn.commit()
+                aird = ()
 
         #запись в таблицу ground
-    for i in range(0,6):
+        for i in range(0,6):
 
-        if (str(var['data']['ground'][i]['result']) == 'True'):
-            result = str(var['data']['ground'][i]['result'])
-            id = int(var['data']['ground'][i]['id'])
-            humidity = float(var['data']['ground'][i]['humidity'])
-            time = var['timeGROUND']
-            grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
-            conn.commit()
-            grd = ()
-        else:
-            result = str(var['data']['ground'][i]['result'])
-            id = int(var['data']['ground'][i]['id'])
-            humidity = 'null'
-            time = var['timeGROUND']
-            grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
-            conn.commit()
-            grd = ()
+            if (str(var['data']['ground'][i]['result']) == 'True'):
+                result = str(var['data']['ground'][i]['result'])
+                id = int(var['data']['ground'][i]['id'])
+                humidity = float(var['data']['ground'][i]['humidity'])
+                time = var['timeGROUND']
+                grd = (result,id,humidity,time)
+                cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
+                    # conn.commit()
+                grd = ()
+            else:
+                result = str(var['data']['ground'][i]['result'])
+                id = int(var['data']['ground'][i]['id'])
+                humidity = 'null'
+                time = var['timeGROUND']
+                grd = (result,id,humidity,time)
+                cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
+                grd = ()
+        conn.commit()
+    except GeneratorExit as e:
+        print("error")
+        conn.rollback()
+# def table_append(var):
+#     # запись в таблицу air
+#
+#     for i in range(0,4):
+#         if (str(var['data']['air'][i]['result']) == 'True'):
+#             result = str(var['data']['air'][i]['result'])
+#             id = int(var['data']['air'][i]['id'])
+#             temperature = float(var['data']['air'][i]['temperature'])
+#             humidity = float(var['data']['air'][i]['humidity'])
+#             time = var['timeAIR']
+#             aird = (result,id,temperature,humidity,time)
+#             try:
+#                 cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
+#                 conn.commit()
+#             except sqlite3.Error:
+#                 conn.rollback()
+#             aird = ()
+#         else:
+#             result = str(var['data']['air'][i]['result'])
+#             id = int(var['data']['air'][i]['id'])
+#             temperature = 'null'
+#             humidity = 'null'
+#             time = var['timeAIR']
+#             aird = (result,id,temperature,humidity,time)
+#             try:
+#                 cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
+#                 conn.commit()
+#             except sqlite3.Error:
+#                 conn.rollback()
+#             aird = ()
+#
+#         #запись в таблицу ground
+#     for i in range(0,6):
+#
+#         if (str(var['data']['ground'][i]['result']) == 'True'):
+#             result = str(var['data']['ground'][i]['result'])
+#             id = int(var['data']['ground'][i]['id'])
+#             humidity = float(var['data']['ground'][i]['humidity'])
+#             time = var['timeGROUND']
+#             grd = (result,id,humidity,time)
+#             cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
+#             conn.commit()
+#             grd = ()
+#         else:
+#             result = str(var['data']['ground'][i]['result'])
+#             id = int(var['data']['ground'][i]['id'])
+#             humidity = 'null'
+#             time = var['timeGROUND']
+#             grd = (result,id,humidity,time)
+#             cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
+#             conn.commit()
+#             grd = ()
 
 # # #удаление
 cur.execute("DELETE FROM air;")
