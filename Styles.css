@@ -60,3 +60,24 @@ body {
   position: relative;
   top: 2px;
 }
+
+.toggle-checkbox1 {
+  position: absolute;
+  visibility: hidden;
+}
+.toggle-checkbox1:checked + .toggle-switch1 {
+  background: #56c080;
+}
+.toggle-checkbox1:checked + .toggle-switch1:before {
+  left: 30px;
+}
+.toggle-switch1 {
+  display: inline-block;
+  background: #ccc;
+  border-radius: 16px;
+  width: 58px;
+  height: 32px;
+  position: relative;
+  vertical-align: middle;
+  transition: background 0.25s;
+}

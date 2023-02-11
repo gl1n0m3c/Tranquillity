@@ -3,7 +3,6 @@
 <link rel="stylesheet" href="styles.css">
 <head>
 <meta charset="UTF-8">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <title>Система управления</title>
 </head>
 <body>
@@ -27,12 +26,12 @@
 </fieldset>
 <fieldset>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
+  <input class="toggle-checkbox" type="radio" name="settings" onclick="extra()">
   <div class="toggle-switch"></div>
   <span class="toggle-label">Режим экстренного управления</span>
 </label>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))"  >
+  <input class="toggle-checkbox" type="radio" name="settings" onclick="auto()" >
   <div class="toggle-switch"></div>
   <span class="toggle-label">Режим автоматического управления</span>
 </label>
@@ -41,92 +40,68 @@
 <h1>Исполнительные устройства</h1>
 <div class="switch-btn switch-on">
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="fort" onclick="knopki(0)" checked>
+<div id='fortochka'>
+  <input class="toggle-checkbox" type="checkbox" id='1' onclick="knopki()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Закрытие форточки</span>
+  <span class="toggle-label">Форточка</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="fort" onclick="knopki(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Открытие форточки</span>
-</label>
+</div>
 <br>
+<div id='yvl'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="yvl" onclick="knopki2(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='2' onclick="knopki2()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить увлажнение </span>
+  <span class="toggle-label">Увлажнение</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="yvl" onclick="knopki2(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить увлажнение</span>
-</label>
+</div>
 <br>
+<div id='auto1'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto1" onclick="knopki3(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='3' onclick="knopki3()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить Автополив 1 Бороздки </span>
+  <span class="toggle-label">Автополив 1 Бороздки</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto1" onclick="knopki3(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить Автополив 1 Бороздки</span>
-</label>
+</div>
 <br>
+<div id='auto2'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto2" onclick="knopki4(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='4' onclick="knopki4()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить Автополив 2 Бороздки </span>
+  <span class="toggle-label">Автополив 2 Бороздки</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto2" onclick="knopki4(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить Автополив 2 Бороздки</span>
-</label>
+</div>
 <br>
+<div id='auto3'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto3" onclick="knopki5(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='5' onclick="knopki5()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить Автополив 3 Бороздки </span>
+  <span class="toggle-label">Автополив 3 Бороздки</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto3" onclick="knopki5(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить Автополив 3 Бороздки</span>
-</label>
+</div>
 <br>
+<div id='auto4'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto4" onclick="knopki6(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='6' onclick="knopki6()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить Автополив 4 Бороздки </span>
+  <span class="toggle-label">Автополив 4 Бороздки</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto4" onclick="knopki6(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить Автополив 4 Бороздки</span>
-</label>
+</div>
 <br>
+<div id='auto5'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto5" onclick="knopki7(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='7' onclick="knopki7()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить Автополив 5 Бороздки </span>
+  <span class="toggle-label">Автополив 5 Бороздки</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto5" onclick="knopki7(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить Автополив 5 Бороздки</span>
-</label>
+</div>
 <br>
+<div id='auto6'>
 <label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto6" onclick="knopki8(0)" checked>
+  <input class="toggle-checkbox" type="checkbox" id='8' onclick="knopki8()" >
   <div class="toggle-switch"></div>
-  <span class="toggle-label">Выключить Автополив 6 Бороздки </span>
+  <span class="toggle-label">Автополив 6 Бороздки</span>
 </label>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="auto6" onclick="knopki8(1)" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Включить Автополив 6 Бороздки</span>
-</label>
+</div>
 </div>
 </fieldset>
 <fieldset>
@@ -138,7 +113,6 @@
 	<button id="time" type="submit" onclick="" >1 месяц</button>
 	</div>
 </fieldset>
-
 <script src="script.js"></script>
 </body>
 </html>
