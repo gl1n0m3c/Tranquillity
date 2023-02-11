@@ -6,24 +6,27 @@
     <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
     <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
     <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
-    <link rel="stylesheet" href="CSS.css">
+    <!--<link rel="stylesheet" href="CSS.css">-->
     <style>
     </style>
 </head>
 <body>
+
 <div>
-    <button id="30min" type="submit">30 минут</button>
-    <button id="hour">1 час</button>
-    <button id="12hours">12 часов</button>
-    <button id="day">1 день</button>
-    <button id="month">1 месяц</button>
+    <button id="min30">30 минут</button>
+    <button id="hour1">1 час</button>
+    <button id="hours12">12 часов</button>
+    <button id="day1">1 день</button>
+    <button id="month1">1 месяц</button>
     <button id="ChartRefresh1">Обновить показания датчиков</button>
 </div>
 
-<canvas id="chart1" width="800" height="250"></canvas>
-<canvas id="chart2" width="800" height="250"></canvas>
-<canvas id="chart3" width="800" height="250"></canvas>
-<script src="chart.js"></script>
+<div>
+    <canvas id="chart1" width="800" height="250"></canvas>
+    <canvas id="chart2" width="800" height="250"></canvas>
+    <canvas id="chart3" width="800" height="250"></canvas>
+    <script src="chart.js"></script>
+</div>
 
 </body>
 </html>
