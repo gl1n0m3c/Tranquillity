@@ -47,7 +47,7 @@ def break_delete(air_time,ground_time):
 #создание таблиц air, ground, last_parametr
 cur.execute("""CREATE TABLE IF NOT EXISTS air(
    result TEXT,
-   id INTEGER,
+   id INTEGER CHECK(id > 0 and id <=4),
    temperature REAL,
    humidity REAL,
    time TEXT
@@ -56,7 +56,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS air(
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS ground(
    result TEXT,
-   id INTEGER,  
+   id INTEGER CHECK(id > 0 and id <= 6),  
    humidity REAL,
    time TEXT);
 """)
