@@ -1,28 +1,29 @@
 const port = "8000";
 var url;
+
 min30.onclick = function() {
     url = "30min";
-    DataFetch("http://localhost:" + port + "/give_data/30min");
+    DataFetch("http://localhost:" + port + "/give_data/" + url);
 }
 
-hour.onclick = function() {
+hour1.onclick = function() {
     url = "hour";
-    DataFetch("http://localhost:" + port + "/give_data/hour");
+    DataFetch("http://localhost:" + port + "/give_data/" + url);
 }
 
 hours12.onclick = function() {
     url = "12hours";
-    DataFetch("http://localhost:" + port + "/give_data/12hours");
+    DataFetch("http://localhost:" + port + "/give_data/" + url);
 }
 
 day1.onclick = function() {
     url = "day";
-    DataFetch("http://localhost:" + port + "/give_data/day");
+    DataFetch("http://localhost:" + port + "/give_data/" + url);
 }
 
 month1.onclick = function() {
     url = "month"
-    DataFetch("http://localhost:" + port + "/give_data/month");
+    DataFetch("http://localhost:" + port + "/give_data/" + url);
 }
 
 ChartRefresh1.onclick = function() {
@@ -39,7 +40,6 @@ async function DataFetch(strURL) {
     const Requ = new Request(strURL);
     const Resp = await fetch(Requ);
     var Sensor = await Resp.json();
-    
     if (Chart1 != undefined) {	
         Chart1.data.datasets.forEach(dataset => {
             dataset.data = Sensor.air});
@@ -122,14 +122,15 @@ async function DataFetch(strURL) {
 	    },
             time: {
 	    isoWeekday: true,
-	    minUnit: 'minute',
+	    //minUnit: 'minute',
+        //maxUnit: 'day',
         displayFormats: {				
-  	        millisecond: 'mm:ss.SSS',
-  	        second: 'hh:mm:ss',
+  	        millisecond: 'D MMM mm:ss',
+  	        second: 'D MMM hh:mm',
 	        minute: 'D MMM hh:mm',
 	        hour: 'D MMM hh:mm',
-	        day: 'D MMM hh:mm',
-	        week: 'D MMM hh:mm',
+	        day: 'D MMM hh',
+	        week: 'D MMM hh',
 	        month: 'D MMM yyyy',
 	        quarter: 'D MMM yyyy',
 	        year: 'D MMM yyyy'
@@ -257,18 +258,19 @@ async function DataFetch(strURL) {
 	    },
             time: {
 	    isoWeekday: true,
-	    minUnit: 'minute',
-                displayFormats: {				
-  	        millisecond: 'mm:ss.SSS',
-  	        second: 'hh:mm:ss',
-	        minute: 'D MMM hh:mm',
-	        hour: 'MMM hh',
-	        day: 'MMM hh:mm',
-	        week: 'MMM hh:mm',
-	        month: 'D MMM yyyy',
-	        quarter: 'D MMM yyyy',
-	        year: 'D MMM yyyy'
-              }
+	    //minUnit: 'minute',
+        //maxUnit: 'day',
+        displayFormats: {				
+            millisecond: 'D MMM mm:ss',
+            second: 'D MMM hh:mm',
+            minute: 'D MMM hh:mm',
+            hour: 'D MMM hh:mm',
+            day: 'D MMM hh',
+            week: 'D MMM hh',
+            month: 'D MMM yyyy',
+            quarter: 'D MMM yyyy',
+            year: 'D MMM yyyy'
+            }
             },
             ticks: {
                 autoSkip: true,
@@ -413,18 +415,19 @@ async function DataFetch(strURL) {
 	    },
             time: {
 	    isoWeekday: true,
-	    minUnit: 'minute',
+	    //minUnit: 'minute',
+        //maxUnit: 'day',
         displayFormats: {				
-  	        millisecond: 'mm:ss.SSS',
-  	        second: 'hh:mm:ss',
-	        minute: 'D MMM hh:mm',
-	        hour: 'D MMM hh:mm',
-	        day: 'D MMM hh:mm',
-	        week: 'D MMM hh:mm',
-	        month: 'D MMM yyyy',
-	        quarter: 'D MMM yyyy',
-	        year: 'D MMM yyyy'
-              }
+            millisecond: 'D MMM mm:ss',
+            second: 'D MMM hh:mm',
+            minute: 'D MMM hh:mm',
+            hour: 'D MMM hh:mm',
+            day: 'D MMM hh',
+            week: 'D MMM hh',
+            month: 'D MMM yyyy',
+            quarter: 'D MMM yyyy',
+            year: 'D MMM yyyy'
+            }
             },
             ticks: {
                 autoSkip: true,
