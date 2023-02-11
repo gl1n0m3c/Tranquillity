@@ -62,9 +62,9 @@ cur.execute("""CREATE TABLE IF NOT EXISTS ground(
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS options(
-    temperature INTEGER,
-    air_hum INTEGER,
-    gr_hum INTEGER);
+    temperature REAL,
+    air_hum REAL,
+    gr_hum REAL);
 """)
 conn.commit()
 # time,id,type,result,
