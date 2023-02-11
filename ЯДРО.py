@@ -15,23 +15,24 @@ cur = conn.cursor()
 # создание таблиц air, ground, last_parametr
 cur.execute("""CREATE TABLE IF NOT EXISTS air(
    result TEXT,
-   id INTEGER,
+   id INTEGER CHECK(id > 0 and id <=4),
    temperature REAL,
    humidity REAL,
-   time TEXT);
+   time TEXT
+   );
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS ground(
    result TEXT,
-   id INTEGER,  
+   id INTEGER CHECK(id > 0 and id <= 6),
    humidity REAL,
    time TEXT);
 """)
 conn.commit()
 cur.execute("""CREATE TABLE IF NOT EXISTS options(
-    temperature INTEGER,
-    air_hum INTEGER,
-    gr_hum INTEGER);
+    temperature REAL,
+    air_hum REAL,
+    gr_hum REAL);
 """)
 conn.commit()
 
@@ -72,16 +73,6 @@ def gr_update(gh):
     conn.commit()
 
 
-# ФУНКЦИЯ УДАЛЕНИЯ ПОСЛЕДНИХ ДАННЫХ, ИСПОЛЬЗУЕМАЯ В СЛУЧАЕ, ЕСЛИ ПРИЛОЖЕНИЕ ЗАКРЫЛОСЬ И ДАННЫЕ В БД ЗАПИСАЛИСЬ НЕ В ПОЛНОМ ОБЪЕМЕ
-def deleter(air_time,ground_time):
-    at_del = air_time
-    gt = ground_time
-    cur.execute("DELETE FROM air where time = :at_del",{"at_del": at_del})
-    conn.commit()
-    cur.execute("DELETE FROM ground WHERE time = :gt", {"gt": gt})
-    conn.commit()
-
-
 # ФУНКЦИЯ ЗАПРОСА ДАННЫХ ЗА ОПРЕДЕЛЕННЫЙ ПЕРИОД
 def time_period(n):
     if isinstance(n, str):
@@ -113,13 +104,6 @@ def time_period(n):
             ground = cur.fetchall()
             final_result = perevod(air, ground)
 
-        elif n == 'week':
-            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
-            air = cur.fetchall()
-            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
-            ground = cur.fetchall()
-            final_result = perevod(air,ground)
-
         elif n == 'month':
             cur.execute("SELECT * FROM air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             airq = cur.fetchall()
@@ -136,47 +120,52 @@ def time_period(n):
 # ФУНКЦИЯ ЗАНЕСЕНИЯ ДАННЫХ В ТАБЛИЦУ
 def table_append(var):
     # запись в таблицу air
-    for i in range(0,4):
-        if (str(var['data']['air'][i]['result']) == 'True'):
-            result = str(var['data']['air'][i]['result'])
-            id = int(var['data']['air'][i]['id'])
-            temperature = float(var['data']['air'][i]['temperature'])
-            humidity = float(var['data']['air'][i]['humidity'])
-            time = var['timeAIR']
-            aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
-            conn.commit()
-            aird = ()
-        else:
-            result = str(var['data']['air'][i]['result'])
-            id = int(var['data']['air'][i]['id'])
-            temperature = 'null'
-            humidity = 'null'
-            time = var['timeAIR']
-            aird = (result,id,temperature,humidity,time)
-            cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
-            conn.commit()
-            aird = ()
-    # Запись в таблицу ground
-    for i in range(0,6):
-        if (str(var['data']['ground'][i]['result']) == 'True'):
-            result = str(var['data']['ground'][i]['result'])
-            id = int(var['data']['ground'][i]['id'])
-            humidity = float(var['data']['ground'][i]['humidity'])
-            time = var['timeGROUND']
-            grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
-            conn.commit()
-            grd = ()
-        else:
-            result = str(var['data']['ground'][i]['result'])
-            id = int(var['data']['ground'][i]['id'])
-            humidity = 'null'
-            time = var['timeGROUND']
-            grd = (result,id,humidity,time)
-            cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
-            conn.commit()
-            grd = ()
+    try:
+        for i in range(0,4):
+            if (str(var['data']['air'][i]['result']) == 'True'):
+                result = str(var['data']['air'][i]['result'])
+                id = int(var['data']['air'][i]['id'])
+                temperature = float(var['data']['air'][i]['temperature'])
+                humidity = float(var['data']['air'][i]['humidity'])
+                time = var['timeAIR']
+                aird = (result,id,temperature,humidity,time)
+
+                cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
+                    # conn.commit()
+                aird = ()
+            else:
+                result = str(var['data']['air'][i]['result'])
+                id = int(var['data']['air'][i]['id'])
+                temperature = 'null'
+                humidity = 'null'
+                time = var['timeAIR']
+                aird = (result,id,temperature,humidity,time)
+                cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
+            #    conn.commit()
+                aird = ()
+        #запись в таблицу ground
+        for i in range(0,6):
+            if (str(var['data']['ground'][i]['result']) == 'True'):
+                result = str(var['data']['ground'][i]['result'])
+                id = int(var['data']['ground'][i]['id'])
+                humidity = float(var['data']['ground'][i]['humidity'])
+                time = var['timeGROUND']
+                grd = (result,id,humidity,time)
+                cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
+                    # conn.commit()
+                grd = ()
+            else:
+                result = str(var['data']['ground'][i]['result'])
+                id = int(var['data']['ground'][i]['id'])
+                humidity = 'null'
+                time = var['timeGROUND']
+                grd = (result,id,humidity,time)
+                cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
+                grd = ()
+        conn.commit()
+    except GeneratorExit as e:
+        conn.rollback()
+
 
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
@@ -188,6 +177,8 @@ def perevod(air_mas, ground_mas):
     result_ground = ""
     x = 0
     y = 0
+    if len(air_mas) == 0 or len(ground_mas) == 0:
+        return "[]"
     while ra < len(air_mas):
         dt = DT.datetime.strptime(air_mas[ra][4], '%Y-%m-%d %H:%M:%S')
         result_air += '{"dt": ' + str(int(dt.timestamp()) * 1000)
@@ -210,25 +201,6 @@ def perevod(air_mas, ground_mas):
     result_ground = result_ground[:-2]
     result += "{\n\"air\": [\n" + result_air + "],\n\"ground\": [\n" + result_ground + "]}"
     return result
-
-
-# ФУНКЦИЯ ПРОВЕРКИ ЦЕЛОСТНОСТИ ПОСЛЕДНЕЙ ЗАПИСИ (ВОЗМОЖНО ПРОГРАММА ПРЕКРАТИЛА РАБОТУ, НЕ УСПЕВ ЗАНЕСТИ ВСЕ ЗНАЧЕНИЯ В БД)
-def proverka_last_data():
-    cur.execute("SELECT * FROM air")
-    last_air = cur.fetchall()
-    cur.execute("SELECT * FROM ground")
-    last_ground = cur.fetchall()
-    if len(last_air) == len(last_ground) == 0:
-        print('БД пуста')
-        return False
-    print(last_air[-1], last_air[-1][4])
-    print(last_ground[-1], last_ground[-1][3])
-    # ПРОВЕРКА НА НЕДОСТАЮЩИЕ ДАННЫЕ С ДАТЧИКОВ, КОТОРЫЕ МОГЛИ НЕДОПИСАТЬСЯ ВСЛЕДСТВИЕ ПРЕКРАЩЕНИЯ ПРОГРАММЫ
-    if int(last_air[-1][1]) != 4 or int(last_ground[-1][1]) != 6:
-        deleter(last_air[-1][4], last_ground[-1][3])
-        print('Человечность данных восcтановлена!')
-    else:
-        print('С данными все хорошо!')
 
 
 #                                                                   ЧАСТЬ СО СЧИТЫВАНИЕМ ДАННЫХ С ТЕПЛИЦЫ
@@ -441,13 +413,10 @@ def SERVER():
             else:
                 self.wfile.write("{\"message\": \"Неверная ссылка!\"}".encode())
 
-    server_addres = ('', 8000)
+    port = 8000
+    server_addres = ('', port)
     httpd = ThreadingHTTPServer(server_addres, HttpGetHandler)
     httpd.serve_forever()
-
-
-# ПРОВЕРЯЕМ НА ЦЕЛОСТНОСТЬ ПОСЛЕДНЕЙ ЗАПИСИ (4 ПОКАЗАНИЯ С ВОЗДУХА И 6 С ЗЕМЛИ)
-proverka_last_data()
 
 
 # ОБОЗНАЧЕНИЯ ПОТОКОВ
