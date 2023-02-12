@@ -5,7 +5,7 @@ const getResourse = async(url) => {
 
 
 
-const m = '8000' // 8001
+const m = '8000'
 let k = 0
 let k1 = 0
 let k2 = 0
@@ -170,12 +170,12 @@ async function borozdka3(url) {
     if (message_ground_3 == "Система полива бороздки включена!"){
         document.getElementById("5").classList.remove('toggle-checkbox1')
         document.getElementById("5").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки включена!")}
+        alert("Система полива третьей бороздки включена!")}
     if (message_ground_3 == "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"){
         k4 = k4 - 1
         document.getElementById("5").classList.remove('toggle-checkbox')
         document.getElementById("5").classList.add('toggle-checkbox1')
-        alert("Система полива не может быть включена в связи с избыточной влажностью во второй бороздке!")
+        alert("Система полива не может быть включена в связи с избыточной влажностью в третьей бороздке!")
     }
     if (message_ground_3 == "Сервер теплицы не отвечает!"){
         k4 = k4 - 1
@@ -185,7 +185,7 @@ async function borozdka3(url) {
     if (message_ground_3 == "Система полива бороздки выключена!"){
         document.getElementById("5").classList.remove('toggle-checkbox1')
         document.getElementById("5").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки выключена!")}}       
+        alert("Система полива третьей бороздки выключена!")}}       
 
 
 
@@ -197,12 +197,12 @@ async function borozdka4(url) {
     if (message_ground_4 == "Система полива бороздки включена!"){
         document.getElementById("6").classList.remove('toggle-checkbox1')
         document.getElementById("6").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки включена!")}
+        alert("Система полива четвертой бороздки включена!")}
     if (message_ground_4 == "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"){
         k5 = k5 - 1
         document.getElementById("6").classList.remove('toggle-checkbox')
         document.getElementById("6").classList.add('toggle-checkbox1')
-        alert("Система полива не может быть включена в связи с избыточной влажностью во второй бороздке!")
+        alert("Система полива не может быть включена в связи с избыточной влажностью в четвертой бороздке!")
     }
     if (message_ground_4 == "Сервер теплицы не отвечает!"){
         k5 = k5 - 1
@@ -212,7 +212,7 @@ async function borozdka4(url) {
     if (message_ground_4 == "Система полива бороздки выключена!"){
         document.getElementById("6").classList.remove('toggle-checkbox1')
         document.getElementById("6").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки выключена!")}}
+        alert("Система полива четвертой бороздки выключена!")}}
 
 
 
@@ -224,12 +224,12 @@ async function borozdka5(url) {
     if (message_ground_5 == "Система полива бороздки включена!"){
         document.getElementById("7").classList.remove('toggle-checkbox1')
         document.getElementById("7").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки включена!")}
+        alert("Система полива пятой бороздки включена!")}
     if (message_ground_5 == "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"){
         k6 = k6 - 1
         document.getElementById("7").classList.remove('toggle-checkbox')
         document.getElementById("7").classList.add('toggle-checkbox1')
-        alert("Система полива не может быть включена в связи с избыточной влажностью во второй бороздке!")
+        alert("Система полива не может быть включена в связи с избыточной влажностью в пятой бороздке!")
     }
     if (message_ground_5 == "Сервер теплицы не отвечает!"){
         k6 = k6 - 1
@@ -239,7 +239,7 @@ async function borozdka5(url) {
     if (message_ground_5 == "Система полива бороздки выключена!"){
         document.getElementById("7").classList.remove('toggle-checkbox1')
         document.getElementById("7").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки выключена!")}}
+        alert("Система полива пятой бороздки выключена!")}}
 
 
 
@@ -247,26 +247,26 @@ async function borozdka6(url) {
     const Requ = new Request(url)
     const Resp = await fetch(Requ)
     const D = await Resp.json()
-    message_ground_5 = D.message
-    if (message_ground_5 == "Система полива бороздки включена!"){
+    message_ground_6 = D.message
+    if (message_ground_6 == "Система полива бороздки включена!"){
         document.getElementById("8").classList.remove('toggle-checkbox1')
         document.getElementById("8").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки включена!")}
-    if (message_ground_5 == "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"){
+        alert("Система полива шестой бороздки включена!")}
+    if (message_ground_6 == "Система полива не может быть включена в связи с избыточной влажностью в бороздке!"){
         k7 = k7 - 1
         document.getElementById("8").classList.remove('toggle-checkbox')
         document.getElementById("8").classList.add('toggle-checkbox1')
-        alert("Система полива не может быть включена в связи с избыточной влажностью во второй бороздке!")
+        alert("Система полива не может быть включена в связи с избыточной влажностью в шестой бороздке!")
     }
-    if (message_ground_5 == "Сервер теплицы не отвечает!"){
+    if (message_ground_6 == "Сервер теплицы не отвечает!"){
         k7 = k7 - 1
         document.getElementById("8").classList.remove('toggle-checkbox')
         document.getElementById("8").classList.add('toggle-checkbox1')
         alert("Сервер теплицы не отвечает")}
-    if (message_ground_5 == "Система полива бороздки выключена!"){
+    if (message_ground_6 == "Система полива бороздки выключена!"){
         document.getElementById("8").classList.remove('toggle-checkbox1')
         document.getElementById("8").classList.add('toggle-checkbox')
-        alert("Система полива второй бороздки выключена!")}}
+        alert("Система полива шестой бороздки выключена!")}}
 
 
 
@@ -317,12 +317,11 @@ function knopki7(){
     if (k6 % 2 == 1){
         borozdka5("http://localhost:" + m + "/start_wattering/5")
 }   if (k6 % 2 == 0){
-        borozdka5("http://localhost:" + m + "/stop_wattering/5")
-}}
+        borozdka5("http://localhost:" + m + "/stop_wattering/5")}}
 
 function knopki8(){
     k7 += 1
     if (k7 % 2 ==1){
         borozdka6("http://localhost:" + m + "/start_wattering/6")
-}   if (l7 % 2 == 0){
+}   if (k7 % 2 == 0){
         borozdka6("http://localhost:" + m + "/stop_wattering/6")}}
