@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <link rel="stylesheet" href="styles.css">
+ <script src="chart.umd.min_v4.2.0.js"></script>
+ <script src="moment-with-locales.min_v2.29.4.js"></script>
+ <script src="chartjs-adapter-moment.min_v1.0.1.js"></script>
 <head>
 <meta charset="UTF-8">
 <title>Система управления</title>
@@ -105,13 +108,20 @@
 </div>
 </fieldset>
 <fieldset>
-	<div class="timer">
-	<button id="time" type="submit" onclick="" >30 минут</button>
-	<button id="time" type="submit" onclick="" >1 час</button>
-	<button id="time" type="submit" onclick="" >12 часов</button>
-	<button id="time" type="submit" onclick="" >1 день</button>
-	<button id="time" type="submit" onclick="" >1 месяц</button>
-	</div>
+	<div>
+    <button id="min30">30 минут</button>
+    <button id="hour1">1 час</button>
+    <button id="hours12">12 часов</button>
+    <button id="day1">1 день</button>
+    <button id="month1">1 месяц</button>
+    <button id="ChartRefresh1">Обновить показания датчиков</button>
+</div>
+<div>
+    <canvas id="chart1" width="800" height="250"></canvas>
+    <canvas id="chart2" width="800" height="250"></canvas>
+    <canvas id="chart3" width="800" height="250"></canvas>
+    <script src="chart.js"></script>
+</div>
 </fieldset>
 <script src="script.js"></script>
 </body>
