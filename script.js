@@ -2,7 +2,7 @@ const getResourse = async(url) => {
    const response = await fetch(url);
     return await response.json();
 }
-const m = 8001
+const m = '8001'
 let k = 0
 let k1 = 0
 let k2 = 0
@@ -13,11 +13,11 @@ let k6 = 0
 let k7 = 0
 let e = 0
 function extra(){
-let e = 1
+e=1
 }
 
 function auto(){
-let e = 0
+e=0
 }
 async function zapros(n){
     const Requ = new Request(n)
@@ -42,25 +42,38 @@ if (n==3){
 }
 };
 function knopki(){
-    k+=1    
-    if (1==2){                              //if 1==2 заменить на ответ от сервера( отрицательный)
-        document.getElementById("1").classList.remove('toggle-checkbox');
-        document.getElementById("1").classList.add('toggle-checkbox1');
-        k=k-1
-        alert('ответ от сервера отрицательный')
-}   
-    if(1==1){                               //if 1==1 заменить на ответ от сервера(положительный)
-    document.getElementById("1").classList.remove('toggle-checkbox1');
-    document.getElementById("1").classList.add('toggle-checkbox');
-    alert('ответ от сервера положительный')
-        if (k%2==1){
-            zapros('http://localhost:'+m+'/open_windows')
-            console.log('Open Windows')}
-        if (k%2==0){
+    k+=1
+    if (k%2==1){  
+        if (1==2){             //if 1==2 заменить на ответ от сервера(отрицательный)
+            document.getElementById("1").classList.remove('toggle-checkbox');
+            document.getElementById("1").classList.add('toggle-checkbox1');
+            document.getElementById("1").classList.remove('toggle-checkbox2');
+            k=k-1
+            alert('ответ от сервера отрицательный')
+        }
+        if(1==1){                               //if 1==1 заменить на ответ от сервера(положительный)
+            document.getElementById("1").classList.remove('toggle-checkbox1');
+            document.getElementById("1").classList.add('toggle-checkbox');
+            alert('ответ от сервера положительный')
+                zapros('http://localhost:'+m+'/open_windows')
+                console.log('Open Windows')}
+    }
+    if (k%2==0){  
+        if (1==2){             //if 1==2 заменить на ответ от сервера(отрицательный)
+            document.getElementById("1").classList.remove('toggle-checkbox');
+            document.getElementById("1").classList.add('toggle-checkbox1');
+            k=k-1
+            alert('ответ от сервера отрицательный')
+        }
+        if(1==1){                               //if 1==1 заменить на ответ от сервера(положительный)
+            document.getElementById("1").classList.remove('toggle-checkbox1');
+            document.getElementById("1").classList.add('toggle-checkbox');
+            alert('ответ от сервера положительный')
             zapros('http://localhost:'+m+'/close_windows')
             console.log('Close Windows')
-                    }
-}
+
+                } 
+                }
 }
 function knopki2(){
     k1+=1   
@@ -130,13 +143,13 @@ function knopki4(){
 }
 function knopki5(){
     k4+=1
-    if (1==1){
+    if (1==1 && e==0){
     document.getElementById("5").classList.remove('toggle-checkbox');
     document.getElementById("5").classList.add('toggle-checkbox1');
     k4=k4-1
     alert('ответ от сервера отрицательный')
             }   
-    if(1==2){
+    if (1==2 || e==1){
     document.getElementById("5").classList.remove('toggle-checkbox1');
     document.getElementById("5").classList.add('toggle-checkbox');
     alert('ответ от сервера положительный')
