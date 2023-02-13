@@ -1,88 +1,129 @@
 <!DOCTYPE html>
-<html>
-<link rel="stylesheet" href="styles.css">
+<html lang="ru">
+    <link rel="stylesheet" href="styles.css">
+    <script src="chart.umd.min_v4.2.0.js"></script>
+    <script src="moment-with-locales.min_v2.29.4.js"></script>
+    <script src="chartjs-adapter-moment.min_v1.0.1.js"></script>
 <head>
-<meta charset="UTF-8">
-<script src="script.js"></script>
-<title>Система управления</title>
+    <meta charset="UTF-8">
+    <title>Система управления</title>
 </head>
 <body>
-      <fieldset>
+    <fieldset>
         <legend align="center">Установка параметров</legend>
-		<form class="forma" id="setap" onsubmit="return false">
-			  <label for="MaxT">Максимальная средняя температура в теплице</label>
-			 <input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
-			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
-		</form>
-		<form class="forma" id="setap" onsubmit="return false">
-			  <label for="MaxH">Максимальна средняя влажность воздуха в теплице(%)</label>
-			 <input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
-			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
-		</form>
-		<form class="forma" id="setap" onsubmit="return false">
-			  <label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
-			 <input type="number" id="MaxHb" name="maxHb" placeholder="Введите число" required />
-			 <button id="send" type="submit" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >Отправить</button>
-		</form>
-      </fieldset>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Режим экстренного управления</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="radio" name="settings" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))"  >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Режим автоматического управления</span>
-</label>
-<h1>Исполнительные устройства</h1>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Форточка</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Система Увлажнения</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 1 Бороздки</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 2 Бороздки</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 3 Бороздки</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 4 Бороздки</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 5 Бороздки</span>
-</label>
-<br>
-<label class="toggle">
-  <input class="toggle-checkbox" type="checkbox" onclick="getResourse('https://my-json-server.typicode.com/valeriy-egorov/FakeOnlineRESTserver/options').then((data) => console.log(data))" >
-  <div class="toggle-switch"></div>
-  <span class="toggle-label">Автополив 6 Бороздки</span>
-</label>
+		    <form class="forma" onsubmit="return false" id="form1">
+		    	<label for="MaxT">Максимальная средняя температура воздуха в теплице(°C)</label>
+		    	<input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
+		    	<button id="send1" type="submit" onclick="get(1)" >Отправить</button>
+		    </form>
+		    <form class="forma"  onsubmit="return false" id="form2">
+		        <label for="MaxH">Максимальная средняя влажность воздуха в теплице(%)</label>
+		    	<input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
+		    	<button id="send2" type="submit" onclick="get(2)" >Отправить</button>
+		    </form>
+		    <form class="forma"  onsubmit="return false" id="form3">
+		    	<label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
+		    	<input type="number" id="MaxHb" name="maxHb" placeholder="Введите число" required />
+		    	<button id="send3" type="submit"onclick="get(3)" >Отправить</button>
+		    </form>
+    </fieldset>
+    <fieldset>
+        <label class="toggle">
+            <input class="toggle-checkbox" type="radio" name="settings" onclick="extra()">
+            <div class="toggle-switch"></div>
+            <span class="toggle-label">Режим экстренного управления</span>
+        </label>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="radio" name="settings" onclick="auto()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Режим автоматического управления</span>
+            </label>
+        </fieldset>
+        <fieldset>
+            <h1>Исполнительные устройства</h1>
+            <div class="switch-btn switch-on">
+                <label class="toggle">
+                <div id='fortochka'>
+                    <input class="toggle-checkbox" type="checkbox" id='1' onclick="knopki()" >
+                    <div class="toggle-switch"></div>
+                    <span class="toggle-label">Форточка</span>
+                </div>
+                </label>
+            </div>
+        <br>
+        <div id='yvl'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='2' onclick="knopki2()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Увлажнение</span>
+            </label>
+        </div>
+        <br>
+        <div id='auto1'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='3' onclick="knopki3()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Автополив 1 Бороздки</span>
+            </label>
+        </div>
+        <br>
+        <div id='auto2'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='4' onclick="knopki4()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Автополив 2 Бороздки</span> 
+            </label>
+        </div>
+        <br>
+        <div id='auto3'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='5' onclick="knopki5()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Автополив 3 Бороздки</span>
+            </label>
+        </div>
+        <br>
+        <div id='auto4'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='6' onclick="knopki6()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Автополив 4 Бороздки</span>          
+            </label>
+        </div>
+        <br>
+        <div id='auto5'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='7' onclick="knopki7()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Автополив 5 Бороздки</span>
+            </label>
+        </div>
+        <br>
+        <div id='auto6'>
+            <label class="toggle">
+                <input class="toggle-checkbox" type="checkbox" id='8' onclick="knopki8()" >
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">Автополив 6 Бороздки</span>
+            </label>
+        </div>
+    </fieldset>
+    <fieldset>
+	    <div>
+            <button id="min30">30 минут</button>
+            <button id="hour1">1 час</button>
+            <button id="hours12">12 часов</button>
+            <button id="day1">1 день</button>
+            <button id="month1">1 месяц</button>
+            <button id="ChartRefresh1">Обновить показания датчиков</button>
+        </div>
+        <div>
+            <canvas id="chart1" width="800" height="250"></canvas>
+            <canvas id="chart2" width="800" height="250"></canvas>
+            <canvas id="chart3" width="800" height="250"></canvas>
+            <script src="chart.js"></script>
+        </div>
+    </fieldset>
+    <script src="script.js"></script>
+
 </body>
 </html>
