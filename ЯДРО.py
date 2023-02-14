@@ -13,23 +13,23 @@ import datetime as DT
 conn = sqlite3.connect('data.db', check_same_thread=False)
 cur = conn.cursor()
 # создание таблиц air, ground, last_parametr
-cur.execute("""CREATE TABLE IF NOT EXISTS air(
-   result TEXT,
+cur.execute("""CREATE TABLE IF NOT EXISTS test_air(
    id INTEGER CHECK(id > 0 and id <=4),
    temperature REAL,
    humidity REAL,
-   time TEXT
+   time TEXT,
+   avg_temp REAL,
+   avg_hum REAL
    );
 """)
 conn.commit()
-cur.execute("""CREATE TABLE IF NOT EXISTS ground(
-   result TEXT,
-   id INTEGER CHECK(id > 0 and id <= 6),
+cur.execute("""CREATE TABLE IF NOT EXISTS test_ground(
+   id INTEGER CHECK(id > 0 and id <= 6),  
    humidity REAL,
    time TEXT);
 """)
 conn.commit()
-cur.execute("""CREATE TABLE IF NOT EXISTS options(
+cur.execute("""CREATE TABLE IF NOT EXISTS test_options(
     temperature REAL,
     air_hum REAL,
     gr_hum REAL);
@@ -38,11 +38,11 @@ conn.commit()
 
 # ФУНКЦИЯ ОБНУЛЕНИЯ ВСЕЙ БД
 def null():
-    cur.execute("DELETE FROM air;")
+    cur.execute("DELETE FROM test_air;")
     conn.commit()
-    cur.execute("DELETE FROM ground;")
+    cur.execute("DELETE FROM test_ground;")
     conn.commit()
-    cur.execute("DELETE FROM options;")
+    cur.execute("DELETE FROM test_options;")
 
 
 # ЕСЛИ БД ПУСТА, ТО ЗАПОЛНИТЬ ЕЕ НУЛЯМИ
@@ -77,37 +77,44 @@ def gr_update(gh):
 def time_period(n):
     if isinstance(n, str):
         if n == '30min':
-            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_air WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_ground WHERE time BETWEEN  DATETIME('now','localtime','-30 minutes') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
 
         elif n == 'hour':
-            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_air WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_ground WHERE time BETWEEN  DATETIME('now','localtime','-1 hour') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
 
         elif n == '12hours':
-            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_air WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_ground WHERE time BETWEEN  DATETIME('now','localtime','-12 hours') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
 
         elif n == 'day':
-            cur.execute("SELECT * from air WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_air WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             air = cur.fetchall()
-            cur.execute("SELECT * from ground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
+            cur.execute("SELECT * from test_ground WHERE time BETWEEN  DATETIME('now','localtime','-1 day') and DATETIME('now','localtime')")
             ground = cur.fetchall()
             final_result = perevod(air, ground)
 
+        elif n == 'week':
+            cur.execute("SELECT * from test_air WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
+            air = cur.fetchall()
+            cur.execute("SELECT * from test_ground WHERE time BETWEEN  DATETIME('now','localtime','-1 week') and DATETIME('now','localtime')")
+            ground = cur.fetchall()
+            final_result = perevod(air,ground)
+
         elif n == 'month':
-            cur.execute("SELECT * FROM air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+            cur.execute("SELECT * FROM test_air WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             airq = cur.fetchall()
-            cur.execute("SELECT * FROM ground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
+            cur.execute("SELECT * FROM test_ground WHERE time BETWEEN  DATETIME('now','localtime','-1 month') and DATETIME('now','localtime')")
             groundq = cur.fetchall()
             final_result = perevod(airq,groundq)
         else:
@@ -119,53 +126,50 @@ def time_period(n):
 
 # ФУНКЦИЯ ЗАНЕСЕНИЯ ДАННЫХ В ТАБЛИЦУ
 def table_append(var):
-    # запись в таблицу air
-    try:
-        for i in range(0,4):
-            if (str(var['data']['air'][i]['result']) == 'True'):
-                result = str(var['data']['air'][i]['result'])
-                id = int(var['data']['air'][i]['id'])
-                temperature = float(var['data']['air'][i]['temperature'])
-                humidity = float(var['data']['air'][i]['humidity'])
-                time = var['timeAIR']
-                aird = (result,id,temperature,humidity,time)
-
-                cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
-                    # conn.commit()
-                aird = ()
+    if type(var) == dict:
+        # запись в таблицу air
+        try:
+            time = dict_check(var, 'timeAIR', str)
+            if var['AVGtemp'] is None:
+                avg_temp = "null"
             else:
-                result = str(var['data']['air'][i]['result'])
-                id = int(var['data']['air'][i]['id'])
-                temperature = 'null'
-                humidity = 'null'
-                time = var['timeAIR']
-                aird = (result,id,temperature,humidity,time)
-                cur.execute("INSERT INTO air VALUES(?, ?, ?, ?, ?);", aird)
-            #    conn.commit()
-                aird = ()
-        #запись в таблицу ground
-        for i in range(0,6):
-            if (str(var['data']['ground'][i]['result']) == 'True'):
-                result = str(var['data']['ground'][i]['result'])
-                id = int(var['data']['ground'][i]['id'])
-                humidity = float(var['data']['ground'][i]['humidity'])
-                time = var['timeGROUND']
-                grd = (result,id,humidity,time)
-                cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
-                    # conn.commit()
-                grd = ()
+                avg_temp = dict_check(var, 'AVGtemp', float)
+            if var['AVGhum'] is None:
+                avg_hum = "null"
             else:
-                result = str(var['data']['ground'][i]['result'])
-                id = int(var['data']['ground'][i]['id'])
-                humidity = 'null'
-                time = var['timeGROUND']
-                grd = (result,id,humidity,time)
-                cur.execute("INSERT INTO ground VALUES(?, ?, ?, ?);", grd)
-                grd = ()
-        conn.commit()
-    except GeneratorExit as e:
-        conn.rollback()
+                avg_hum = dict_check(var, 'AVGhum', float)
+            #запись в таблицу air
+            for el in var['data']['air']:
+                id = dict_check(el, 'id', int)
+                if(el['temperature'] is None):
+                    temperature = "null"
+                else:
+                    temperature = dict_check(el, 'temperature', (float))
+                if(el['humidity'] is None):
+                    humidity = "null"
+                else:
+                    humidity = dict_check(el, 'humidity', float)
+                cur.execute("INSERT INTO test_air VALUES(?, ?, ?, ?, ?, ?);", (id,temperature,humidity,time,avg_temp,avg_hum))
+            #запись в таблицу ground
+            time = dict_check(var, 'timeGROUND', str)
+            for el in var['data']['ground']:
+                id = dict_check(el, 'id', int)
+                if (el['humidity'] is None):
+                    humidity = "null"
+                else:
+                    humidity = dict_check(el, 'humidity', float)
+                cur.execute("INSERT INTO test_ground VALUES(?, ?, ?);", (id,humidity,time))
+            conn.commit()
+        except Exception as e:
+            print("Ошибка - " + str(e))
+            conn.rollback()
 
+
+# ФУНКЦИЯ ДОПОЛНИТЕЛЬНОЙ ПРОВЕРКИ
+def dict_check(dict, name, type):
+    if not (name in dict) or not isinstance(dict[name], type):
+        raise Exception("Ошибка в параметре " + name)
+    return dict[name]
 
 
 # ФУНКЦИЯ ПЕРЕВОДА ДАННЫХ ИЗ БД В ФОРМАТ JSON
@@ -180,20 +184,23 @@ def perevod(air_mas, ground_mas):
     if len(air_mas) == 0 or len(ground_mas) == 0:
         return "[]"
     while ra < len(air_mas):
-        dt = DT.datetime.strptime(air_mas[ra][4], '%Y-%m-%d %H:%M:%S')
-        result_air += '{"dt": ' + str(int(dt.timestamp()) * 1000)
-        for r in range(ra, ra+4):
-            result_air += ',\n "t' + str(x+1) + '": ' + str(air_mas[r][2]) + ',\n "h' + str(x+1) + '": ' + str(air_mas[r][3])
+        dt = DT.datetime.strptime(air_mas[ra][3], '%Y-%m-%d %H:%M:%S')
+        avg_temp = air_mas[ra][4]
+        avg_hum = air_mas[ra][5]
+        result_air += '{"dt": ' + str(int(dt.timestamp()) * 1000) + ',\n "avg_temp: "' + str(avg_temp) + ',\n "avg_hum: "' + str(avg_hum)
+        for r in range(ra, ra + 4):
+            result_air += ',\n "t' + str(x + 1) + '": ' + str(air_mas[r][1]) + ',\n "h' + str(x + 1) + '": ' + str(
+                air_mas[r][2])
             x += 1
         result_air += "},\n"
         ra += 4
         x = 0
     result_air = result_air[:-2]
     while rg < len(ground_mas):
-        dtg = DT.datetime.strptime(ground_mas[rg][3], '%Y-%m-%d %H:%M:%S')
+        dtg = DT.datetime.strptime(ground_mas[rg][2], '%Y-%m-%d %H:%M:%S')
         result_ground += '{"dt": ' + str(int(dtg.timestamp()) * 1000)
-        for r in range(rg, rg+6):
-            result_ground += ',\n "h' + str(y+1) + '": ' + str(ground_mas[r][2])
+        for r in range(rg, rg + 6):
+            result_ground += ',\n "h' + str(y + 1) + '": ' + str(ground_mas[r][1])
             y += 1
         rg += 6
         y = 0
@@ -221,7 +228,7 @@ def TEPLICA():
         count = 0
         # ОТВЕТЫ СЕРВЕРА ПО ТЕМПЕРАТУРЕ И ВЛАЖНОСТИ ВОЗДУХА
         # Массив с данными с датчиков, за последние 5сек
-        data_per_5sec = {'timeAIR': 0, 'timeGROUND': 0, 'data': {'air': [], 'ground': []}}
+        data_per_5sec = {'timeAIR': 0, 'timeGROUND': 0, 'AVGtemp': None, 'AVGhum': None, 'data': {'air': [], 'ground': []}}
         # Время начала отправки первого запроса в UNIX
         T1_1 = datetime.datetime.now()
         T1_1 = (T1_1 - datetime.datetime(1970, 1, 1)).total_seconds()
@@ -230,13 +237,13 @@ def TEPLICA():
             try:
                 k = requests.get(URL_Temperature_AirHumidity + str(i), timeout=timeout_for_sensors)
             except Exception:
-                data_per_5sec['data']['air'].append({'result': False, 'id': i})
+                data_per_5sec['data']['air'].append({'id': i, 'temperature': None, 'humidity': None})
             else:
                 count += 1
                 sr_temp += k.json()['temperature']
                 sr_humidity_AIR += k.json()['humidity']
                 data_per_5sec['data']['air'].append(
-                    {'result': True, 'id': i, 'temperature': k.json()['temperature'], 'humidity': k.json()['humidity']})
+                    {'id': i, 'temperature': k.json()['temperature'], 'humidity': k.json()['humidity']})
             print(data_per_5sec['data']['air'][i - 1])
         # Время получения всех запросов с теплицы (влажность воздуха и его температура) в UNIX
         T1_2 = datetime.datetime.now()
@@ -250,11 +257,11 @@ def TEPLICA():
             try:
                 k = requests.get(URL_GroundHumidity + str(i), timeout=timeout_for_sensors)
             except Exception:
-                data_per_5sec['data']['ground'].append({'result': False, 'id': i})
+                data_per_5sec['data']['ground'].append({'id': i, 'humidity': None})
                 last_GROUND_humidity.append(-1)
             else:
                 last_GROUND_humidity[i - 1] = (k.json()['humidity'])
-                data_per_5sec['data']['ground'].append({'result': True, 'id': i, 'humidity': k.json()['humidity']})
+                data_per_5sec['data']['ground'].append({'id': i, 'humidity': k.json()['humidity']})
             print(data_per_5sec['data']['ground'][i - 1])
         # Время получения всех запросов с теплицы (влажность почв)
         T2_2 = datetime.datetime.now()
@@ -269,15 +276,18 @@ def TEPLICA():
         ts2 = int(str(unixT2)[:-2])
         value2 = gmtime(ts2)
         T2 = strftime("%Y-%m-%d %H:%M:%S", value2)
-        # Добавление времени в кортеж
-        data_per_5sec['timeAIR'] = T1
-        data_per_5sec['timeGROUND'] = T2
         # Приведение средних параметров в нормальное состояние))
         if count != 0:
-            sr_humidity_AIR = sr_humidity_AIR / count
-            sr_temp = sr_temp / count
+            sr_humidity_AIR = round(sr_humidity_AIR / count, 2)
+            sr_temp = round(sr_temp / count, 2)
         else:
-            sr_humidity_AIR = sr_temp = 0
+            sr_temp = None
+            sr_humidity_AIR = None
+        # Добавление времени и срелних показателей
+        data_per_5sec['timeAIR'] = T1
+        data_per_5sec['timeGROUND'] = T2
+        data_per_5sec['AVGtemp'] = sr_temp
+        data_per_5sec['AVGhum'] = sr_humidity_AIR
         print(data_per_5sec)
         # Заполнение БД данными за минуту
         table_append(data_per_5sec)
@@ -289,7 +299,6 @@ def TEPLICA():
 
 
 #                                                                   СЕРВЕРНАЯ ЧАСТЬ
-
 def SERVER():
     class HttpGetHandler(BaseHTTPRequestHandler):
         """Обработчик с реализованным методом do_GET."""
@@ -309,6 +318,14 @@ def SERVER():
             # ЗАПРОС НА ВЫКЛЮЧЕНИЕ ЭКСТРЕННОГО РЕЖИМА
             elif m[0] == 'off_extreme_mode':
                 extreme_mode = False
+
+            # ЗАПРОС НА СОХРАНЕНИЕ ДАННЫХ С ПОЛЬЗОВАТЕЛЬСКОГО ИНТЕРФЕЙСА
+            elif m[0] == 'save':
+                timenow = str(datetime.datetime.now())[:-7]
+                data = {'timeAIR': timenow, 'timeGROUND': timenow, 'data': {'air': [], 'ground': []}}
+
+
+
 
             # СОХРАНЕНИЕ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ТЕМПЕРАТУРЫ ВОЗДУХА
             elif m[0] == 'save_temperature':
