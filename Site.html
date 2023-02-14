@@ -18,12 +18,12 @@
 		    </form>
 		    <form class="forma"  onsubmit="return false" id="form2">
 		        <label for="MaxH">Максимальная средняя влажность воздуха в теплице(%)</label>
-		    	<input type="number" id="MaxH" name="MaxH" placeholder="Введите число" required />
+		    	<input type="number" min="0" max="100" id="MaxH" name="MaxH" placeholder="Введите число" required />
 		    	<button id="send2" type="submit" onclick="get(2)" >Отправить</button>
 		    </form>
 		    <form class="forma"  onsubmit="return false" id="form3">
 		    	<label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
-		    	<input type="number" id="MaxHb" name="maxHb" placeholder="Введите число" required />
+		    	<input type="number" min="0" max="100" id="MaxHb" name="maxHb" placeholder="Введите число" required />
 		    	<button id="send3" type="submit"onclick="get(3)" >Отправить</button>
 		    </form>
     </fieldset>
@@ -120,36 +120,36 @@
 			</fieldset>
 			<fieldset>
 			<label >Показания 1 датчика Влажности </label>
-		    <input type="number"  placeholder="Введите число" id="d5"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d5"/>
 			<br>
 			<label >Показания 2 датчика Влажности</label>
-		    <input type="number"  placeholder="Введите число" id="d6"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d6"/>
 			<br>
 			<label >Показания 3 датчика Влажности</label>
-		    <input type="number"  placeholder="Введите число" id="d7"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d7"/>
 			<br>
 			<label >Показания 4 датчика Влажности</label>
-		    <input type="number"  placeholder="Введите число" id="d8"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d8"/>
 			<br>
 			</fieldset>
 			<fieldset>
 			<label >Показания 1 датчика Влажности Бороздки</label>
-		    <input type="number"  placeholder="Введите число" id="d9"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d9"/>
 			<br>
 			<label >Показания 2 датчика Влажности Бороздки</label>
-		    <input type="number"  placeholder="Введите число" id="d10"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d10"/>
 			<br>
 			<label >Показания 3 датчика Влажности Бороздки</label>
-		    <input type="number"  placeholder="Введите число" id="d11"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d11"/>
 			<br>
 			<label >Показания 4 датчика Влажности Бороздки</label>
-		    <input type="number"  placeholder="Введите число" id="d12"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d12"/>
 			<br>
 			<label >Показания 5 датчика Влажности Бороздки</label>
-		    <input type="number"  placeholder="Введите число" id="d13"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d13"/>
 			<br>
 			<label >Показания 6 датчика Влажности Бороздки</label>
-		    <input type="number"  placeholder="Введите число" id="d14"/>
+		    <input type="number" min="0" max="100" placeholder="Введите число" id="d14"/>
 			<br>
 			</fieldset>
 		<button type="submit" onclick="send()" >Отправить</button>
