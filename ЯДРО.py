@@ -307,6 +307,7 @@ def SERVER():
             # Основные настройки сервера
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             # Массив, в котором хранятятся данные, переданные пользователем через ссылку
             m = self.path[1:].split('/')
