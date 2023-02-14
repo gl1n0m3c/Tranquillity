@@ -29,16 +29,11 @@
     </fieldset>
     <fieldset>
         <label class="toggle">
-            <input class="toggle-checkbox" type="radio" name="settings" onclick="extra()">
+            <input class="toggle-checkbox" type="checkbox"  onclick="extra()">
             <div class="toggle-switch"></div>
             <span class="toggle-label">Режим экстренного управления</span>
         </label>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="radio" name="settings" onclick="auto()" >
-                <div class="toggle-switch"></div>
-                <span class="toggle-label">Режим автоматического управления</span>
-            </label>
-        </fieldset>
+	</fieldset>
         <fieldset>
             <h1>Исполнительные устройства</h1>
             <div class="switch-btn switch-on">
@@ -107,6 +102,59 @@
             </label>
         </div>
     </fieldset>
+	<fieldset>
+		<form class="forma" onsubmit="return false" id="form1">
+		<fieldset>
+		    <label >Показания 1 датчика Температуры</label>
+		    <input type="number"  placeholder="Введите число" id="d1"/>
+			<br>
+			<label >Показания 2 датчика Температуры</label>
+		    <input type="number"  placeholder="Введите число" id="d2"/>
+			<br>
+			<label >Показания 3 датчика Температуры</label>
+		    <input type="number"  placeholder="Введите число" id="d3"/>
+			<br>
+			<label >Показания 4 датчика Температуры</label>
+		    <input type="number"  placeholder="Введите число" id="d4"/>
+			<br>
+			</fieldset>
+			<fieldset>
+			<label >Показания 1 датчика Влажности </label>
+		    <input type="number"  placeholder="Введите число" id="d5"/>
+			<br>
+			<label >Показания 2 датчика Влажности</label>
+		    <input type="number"  placeholder="Введите число" id="d6"/>
+			<br>
+			<label >Показания 3 датчика Влажности</label>
+		    <input type="number"  placeholder="Введите число" id="d7"/>
+			<br>
+			<label >Показания 4 датчика Влажности</label>
+		    <input type="number"  placeholder="Введите число" id="d8"/>
+			<br>
+			</fieldset>
+			<fieldset>
+			<label >Показания 1 датчика Влажности Бороздки</label>
+		    <input type="number"  placeholder="Введите число" id="d9"/>
+			<br>
+			<label >Показания 2 датчика Влажности Бороздки</label>
+		    <input type="number"  placeholder="Введите число" id="d10"/>
+			<br>
+			<label >Показания 3 датчика Влажности Бороздки</label>
+		    <input type="number"  placeholder="Введите число" id="d11"/>
+			<br>
+			<label >Показания 4 датчика Влажности Бороздки</label>
+		    <input type="number"  placeholder="Введите число" id="d12"/>
+			<br>
+			<label >Показания 5 датчика Влажности Бороздки</label>
+		    <input type="number"  placeholder="Введите число" id="d13"/>
+			<br>
+			<label >Показания 6 датчика Влажности Бороздки</label>
+		    <input type="number"  placeholder="Введите число" id="d14"/>
+			<br>
+			</fieldset>
+		<button type="submit" onclick="send()" >Отправить</button>
+		</form>
+	</fieldset>
     <fieldset>
 	    <div>
             <button id="min30">30 минут</button>

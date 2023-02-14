@@ -5,7 +5,7 @@ const getResourse = async(url) => {
 
 
 
-const m = '8000'
+const m = '27314'
 let k = 0
 let k1 = 0
 let k2 = 0
@@ -18,23 +18,35 @@ let e = 0
 
 
 
- function extra() {
-    let e = 1
-}
- 
-
-
- function auto() {
-    let e = 0
-}
-
-
-
 async function zapros(n){
     const Requ = new Request(n)
     const Resp = await fetch(Requ);
     const D = await Resp.json()
 }
+
+
+function send(){
+    let input4 = document.getElementById('d1')
+    let input5 = document.getElementById('d2')
+    let input6 = document.getElementById('d3')
+    let input7 = document.getElementById('d4')
+    let input8 = document.getElementById('d5')
+    let input9 = document.getElementById('d6')
+    let input10 = document.getElementById('d7')
+    let input11 = document.getElementById('d8')
+    let input12 = document.getElementById('d9')
+    let input13 = document.getElementById('d10')
+    let input14 = document.getElementById('d11')
+    let input15 = document.getElementById('d12')
+    let input16 = document.getElementById('d13')
+    let input17 = document.getElementById('d14')
+    console.log(input4.value)
+    console.log(input5.value)
+zapros('http://localhost:' + m +'/save/'+ input4.value+ '/' + input5.value + '/' + input6.value +  '/' + input7.value +  '/' + input8.value +  '/' + input9.value +  '/'
+ + input10.value +  '/' + input11.value +  '/' + input12.value +  '/' + input13.value +  '/' + input14.value+  '/' + input15.value +  '/' + input16.value  +  '/' + input17.value )
+
+}
+
 
 
 
@@ -51,6 +63,15 @@ function get(n) {
         let input3 = document.getElementById('MaxHb')
         zapros('http://localhost:' + m + '/save_ground_humidity/' + input3.value)
         console.log(input3.value)}}
+
+
+function extra(){
+    e=e+1
+    if (e % 2 == 1){ 
+        zapros("http://localhost:" + m + "/on_extreme_mode")
+}   if (e % 2 == 0){ 
+        zapros("http://localhost:" + m + "/off_extreme_mode")}}
+
 
 
 
