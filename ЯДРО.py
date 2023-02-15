@@ -187,7 +187,7 @@ def perevod(air_mas, ground_mas):
         dt = DT.datetime.strptime(air_mas[ra][3], '%Y-%m-%d %H:%M:%S')
         avg_temp = air_mas[ra][4]
         avg_hum = air_mas[ra][5]
-        result_air += '{"dt": ' + str(int(dt.timestamp()) * 1000) + ',\n "avg_temp: "' + str(avg_temp) + ',\n "avg_hum: "' + str(avg_hum)
+        result_air += '{"dt": ' + str(int(dt.timestamp()) * 1000) + ',\n "avg_temp": ' + str(avg_temp) + ',\n "avg_hum": ' + str(avg_hum)
         for r in range(ra, ra + 4):
             result_air += ',\n "t' + str(x + 1) + '": ' + str(air_mas[r][1]) + ',\n "h' + str(x + 1) + '": ' + str(
                 air_mas[r][2])
