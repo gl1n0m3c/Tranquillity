@@ -322,6 +322,9 @@ def SERVER():
 
             # ЗАПРОС НА СОХРАНЕНИЕ ДАННЫХ С ПОЛЬЗОВАТЕЛЬСКОГО ИНТЕРФЕЙСА
             elif m[0] == 'save':
+                global sr_temp
+                global sr_humidity_AIR
+                global last_GROUND_humidity
                 # Определение времени
                 timenow = str(datetime.datetime.now())[:-7]
                 # Структуры, которая будет передоваться в функцию table_append
@@ -354,10 +357,19 @@ def SERVER():
                     else:
                         ground_hum = float(m[i])
                     data['data']['ground'].append({'id': i - 8, 'humidity': ground_hum})
+                    last_GROUND_humidity[i - 9] = ground_hum
+
                 if count_temp != 0:
                     data['AVGtemp'] = round(sum_temp / count_temp, 2)
+                    sr_temp = round(sum_temp / count_temp, 2)
+                else:
+                    sr_temp = None
                 if count_hum != 0:
                     data['AVGhum'] = round(sum_hum / count_hum, 2)
+                    sr_humidity_AIR = round(sum_hum / count_hum, 2)
+                else:
+                    sr_humidity_AIR = None
+
                 # Сохранение данных в БД
                 print(data)
                 table_append(data)
@@ -401,7 +413,16 @@ def SERVER():
             elif m[0] == 'give_data':
                 self.wfile.write(time_period(m[1]).encode())
 
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ (БЕЗ ЭКСТРЕННОГО РЕЖИМА)
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ (ЭКСТРЕННЫЙ РЕЖИМ / НЕОПРЕДЕЛЕННЫЙ СРЕДНИЙ ПОКАЗАТЕЛЬ)
+            elif m[0] == 'open_windows' and (extreme_mode == True or sr_temp == None):
+                try:
+                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/fork_drive', params={"state": 1})
+                except Exception:
+                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                else:
+                    self.wfile.write("{\"message\": \"Форточка открыта!\"}".encode())
+
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ
             elif m[0] == 'open_windows' and extreme_mode == False:
                 cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
@@ -415,15 +436,6 @@ def SERVER():
                 else:
                     self.wfile.write("{\"message\": \"Форточка не может быть открыта в связи со слишком малой температурой в теплице!\"}".encode())
 
-                # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ОТКРЫТИЯ ФОРТОЧКИ (БЕЗ ЭКСТРЕННОГО РЕЖИМА)
-            elif m[0] == 'open_windows' and extreme_mode == True:
-                    try:
-                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/fork_drive', params={"state": 1})
-                    except Exception:
-                        self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
-                    else:
-                        self.wfile.write("{\"message\": \"Форточка открыта!\"}".encode())
-
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ЗАКРЫТИЯ ФОРТОЧКИ
             elif m[0] == 'close_windows':
                 try:
@@ -432,6 +444,15 @@ def SERVER():
                     self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
                 else:
                     self.wfile.write("{\"message\": \"Форточка закрыта!\"}".encode())
+
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ (ЭКСТРЕННЫЙ РЕЖИМ / НЕОПРЕДЕЛЕННЫЙ СРЕДНИЙ ПОКАЗАТЕЛЬ)
+            elif m[0] == 'start_humidity_system' and (extreme_mode == True or sr_humidity_AIR == None):
+                try:
+                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 1})
+                except Exception:
+                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                else:
+                    self.wfile.write("{\"message\": \"Система увлажнения включена!\"}".encode())
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
             elif m[0] == 'start_humidity_system' and extreme_mode == False:
@@ -447,16 +468,7 @@ def SERVER():
                 else:
                     self.wfile.write("{\"message\": \"Система увлажнения воздуха не может быть включена в связи с избыточной влажностью в теплице!\"}".encode())
 
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
-            elif m[0] == 'start_humidity_system' and extreme_mode == True:
-                try:
-                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 1})
-                except Exception:
-                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
-                else:
-                    self.wfile.write("{\"message\": \"Система увлажнения включена!\"}".encode())
-
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ВЫКЛЮЧЕНИЯ СИСТЕМЫ УВЛАЖНЕНИЯ ВОЗДУХА В ТЕПЛИЦЕ
             elif m[0] == 'stop_humidity_system':
                 try:
                     k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 0})
@@ -464,6 +476,16 @@ def SERVER():
                     self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
                 else:
                     self.wfile.write("{\"message\": \"Система увлажнения воздуха выключена!\"}".encode())
+
+            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ НАЧАЛА ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ (ЭКСТРЕННЫЙ РЕЖИМ / НЕОПРЕДЕЛЕННЫЙ СРЕДНИЙ ПОКАЗАТЕЛЬ)
+            elif m[0] == 'start_wattering' and (extreme_mode == True or last_GROUND_humidity[(int(m[1])) - 1] == None):
+                try:
+                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
+                                       params={"id": int(m[1]), "state": 1})
+                except Exception:
+                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                else:
+                    self.wfile.write("{\"message\": \"Система полива бороздки включена!\"}".encode())
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ НАЧАЛА ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
             elif m[0] == 'start_wattering' and extreme_mode == False:
@@ -479,16 +501,6 @@ def SERVER():
                         self.wfile.write("{\"message\": \"Система полива бороздки включена!\"}".encode())
                 else:
                     self.wfile.write("{\"message\": \"Система полива не может быть включена в связи с избыточной влажностью в бороздке!\"}".encode())
-
-            # ПРОВЕРКА НА ВОЗМОЖНОСТЬ НАЧАЛА ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
-            elif m[0] == 'start_wattering' and extreme_mode == True:
-                try:
-                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
-                                       params={"id": int(m[1]), "state": 1})
-                except Exception:
-                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
-                else:
-                    self.wfile.write("{\"message\": \"Система полива бороздки включена!\"}".encode())
 
             # ПРОВЕРКА НА ВОЗМОЖНОСТЬ ПРЕКРАЩЕНИЯ ПОЛИВА КОНКРЕТНОЙ БОРОЗДКИ
             elif m[0] == 'stop_wattering':
