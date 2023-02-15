@@ -322,11 +322,45 @@ def SERVER():
 
             # ЗАПРОС НА СОХРАНЕНИЕ ДАННЫХ С ПОЛЬЗОВАТЕЛЬСКОГО ИНТЕРФЕЙСА
             elif m[0] == 'save':
+                # Определение времени
                 timenow = str(datetime.datetime.now())[:-7]
-                data = {'timeAIR': timenow, 'timeGROUND': timenow, 'data': {'air': [], 'ground': []}}
+                # Структуры, которая будет передоваться в функцию table_append
+                data = {'timeAIR': timenow, 'timeGROUND': timenow, 'AVGtemp': None, 'AVGhum': None,  'data': {'air': [], 'ground': []}}
+                # Счётчики температур и влажностей
+                count_temp = 0
+                count_hum = 0
+                # Суммы температур и влажностей
+                sum_temp = 0
+                sum_hum = 0
+                # Заполнение структуры данными
+                for i in range(1, 5):
+                    if m[i] == '':
+                        temp = None
+                    else:
+                        temp = float(m[i])
+                        count_temp += 1
+                        sum_temp += temp
+                    if m[i + 4] == '':
+                        hum = None
+                    else:
+                        hum = float(m[i + 4])
+                        count_hum += 1
+                        sum_hum += hum
+                    data['data']['air'].append({'id': i, 'temperature': temp, 'humidity': hum})
 
-
-
+                for i in range(9, 15):
+                    if m[i] == '':
+                        ground_hum = None
+                    else:
+                        ground_hum = float(m[i])
+                    data['data']['ground'].append({'id': i - 8, 'humidity': ground_hum})
+                if count_temp != 0:
+                    data['AVGtemp'] = round(sum_temp / count_temp, 2)
+                if count_hum != 0:
+                    data['AVGhum'] = round(sum_hum / count_hum, 2)
+                # Сохранение данных в БД
+                print(data)
+                table_append(data)
 
             # СОХРАНЕНИЕ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ТЕМПЕРАТУРЫ ВОЗДУХА
             elif m[0] == 'save_temperature':
