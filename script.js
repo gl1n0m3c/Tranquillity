@@ -71,8 +71,13 @@ function extra(){
     e=e+1
     if (e % 2 == 1){ 
         zapros("http://localhost:" + m + "/on_extreme_mode")
+        document.getElementById("e1").classList.remove('toggle-switch')
+        document.getElementById("e1").classList.add('toggle-switch2')
 }   if (e % 2 == 0){ 
-        zapros("http://localhost:" + m + "/off_extreme_mode")}}
+        zapros("http://localhost:" + m + "/off_extreme_mode")
+        document.getElementById("e1").classList.remove('toggle-switch2')
+        document.getElementById("e1").classList.add('toggle-switch')
+    }}
 
 
 
