@@ -14,18 +14,27 @@ body {
   display: inline-block;
 }
 
-.toggle-switch {
-  display: inline-block;
-  background: #ccc;
-  border-radius: 16px;
-  width: 58px;
-  height: 32px;
-  position: relative;
-  vertical-align: middle;
-  transition: background 0.25s;
-}
+
 .toggle-switch:before, .toggle-switch:after {
   content: "";
+}
+
+.toggle:hover .toggle-switch:before {
+  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+
+
+.toggle-checkbox {
+  position: absolute;
+  visibility: hidden;
+}
+
+.toggle-label {
+  margin-left: 5px;
+  position: relative;
+  top: 2px;
 }
 .toggle-switch:before {
   display: block;
@@ -39,39 +48,20 @@ body {
   left: 4px;
   transition: left 0.25s;
 }
-.toggle:hover .toggle-switch:before {
-  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
-}
-.toggle-checkbox:checked + .toggle-switch {
-  background: #56c080;
-}
-.toggle-checkbox:checked + .toggle-switch:before {
-  left: 30px;
-}
-
-.toggle-checkbox {
+.toggle-switch2:before {
+  display: block;
+  background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  width: 24px;
+  height: 24px;
   position: absolute;
-  visibility: hidden;
-}
-
-.toggle-label {
-  margin-left: 5px;
-  position: relative;
-  top: 2px;
-}
-
-.toggle-checkbox1 {
-  position: absolute;
-  visibility: hidden;
-}
-.toggle-checkbox1:checked + .toggle-switch1 {
-  background: #56c080;
-}
-.toggle-checkbox1:checked + .toggle-switch1:before {
+  top: 4px;
   left: 30px;
+transition: left 0.25s;
 }
-.toggle-switch1 {
+
+.toggle-switch {
   display: inline-block;
   background: #ccc;
   border-radius: 16px;
@@ -80,4 +70,31 @@ body {
   position: relative;
   vertical-align: middle;
   transition: background 0.25s;
+}
+.toggle-switch2 {
+  display: inline-block;
+  background: #56c080;
+  border-radius: 16px;
+  width: 58px;
+  height: 32px;
+  position: relative;
+  vertical-align: middle;
+  transition: background 0.25s;
+}
+.toggle-switch2:before, .toggle-switch2:after {
+  content: "";
+}
+
+.toggle:hover .toggle-switch2:before {
+  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.toggle-checkbox:checked + .toggle-switch2 {
+  background: #56c080;
+}
+.toggle-checkbox:checked {
+  left: 30px;
+}
+.toggle-switch2{
+  content: "";
 }
