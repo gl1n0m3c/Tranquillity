@@ -24,7 +24,6 @@ async function zapros(n){
     const D = await Resp.json()
 }
 
-zapros()
 function send(){
     let input4 = document.getElementById('d1')
     let input5 = document.getElementById('d2')
