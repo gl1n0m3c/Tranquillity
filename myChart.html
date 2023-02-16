@@ -6,27 +6,76 @@
     <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
     <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
     <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
-    <!--<link rel="stylesheet" href="CSS.css">-->
-    <style>
-    </style>
+    <link rel="stylesheet" href="CSS.css">
 </head>
 <body>
 
-<div>
-    <button id="min30">30 минут</button>
-    <button id="hour1">1 час</button>
-    <button id="hours12">12 часов</button>
-    <button id="day1">1 день</button>
-    <button id="month1">1 месяц</button>
-    <button id="ChartRefresh1">Обновить показания датчиков</button>
-</div>
+    <div>
+        <button id="min30">30 минут</button>
+        <button id="hour1">1 час</button>
+        <button id="hours12">12 часов</button>
+        <button id="day1">1 день</button>
+        <button id="month1">1 месяц</button>
+        <button id="ChartRefresh1">Обновить показания датчиков</button>
+    </div>
 
-<div>
-    <canvas id="chart1" width="800" height="250"></canvas>
-    <canvas id="chart2" width="800" height="250"></canvas>
-    <canvas id="chart3" width="800" height="250"></canvas>
+    <div>
+        <canvas id="chart1" width="800" height="250"></canvas>
+        <canvas id="chart2" width="800" height="250"></canvas>
+        <canvas id="chart3" width="800" height="250"></canvas>
+        <canvas id="chart_AVG" width="800" height="250"></canvas>
+    </div>
+
+    <header></header>
+    <section></section>
+    <h2 style="background-color:red;color:white;"></h2>
+    <div style="border: 1px solid; padding: 100px; height: 100px; width: 900px; overflow: auto;">
+        <table id="TableAir"><caption>Датчики воздуха</caption>
+            <thead>
+                <tr>
+                    <th rowspan="2">Дата и время</th>
+                    <th colspan="5">Температура</th>
+                    <th colspan="5">Влажность</th>
+                </tr>
+                <tr>
+                    <th>№1</th>
+                    <th>№2</th>
+                    <th>№3</th>
+                    <th>№4</th>
+                    <th>Средняя</th>
+                    <th>№1</th>
+                    <th>№2</th>
+                    <th>№3</th>
+                    <th>№4</th>
+                    <th>Средняя</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="border: 1px solid; padding: 100px; height: 100px; width: 900px; overflow: auto;">
+        <table id="TableGround"><caption>Датчики почвы</caption>
+            <thead>
+                <tr>
+                    <th rowspan="2">Дата и время</th>
+                    <th colspan="6">Влажность</th>
+                </tr>
+                <tr>
+                    <th>№1</th>
+                    <th>№2</th>
+                    <th>№3</th>
+                    <th>№4</th>
+                    <th>№5</th>
+                    <th>№6</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
     <script src="chart.js"></script>
-</div>
-
+    
 </body>
 </html>
