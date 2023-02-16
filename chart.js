@@ -1,48 +1,139 @@
 
-const port = "8000";
+const TagError = document.querySelector('h2');		//Элемент для сообщений об ошибках
+moment.locale('ru');					//Настройки графика. Переключение языка на русский для строк с датой
+var Data;						//Массив данных полученных от сервера
+var RowAirFragment = TableRowCreate(1+5+5);		//Шаблон строки для таблицы Air
+var RowGroundFragment = TableRowCreate(1+6);		//Шаблон строки для таблицы Ground
+var coFixed = 1;
+const port = "27314";
 var url;
 
 min30.onclick = function() {
     url = "30min";
-    DataFetch("http://localhost:" + port + "/give_data/" + url);
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
 }
 
 hour1.onclick = function() {
     url = "hour";
-    DataFetch("http://localhost:" + port + "/give_data/" + url);
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
 }
 
 hours12.onclick = function() {
     url = "12hours";
-    DataFetch("http://localhost:" + port + "/give_data/" + url);
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
 }
 
 day1.onclick = function() {
     url = "day";
-    DataFetch("http://localhost:" + port + "/give_data/" + url);
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
 }
 
 month1.onclick = function() {
     url = "month";
-    DataFetch("http://localhost:" + port + "/give_data/" + url);
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
 }
 
 ChartRefresh1.onclick = function() {
-    DataFetch("http://localhost:" + port + "/give_data/" + url);
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
 }
 
-
+var Sensor;
 var Chart1;		
 var Chart2; 
-var Chart3;					
+var Chart3;	
+var Chart4;				
 moment.locale('ru');
 
 
+
+//Подготовка шаблона строки таблицы с указанным в параметре Columns количеством полей
+function TableRowCreate(Columns) {
+    let RowFragment = new DocumentFragment();  //Шаблон строки таблицы
+    let TR = document.createElement('tr');
+    for (let i=1; i <= Columns; i++) {
+        TR.append(document.createElement('td'))
+    }
+    RowFragment.append(TR);
+    return RowFragment;
+}
+
+
+
+//Выравниваем количество строк в таблице TableBody по данным из Data.air. RowFragment используется как шаблон строки таблицы
+function TableRowSet(TableBody, RowFragment) {
+    let Delta = Sensor.air.length - TableBody.rows.length;  //Разница строк между данными и таблицей
+    if (Delta < 0) {
+        for (Delta = Delta; Delta < 0; Delta++) {
+            TableBody.deleteRow(-1)  //Удаляем лишние строки
+        }
+    } else if (Delta > 0) {
+        for (Delta = Delta; Delta > 0; Delta--) {
+            TableBody.append(RowFragment.cloneNode(true));  //Добаляем недостающие строки как копию шаблона
+    }}
+}
+
+
+
+// Обновление таблицы
+function TableAirRefresh(TableId) {
+    //if (document.getElementById(TableId) != undefined) { !!! } Нужна проверка?
+    let TableBody = document.getElementById(TableId).tBodies[0];  //Запрашиваем тело таблицы
+    TableRowSet(TableBody, RowAirFragment);
+    //Заполняем HTML элементы таблицы по Data.air начиная с первой строки
+    let TableRow = TableBody.firstElementChild; // возвращает tr 
+    for (const Rec of Sensor.air) {  //Цикл по всем записям Data.sensor
+        TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
+        TableRow.cells[1].textContent = Rec.t1.toFixed(coFixed);
+        TableRow.cells[2].textContent = Rec.t2.toFixed(coFixed);
+        TableRow.cells[3].textContent = Rec.t3.toFixed(coFixed);
+        TableRow.cells[4].textContent = Rec.t4.toFixed(coFixed);
+        TableRow.cells[5].textContent = Rec.avg_temp.toFixed(coFixed);
+        TableRow.cells[6].textContent = Rec.h1.toFixed(coFixed);
+        TableRow.cells[7].textContent = Rec.h2.toFixed(coFixed);
+        TableRow.cells[8].textContent = Rec.h3.toFixed(coFixed);
+        TableRow.cells[9].textContent = Rec.h4.toFixed(coFixed);
+        TableRow.cells[10].textContent = Rec.avg_hum.toFixed(coFixed);
+        TableRow = TableRow.nextElementSibling;
+    }
+}
+
+
+
+//Обновить таблицу почвы по данным из Data.ground
+function TableGroundRefresh(TableId) {
+    //if (document.getElementById(TableId) != undefined) { !!! } Нужна проверка?
+    let TableBody = document.getElementById(TableId).tBodies[0];//Запрашиваем тело таблицы
+    TableRowSet(TableBody, RowGroundFragment);
+    //Заполняем HTML элементы таблицы по Data.ground начиная с первой строки
+    let TableRow = TableBody.firstElementChild;
+    for (const Rec of Sensor.ground) {  //Цикл по всем записям Data.air
+        TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
+        TableRow.cells[1].textContent = Rec.h1.toFixed(coFixed);
+        TableRow.cells[2].textContent = Rec.h2.toFixed(coFixed);
+        TableRow.cells[3].textContent = Rec.h3.toFixed(coFixed);
+        TableRow.cells[4].textContent = Rec.h4.toFixed(coFixed);
+        TableRow.cells[5].textContent = Rec.h5.toFixed(coFixed);
+        TableRow.cells[6].textContent = Rec.h6.toFixed(coFixed);
+        TableRow = TableRow.nextElementSibling;
+  }
+}
+
+
+
 async function DataFetch(strURL) {
+    // Очистить сообщение об ошибке
+    TagError.textContent = '';
     const Requ = new Request(strURL);
     const Resp = await fetch(Requ);
-    const Sensor = await Resp.json();
+    Sensor = await Resp.json();
     var time_per;
+    if (!Resp.ok) {  // Ответ сервера 200?
+        TagError.textContent = Resp;  // Сообщение об ошибке
+        return;
+    }
+    // Обновление таблицы
+    TableAirRefresh('TableAir');
+    TableGroundRefresh('TableGround');
     if  (url == "30min") {
         time_per = "minute";
     } else if (url == "hour") {
@@ -54,16 +145,12 @@ async function DataFetch(strURL) {
     } else if (url == "month") {
          time_per = "day";
     }
-    console.log(time_per)
-    var t_average;
     if (Chart1 != undefined) {	
         Chart1.data.datasets.forEach(dataset => {
             dataset.data = Sensor.air});
         Chart1.options.scales.x.time.minUnit = time_per;
-       // t_average = (Sensor.air.t1 + Sensor.air.t2 + Sensor.air.t3 + Sensor.air.t4) / 4
             Chart1.update("resize");			
         } else {	
-           // t_average = (Sensor.air.t1 + Sensor.air.t2 + Sensor.air.t3 + Sensor.air.t4) / 4
             Chart1 = new Chart('chart1', {			
                 type: 'line',
                 data: {
@@ -466,4 +553,114 @@ async function DataFetch(strURL) {
         }}}});
     Chart3.update();
     }
-  }
+    if (Chart4 != undefined) {	
+        Chart4.data.datasets.forEach(dataset => {
+            dataset.data = Sensor.air});
+        Chart4.options.scales.x.time.minUnit = time_per;
+            Chart4.update("resize");			
+        } else {	
+            Chart4 = new Chart('chart_AVG', {			
+                type: 'line',
+                data: {
+                    datasets: [
+                {
+                    label: 'Средняя температура воздуха',
+                    data: Sensor.air,
+                    yAxisID: 'y',
+                    parsing: {xAxisKey: "dt", yAxisKey: "avg_temp"},	
+                    showLine: true,
+                    lineTension: 0.3,
+                    color: "#FF0000"},
+                {
+                    label: 'Средняя влажность воздуха',
+                    data: Sensor.air,
+                    yAxisID: 'y',
+                    parsing: {xAxisKey: "dt", yAxisKey: "avg_hum"},
+                    showLine: true,
+                    lineTension: 0.3,
+                    color: "#00FF00"
+                }],
+        },
+            options: {
+                locale: "ru-RU",
+                animation: true,
+                plugins: {
+            title: {
+                display: true,
+                text: 'Датчики средних показаний',
+                color: "#000000"
+              },
+            legend: {
+                labels: {
+                    font: {
+                family: "GOST",				
+                    size: 14
+                    }
+                  }
+                }	  
+            },
+            layout: {
+                padding: {
+                    top: 80
+                }
+            },
+            scales: {
+                x: {
+                    type: 'time',
+            title: {
+              display: true,
+              text: "Время",
+            color: "#000000"
+            },
+                time: {
+            isoWeekday: true,
+            minUnit: time_per,
+            displayFormats: {				
+                minute: 'D MMM hh:mm',
+                hour: 'D MMM hh часов/-а',
+                day: 'D MMM'}
+                },
+                ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 20,
+                    maxRotation: 60,
+                    minRotation: 30,
+                    source: "data",
+                    color: "black",
+                display: true,
+                    font: {
+              },
+                },
+                grid: {
+                    drawTicks: true,
+                    borderColor: "black",
+              enabled: true,
+              drawTicks: true,
+              lineWidth: 1,					
+                },
+              },
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+            border: {
+              color: "#000000",
+            },
+                ticks: {
+                    color: "#000000",
+            },
+            title: {
+              display: true,
+              color: "#000000",
+                text: "Температура",
+            },  
+            grid: {
+                color: "#000000",
+                }
+            }}}});
+        Chart4.update();
+        }	
+ 
+
+
+}
