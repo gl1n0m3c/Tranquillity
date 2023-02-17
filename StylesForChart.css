@@ -24,3 +24,28 @@ table {
     th:first-child, td:first-child {
     text-align: center;
     }
+
+ 
+.scroll-table-body-air {
+    height: 300px;   
+    width: 1000px; 
+    min-width: 400px;
+    max-width: 1600px;
+    overflow-x: auto;
+    overflow-y: auto;   
+    margin-top: 0px;  
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.scroll-table-body-ground {
+    height: 300px;   
+    width: 700px; 
+    min-width: 400px;
+    max-width: 1600px;
+    overflow-x: auto;
+    overflow-y: auto;   
+    margin-top: 0px;  
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
