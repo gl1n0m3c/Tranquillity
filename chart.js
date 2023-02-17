@@ -81,20 +81,31 @@ function TableAirRefresh(TableId) {
     TableRowSet(TableBody, RowAirFragment);
     //Заполняем HTML элементы таблицы по Data.air начиная с первой строки
     let TableRow = TableBody.firstElementChild; // возвращает tr 
-    for (const Rec of Sensor.air) {  //Цикл по всем записям Data.sensor
-        TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
-        TableRow.cells[1].textContent = Rec.t1.toFixed(coFixed);
-        TableRow.cells[2].textContent = Rec.t2.toFixed(coFixed);
-        TableRow.cells[3].textContent = Rec.t3.toFixed(coFixed);
-        TableRow.cells[4].textContent = Rec.t4.toFixed(coFixed);
-        TableRow.cells[5].textContent = Rec.avg_temp.toFixed(coFixed);
-        TableRow.cells[6].textContent = Rec.h1.toFixed(coFixed);
-        TableRow.cells[7].textContent = Rec.h2.toFixed(coFixed);
-        TableRow.cells[8].textContent = Rec.h3.toFixed(coFixed);
-        TableRow.cells[9].textContent = Rec.h4.toFixed(coFixed);
-        TableRow.cells[10].textContent = Rec.avg_hum.toFixed(coFixed);
-        TableRow = TableRow.nextElementSibling;
-    }
+    if (Sensor.air != null || Sensor.air != undefined){
+        for (const Rec of Sensor.air) {  //Цикл по всем записям Data.sensor
+            TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
+            if (Rec.t1 != null){
+                TableRow.cells[1].textContent = Rec.t1.toFixed(coFixed)}
+            if (Rec.t2 != null){
+                TableRow.cells[2].textContent = Rec.t2.toFixed(coFixed)}
+            if (Rec.t3 != null){
+                TableRow.cells[3].textContent = Rec.t3.toFixed(coFixed)}
+            if (Rec.t4 != null){
+                TableRow.cells[4].textContent = Rec.t4.toFixed(coFixed)}
+            if (Rec.avg_temp != null){
+                TableRow.cells[5].textContent = Rec.avg_temp.toFixed(coFixed)}
+            if (Rec.h1 != null){
+                TableRow.cells[6].textContent = Rec.h1.toFixed(coFixed)}
+            if (Rec.h2 != null){
+                TableRow.cells[7].textContent = Rec.h2.toFixed(coFixed)}
+            if (Rec.h3 != null){
+                TableRow.cells[8].textContent = Rec.h3.toFixed(coFixed)}
+            if (Rec.h4 != null){
+                TableRow.cells[9].textContent = Rec.h4.toFixed(coFixed)}
+            if (Rec.avg_hum != null){
+                TableRow.cells[10].textContent = Rec.avg_hum.toFixed(coFixed)}
+            TableRow = TableRow.nextElementSibling;
+        }}
 }
 
 
@@ -106,16 +117,23 @@ function TableGroundRefresh(TableId) {
     TableRowSet(TableBody, RowGroundFragment);
     //Заполняем HTML элементы таблицы по Data.ground начиная с первой строки
     let TableRow = TableBody.firstElementChild;
-    for (const Rec of Sensor.ground) {  //Цикл по всем записям Data.air
-        TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
-        TableRow.cells[1].textContent = Rec.h1.toFixed(coFixed);
-        TableRow.cells[2].textContent = Rec.h2.toFixed(coFixed);
-        TableRow.cells[3].textContent = Rec.h3.toFixed(coFixed);
-        TableRow.cells[4].textContent = Rec.h4.toFixed(coFixed);
-        TableRow.cells[5].textContent = Rec.h5.toFixed(coFixed);
-        TableRow.cells[6].textContent = Rec.h6.toFixed(coFixed);
-        TableRow = TableRow.nextElementSibling;
-  }
+    if (Sensor.ground != null || Sensor.ground != undefined){
+        for (const Rec of Sensor.ground) {  //Цикл по всем записям Data.air
+            TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
+            if (Rec.h1 != null){
+                TableRow.cells[1].textContent = Rec.h1.toFixed(coFixed)}
+            if (Rec.h2 != null){
+                TableRow.cells[2].textContent = Rec.h2.toFixed(coFixed)}
+            if (Rec.h3 != null){
+                TableRow.cells[3].textContent = Rec.h3.toFixed(coFixed)}
+            if (Rec.h4 != null){
+                TableRow.cells[4].textContent = Rec.h4.toFixed(coFixed)}
+            if (Rec.h5 != null){
+                TableRow.cells[5].textContent = Rec.h5.toFixed(coFixed)}
+            if (Rec.h6 != null){
+                TableRow.cells[6].textContent = Rec.h6.toFixed(coFixed)}
+            TableRow = TableRow.nextElementSibling;
+    }}
 }
 
 
