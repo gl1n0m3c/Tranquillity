@@ -10,7 +10,7 @@
 </head>
 <body>
     <fieldset>
-        <legend align="center"><strong>Установка параметров</strong></legend>
+        <legend align="center">Установка параметров</legend>
 		    <form class="forma" onsubmit="return false" id="form1">
 		    	<label for="MaxT">Минимальная средняя температура воздуха в теплице(°C)</label>
 		    	<input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
@@ -155,7 +155,6 @@
 		<button type="submit" onclick="send()" >Отправить</button>
 		</form>
 	</fieldset>
-    <p style="text-align:center"><strong>Графики</strong></p>
     <fieldset>
 	    <div>
         <button id="min30">30 минут</button>
@@ -172,43 +171,42 @@
         <canvas id="chart3" width="800" height="250"></canvas>
         <canvas id="chart_AVG" width="800" height="250"></canvas>
     </div>
-    </fieldset>
-    <p style="text-align:center"><strong>Таблицы</strong></p>
+
     <header></header>
     <section></section>
-    <fieldset>
     <h2 style="background-color:red;color:white;"></h2>
-    <div class="scroll-table-body-air">
-        <table id="TableAir" class="table1"><caption>Датчики воздуха</caption>
+    <div style="border: 1px solid; padding: 100px; height: 400px; width:100%; overflow: auto;">
+        <table style="width:100%;" id="TableAir"><caption>Датчики воздуха</caption>
             <thead>
                 <tr>
                     <th rowspan="2">Дата и время</th>
-                    <th colspan="5">Температура воздуха</th>
-                    <th colspan="5">Влажность воздуха</th>
+                    <th colspan="5">Температура</th>
+                    <th colspan="5">Влажность</th>
                 </tr>
                 <tr>
                     <th>№1</th>
                     <th>№2</th>
                     <th>№3</th>
                     <th>№4</th>
-                    <th>Средняя температура</th>
+                    <th>Средняя</th>
                     <th>№1</th>
                     <th>№2</th>
                     <th>№3</th>
                     <th>№4</th>
-                    <th>Средняя влажность</th>
+                    <th>Средняя</th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
     </div>
-    <div class="scroll-table-body-ground">
-        <table id="TableGround"><caption>Датчики почвы</caption>
+
+    <div style="border: 1px solid; padding: 100px; height: 400px; width: 100%; overflow: auto;">
+        <table style="width:100%;" id="TableGround"><caption>Датчики почвы</caption>
             <thead>
                 <tr>
                     <th rowspan="2">Дата и время</th>
-                    <th colspan="6">Влажность почвы</th>
+                    <th colspan="6">Влажность</th>
                 </tr>
                 <tr>
                     <th>№1</th>
@@ -223,8 +221,7 @@
             </tbody>
         </table>
     </div>
-    </fieldset>
     <script src="chart.js"></script>
-    <script src="script.js"></script>
+	<script src="script.js"></script>
 </body>
 </html>
