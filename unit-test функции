@@ -1,0 +1,103 @@
+#                                                                   ФУНКЦИИ ДЛЯ ТЕСТИРОВАНИЯ
+# ТЕСТИРОВАНИЕ ФУНКЦИИ temp_update
+def selftest_temp_update():
+    test1 = False
+    test2 = False
+    tets3 = False
+    if (temp_update([0.0]) != err_Wrong_Type) or \
+        (temp_update({}) != err_Wrong_Type) or \
+        (temp_update("0.0") != err_Wrong_Type) or \
+        (temp_update(None) != err_Wrong_Type) or \
+        (temp_update(True) != err_Wrong_Type):
+            raise Exception('Ошибка самопроверки - temp_update')
+    if temp_update(0.0001) == '':
+        cur.execute("SELECT temperature FROM options;")
+        m = cur.fetchone()
+        if m[0] == 0.0001:
+            test1 = True
+    if temp_update(-100.0) == '':
+        cur.execute("SELECT temperature FROM options;")
+        m = cur.fetchone()
+        if m[0] == -100.0:
+            test2 = True
+    if temp_update(99) == '':
+        cur.execute("SELECT temperature FROM options;")
+        m = cur.fetchone()
+        if m[0] == 99.0:
+            test3 = True
+    cur.execute("DELETE FROM options;")
+    start_options()
+    if test1 and test2 and test3:
+            return "Самопроверка temp_update прошла успешно"
+    else:
+        raise Exception("Ошибка при самопроверке temp_update")
+
+
+# ТЕСТИРОВАНИЕ ФУНКЦИИ air_update
+def selftest_air_update():
+    test1 = False
+    test2 = False
+    test3 = False
+    if (air_update(100.0001) != err_Wrong_Type) or \
+        (air_update([0.0]) != err_Wrong_Type) or \
+        (air_update(-100) != err_Wrong_Type) or \
+        (air_update(None) != err_Wrong_Type) or \
+        (air_update("0.0") != err_Wrong_Type) or \
+        (air_update(True) != err_Wrong_Type):
+        raise Exception('Ошибка самопроверки - air_update')
+    if air_update(0.0001) == '':
+        cur.execute("SELECT air_hum FROM options;")
+        m = cur.fetchone()
+        if m[0] == 0.0001:
+            test1 = True
+    if air_update(100.0) == '':
+        cur.execute("SELECT air_hum FROM options;")
+        m = cur.fetchone()
+        if m[0] == 100.0:
+            test2 = True
+    if air_update(99) == '':
+        cur.execute("SELECT air_hum FROM options;")
+        m = cur.fetchone()
+        if m[0] == 99.0:
+            test3 = True
+    cur.execute("DELETE FROM options;")
+    start_options()
+    if test1 and test2 and test3:
+            return "Самопроверка air_update прошла успешно"
+    else:
+        raise Exception("Ошибка при самопроверке air_update")
+
+
+# ТЕСТИРОВАНИЕ ФУНКЦИИ gr_update
+def selftest_gr_update():
+    test1 = False
+    test2 = False
+    test3 = False
+    if (gr_update(100.0001) != err_Wrong_Type) or \
+        (gr_update([0.0]) != err_Wrong_Type) or \
+        (gr_update(-100) != err_Wrong_Type) or \
+        (gr_update(None) != err_Wrong_Type) or \
+        (gr_update("0.0") != err_Wrong_Type) or \
+        (gr_update(True) != err_Wrong_Type):
+        raise Exception('Ошибка самопроверки - gr_update')
+    if gr_update(0.0001) == '':
+        cur.execute("SELECT gr_hum FROM options;")
+        m = cur.fetchone()
+        if m[0] == 0.0001:
+            test1 = True
+    if gr_update(100.0) == '':
+        cur.execute("SELECT gr_hum FROM options;")
+        m = cur.fetchone()
+        if m[0] == 100.0:
+            test2 = True
+    if gr_update(99) == '':
+        cur.execute("SELECT gr_hum FROM options;")
+        m = cur.fetchone()
+        if m[0] == 99.0:
+            test3 = True
+    cur.execute("DELETE FROM options;")
+    start_options()
+    if test1 and test2 and test3:
+            return "Самопроверка gr_update прошла успешно"
+    else:
+        raise Exception("Ошибка при самопроверке gr_update")
