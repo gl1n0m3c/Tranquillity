@@ -1,9 +1,8 @@
 
-const TagError = document.querySelector('h2');		//Элемент для сообщений об ошибках
-moment.locale('ru');					//Настройки графика. Переключение языка на русский для строк с датой
-var Data;						//Массив данных полученных от сервера
-var RowAirFragment = TableRowCreate(1+5+5);		//Шаблон строки для таблицы Air
-var RowGroundFragment = TableRowCreate(1+6);		//Шаблон строки для таблицы Ground
+const TagError = document.querySelector('h2');	
+moment.locale('ru');						
+var RowAirFragment = TableRowCreate(1+5+5);		
+var RowGroundFragment = TableRowCreate(1+6);	
 var coFixed = 1;
 const port = "27314";
 var url;
@@ -59,27 +58,45 @@ function TableRowCreate(Columns) {
 
 
 
-//Выравниваем количество строк в таблице TableBody по данным из Data.air. RowFragment используется как шаблон строки таблицы
-function TableRowSet(TableBody, RowFragment) {
-    let Delta = Sensor.air.length - TableBody.rows.length;  //Разница строк между данными и таблицей
-    if (Delta < 0) {
-        for (Delta = Delta; Delta < 0; Delta++) {
-            TableBody.deleteRow(-1)  //Удаляем лишние строки
-        }
-    } else if (Delta > 0) {
-        for (Delta = Delta; Delta > 0; Delta--) {
-            TableBody.append(RowFragment.cloneNode(true));  //Добаляем недостающие строки как копию шаблона
-    }}
+//Выравниваем количество строк в таблице TableBody по данным из Sensor.air. RowFragment используется как шаблон строки таблицы
+function TableRowSetAir(TableBody, RowFragment) {
+    if (Sensor.air != null || Sensor.air != undefined){
+        let Delta = Sensor.air.length - TableBody.rows.length;  //Разница строк между данными и таблицей
+        if (Delta < 0) {
+            for (Delta = Delta; Delta < 0; Delta++) {
+                TableBody.deleteRow(-1)  //Удаляем лишние строки
+            }
+        } else if (Delta > 0) {
+            for (Delta = Delta; Delta > 0; Delta--) {
+                TableBody.append(RowFragment.cloneNode(true));  //Добаляем недостающие строки как копию шаблона
+        }}
+    } else {
+        alert("Ошибка. Данные пришли не в полном объёме")
+    }
 }
 
+function TableRowSetGround(TableBody, RowFragment) {
+    if (Sensor.ground != null || Sensor.ground != undefined){
+        let Delta = Sensor.ground.length - TableBody.rows.length;  //Разница строк между данными и таблицей
+        if (Delta < 0) {
+            for (Delta = Delta; Delta < 0; Delta++) {
+                TableBody.deleteRow(-1)  //Удаляем лишние строки
+            }
+        } else if (Delta > 0) {
+            for (Delta = Delta; Delta > 0; Delta--) {
+                TableBody.append(RowFragment.cloneNode(true));  //Добаляем недостающие строки как копию шаблона
+        }}
+    } else {
+        alert("Ошибка. Данные пришли не в полном объёме")
+    }
+}
 
 
 // Обновление таблицы
 function TableAirRefresh(TableId) {
-    //if (document.getElementById(TableId) != undefined) { !!! } Нужна проверка?
     let TableBody = document.getElementById(TableId).tBodies[0];  //Запрашиваем тело таблицы
-    TableRowSet(TableBody, RowAirFragment);
-    //Заполняем HTML элементы таблицы по Data.air начиная с первой строки
+    TableRowSetAir(TableBody, RowAirFragment);
+    //Заполняем HTML элементы таблицы по Sensor.air начиная с первой строки
     let TableRow = TableBody.firstElementChild; // возвращает tr 
     if (Sensor.air != null || Sensor.air != undefined){
         for (const Rec of Sensor.air) {  //Цикл по всем записям Data.sensor
@@ -105,7 +122,10 @@ function TableAirRefresh(TableId) {
             if (Rec.avg_hum != null){
                 TableRow.cells[10].textContent = Rec.avg_hum.toFixed(coFixed)}
             TableRow = TableRow.nextElementSibling;
-        }}
+        }
+    } else {
+        alert("Ошибка. Данные пришли не в полном объёме")
+    }
 }
 
 
@@ -114,8 +134,8 @@ function TableAirRefresh(TableId) {
 function TableGroundRefresh(TableId) {
     //if (document.getElementById(TableId) != undefined) { !!! } Нужна проверка?
     let TableBody = document.getElementById(TableId).tBodies[0];//Запрашиваем тело таблицы
-    TableRowSet(TableBody, RowGroundFragment);
-    //Заполняем HTML элементы таблицы по Data.ground начиная с первой строки
+    TableRowSetGround(TableBody, RowGroundFragment);
+    //Заполняем HTML элементы таблицы по Sensor.ground начиная с первой строки
     let TableRow = TableBody.firstElementChild;
     if (Sensor.ground != null || Sensor.ground != undefined){
         for (const Rec of Sensor.ground) {  //Цикл по всем записям Data.air
@@ -132,8 +152,10 @@ function TableGroundRefresh(TableId) {
                 TableRow.cells[5].textContent = Rec.h5.toFixed(coFixed)}
             if (Rec.h6 != null){
                 TableRow.cells[6].textContent = Rec.h6.toFixed(coFixed)}
-            TableRow = TableRow.nextElementSibling;
-    }}
+            TableRow = TableRow.nextElementSibling}
+    } else {
+        alert("Ошибка. Данные пришли не в полном объёме")
+    }
 }
 
 
@@ -150,8 +172,11 @@ async function DataFetch(strURL) {
         return;
     }
     // Обновление таблицы
-    TableAirRefresh('TableAir');
-    TableGroundRefresh('TableGround');
+    if (Sensor.air != null || Sensor.air != undefined){
+        TableAirRefresh('TableAir')}
+    if (Sensor.ground != null || Sensor.ground != undefined){
+        TableGroundRefresh('TableGround')}
+
     if  (url == "30min") {
         time_per = "minute";
     } else if (url == "hour") {
@@ -163,13 +188,144 @@ async function DataFetch(strURL) {
     } else if (url == "month") {
          time_per = "day";
     }
-    if (Chart1 != undefined) {	
-        Chart1.data.datasets.forEach(dataset => {
-            dataset.data = Sensor.air});
-        Chart1.options.scales.x.time.minUnit = time_per;
-            Chart1.update("resize");			
-        } else {	
-            Chart1 = new Chart('chart1', {			
+    if ((Sensor.air != null || Sensor.air != undefined) && (Sensor.ground != null || Sensor.ground != undefined)){
+        if (Chart1 != undefined) {	
+            Chart1.data.datasets.forEach(dataset => {
+                dataset.data = Sensor.air});
+            Chart1.options.scales.x.time.minUnit = time_per;
+                Chart1.update("resize");			
+            } else {	
+                Chart1 = new Chart('chart1', {			
+                    type: 'line',
+                    data: {
+                        datasets: [
+                    {
+                        label: 'Первый',
+                        data: Sensor.air,
+                        yAxisID: 'y',
+                        parsing: {xAxisKey: "dt", yAxisKey: "t1"},	
+                        showLine: true,
+                        hidden: false,
+                        lineTension: 0.3,
+                        color: "#FF0000"},
+                    {
+                        label: 'Второй',
+                        data: Sensor.air,
+                        yAxisID: 'y',
+                        parsing: {xAxisKey: "dt", yAxisKey: "t2"},
+                        showLine: true,
+                        hidden: true,
+                        lineTension: 0.3,
+                        color: "#00FF00"
+                    },
+                    {
+                        label: 'Третий',
+                        data: Sensor.air,
+                        yAxisID: 'y',
+                        parsing: {xAxisKey: "dt", yAxisKey: "t3"},
+                        showLine: true,
+                        hidden: true,
+                        lineTension: 0.3,
+                        color: "#0000FF"
+                    },
+                    {
+                        label: 'Четвертый',
+                        data: Sensor.air,
+                        yAxisID: 'y',
+                        parsing: {xAxisKey: "dt", yAxisKey: "t4"},
+                        showLine: true,
+                        hidden: true,
+                        lineTension: 0.3,
+                        color: "#FF00FF"
+                    }],
+            },
+                options: {
+                    locale: "ru-RU",
+                    animation: true,
+                    plugins: {
+                title: {
+                    display: true,
+                    text: 'Датчики температуры',
+                    color: "#000000"
+                  },
+                legend: {
+                    labels: {
+                        font: {
+                    family: "GOST",				
+                        size: 14
+                        }
+                      }
+                    }	  
+                },
+                layout: {
+                    padding: {
+                        top: 80
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                title: {
+                  display: true,
+                  text: "Время",
+                color: "#000000"
+                },
+                    time: {
+                isoWeekday: true,
+                minUnit: time_per,
+                displayFormats: {				
+                    minute: 'D MMM hh:mm',
+                    hour: 'D MMM hh часов/-а',
+                    day: 'D MMM'}
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 20,
+                        maxRotation: 60,
+                        minRotation: 30,
+                        source: "data",
+                        color: "black",
+                    display: true,
+                        font: {
+                  },
+                    },
+                    grid: {
+                        drawTicks: true,
+                        borderColor: "black",
+                  enabled: true,
+                  drawTicks: true,
+                  lineWidth: 1,					
+                    },
+                  },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                border: {
+                  color: "#000000",
+                },
+                    ticks: {
+                        color: "#000000",
+                },
+                title: {
+                  display: true,
+                  color: "#000000",
+                    text: "Температура",
+                },  
+                grid: {
+                    color: "#000000",
+                    }
+                }}}});
+            Chart1.update();
+            }	
+
+        if (Chart2 != undefined) {
+            Chart2.data.datasets.forEach(dataset => {
+                dataset.data = Sensor.air});
+                Chart2.options.scales.x.time.minUnit = time_per;
+                Chart2.update("resize");			
+            } else {
+                Chart2 = new Chart('chart2', {			
                 type: 'line',
                 data: {
                     datasets: [
@@ -177,7 +333,7 @@ async function DataFetch(strURL) {
                     label: 'Первый',
                     data: Sensor.air,
                     yAxisID: 'y',
-                    parsing: {xAxisKey: "dt", yAxisKey: "t1"},	
+                    parsing: {xAxisKey: "dt", yAxisKey: "h1"},	
                     showLine: true,
                     hidden: false,
                     lineTension: 0.3,
@@ -186,7 +342,7 @@ async function DataFetch(strURL) {
                     label: 'Второй',
                     data: Sensor.air,
                     yAxisID: 'y',
-                    parsing: {xAxisKey: "dt", yAxisKey: "t2"},
+                    parsing: {xAxisKey: "dt", yAxisKey: "h2"},
                     showLine: true,
                     hidden: true,
                     lineTension: 0.3,
@@ -196,7 +352,7 @@ async function DataFetch(strURL) {
                     label: 'Третий',
                     data: Sensor.air,
                     yAxisID: 'y',
-                    parsing: {xAxisKey: "dt", yAxisKey: "t3"},
+                    parsing: {xAxisKey: "dt", yAxisKey: "h3"},
                     showLine: true,
                     hidden: true,
                     lineTension: 0.3,
@@ -206,7 +362,7 @@ async function DataFetch(strURL) {
                     label: 'Четвертый',
                     data: Sensor.air,
                     yAxisID: 'y',
-                    parsing: {xAxisKey: "dt", yAxisKey: "t4"},
+                    parsing: {xAxisKey: "dt", yAxisKey: "h4"},
                     showLine: true,
                     hidden: true,
                     lineTension: 0.3,
@@ -219,13 +375,13 @@ async function DataFetch(strURL) {
                 plugins: {
             title: {
                 display: true,
-                text: 'Датчики температуры',
+                text: 'Датчики влажности воздуха',
                 color: "#000000"
               },
             legend: {
                 labels: {
                     font: {
-                family: "GOST",				
+	            family: "GOST",				
                     size: 14
                     }
                   }
@@ -239,19 +395,18 @@ async function DataFetch(strURL) {
             scales: {
                 x: {
                     type: 'time',
-            title: {
-              display: true,
-              text: "Время",
+	        title: {
+  	        display: true,
+  	        text: "Время",
             color: "#000000"
-            },
+	        },
                 time: {
-            isoWeekday: true,
-            minUnit: time_per,
+	        isoWeekday: true,
+	        minUnit: time_per,
             displayFormats: {				
                 minute: 'D MMM hh:mm',
                 hour: 'D MMM hh часов/-а',
-                day: 'D MMM'}
-                },
+                day: 'D MMM'}},
                 ticks: {
                     autoSkip: true,
                     maxTicksLimit: 20,
@@ -259,344 +414,109 @@ async function DataFetch(strURL) {
                     minRotation: 30,
                     source: "data",
                     color: "black",
-                display: true,
+	            display: true,
                     font: {
-              },
+	          },
                 },
                 grid: {
                     drawTicks: true,
                     borderColor: "black",
-              enabled: true,
-              drawTicks: true,
-              lineWidth: 1,					
+	          enabled: true,
+	          drawTicks: true,
+	          lineWidth: 1,					
                 },
               },
             y: {
                 type: 'linear',
                 display: true,
                 position: 'left',
-            border: {
-              color: "#000000",
-            },
+	        border: {
+  	        color: "#000000",
+	        },
                 ticks: {
                     color: "#000000",
-            },
-            title: {
-              display: true,
-              color: "#000000",
-                text: "Температура",
-            },  
+	        },
+	        title: {
+  	        display: true,
+  	        color: "#000000",
+	            text: "Температура",
+	        },  
             grid: {
                 color: "#000000",
                 }
             }}}});
-        Chart1.update();
-        }	
-            
-    if (Chart2 != undefined) {
-        Chart2.data.datasets.forEach(dataset => {
-            dataset.data = Sensor.air});
-            Chart2.options.scales.x.time.minUnit = time_per;
-            Chart2.update("resize");			
-        } else {
-            Chart2 = new Chart('chart2', {			
-            type: 'line',
-            data: {
-                datasets: [
-            {
-                label: 'Первый',
-                data: Sensor.air,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h1"},	
-                showLine: true,
-                hidden: false,
-                lineTension: 0.3,
-                color: "#FF0000"},
-            {
-                label: 'Второй',
-                data: Sensor.air,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h2"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#00FF00"
-            },
-            {
-                label: 'Третий',
-                data: Sensor.air,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h3"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#0000FF"
-            },
-            {
-                label: 'Четвертый',
-                data: Sensor.air,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h4"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#FF00FF"
-            }],
-    },
-        options: {
-            locale: "ru-RU",
-            animation: true,
-            plugins: {
-        title: {
-            display: true,
-            text: 'Датчики влажности воздуха',
-            color: "#000000"
-          },
-        legend: {
-            labels: {
-                font: {
-	        family: "GOST",				
-                size: 14
-                }
-              }
-            }	  
-        },
-        layout: {
-            padding: {
-                top: 80
-            }
-        },
-        scales: {
-            x: {
-                type: 'time',
-	    title: {
-  	    display: true,
-  	    text: "Время",
-        color: "#000000"
-	    },
-            time: {
-	    isoWeekday: true,
-	    minUnit: time_per,
-        displayFormats: {				
-            minute: 'D MMM hh:mm',
-            hour: 'D MMM hh часов/-а',
-            day: 'D MMM'}},
-            ticks: {
-                autoSkip: true,
-                maxTicksLimit: 20,
-                maxRotation: 60,
-                minRotation: 30,
-                source: "data",
-                color: "black",
-	        display: true,
-                font: {
-	      },
-            },
-            grid: {
-                drawTicks: true,
-                borderColor: "black",
-	      enabled: true,
-	      drawTicks: true,
-	      lineWidth: 1,					
-            },
-          },
-        y: {
-            type: 'linear',
-            display: true,
-            position: 'left',
-	    border: {
-  	    color: "#000000",
-	    },
-            ticks: {
-                color: "#000000",
-	    },
-	    title: {
-  	    display: true,
-  	    color: "#000000",
-	        text: "Температура",
-	    },  
-        grid: {
-            color: "#000000",
-            }
-        }}}});
-    Chart2.update();
-    }
+        Chart2.update();
+        }
 
 
-    if (Chart3 != undefined) {
-        Chart3.data.datasets.forEach(dataset => {
-            dataset.data = Sensor.ground});
-            Chart3.options.scales.x.time.minUnit = time_per;
-            Chart3.update("resize");		
-        } else {
-            Chart3 = new Chart('chart3', {			
-            type: 'line',
-            data: {
-                datasets: [
-            {
-                label: 'Первый',
-                data: Sensor.ground,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h1"},	
-                showLine: true,
-                hidden: false,
-                lineTension: 0.3,
-                color: "#FF0000"},
-            {
-                label: 'Второй',
-                data: Sensor.ground,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h2"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#00FF00"
-            },
-            {
-                label: 'Третий',
-                data: Sensor.ground,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h3"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#0000FF"
-            },
-            {
-                label: 'Четвертый',
-                data: Sensor.ground,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h4"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#FF00FF"
-            },
-            {
-                label: 'Пятый',
-                data: Sensor.ground,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h5"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#FF00FF"
-            },
-            {
-                label: 'Шестой',
-                data: Sensor.ground,
-                yAxisID: 'y',
-                parsing: {xAxisKey: "dt", yAxisKey: "h6"},
-                showLine: true,
-                hidden: true,
-                lineTension: 0.3,
-                color: "#FF00FF"
-            }],
-    },
-        options: {
-            locale: "ru-RU",
-            animation: true,
-            plugins: {
-        title: {
-            display: true,
-            text: 'Датчики влажности почвы',
-            color: "#000000"
-          },
-        legend: {
-            labels: {
-                font: {
-	        family: "GOST",				
-                size: 14
-                }
-              }
-            }	  
-        },
-        layout: {
-            padding: {
-                top: 80
-            }
-        },
-        scales: {
-            x: {
-                type: 'time',
-	    title: {
-  	    display: true,
-  	    text: "Время",
-        color: "#000000"
-	    },
-            time: {
-	    isoWeekday: true,
-	    minUnit: time_per,
-        displayFormats: {				
-            minute: 'D MMM hh:mm',
-            hour: 'D MMM hh часов/-а',
-            day: 'D MMM'}},
-            ticks: {
-                autoSkip: true,
-                maxTicksLimit: 20,
-                maxRotation: 60,
-                minRotation: 30,
-                source: "data",
-                color: "black",
-	        display: true,
-                font: {
-	      },
-            },
-            grid: {
-                drawTicks: true,
-                borderColor: "black",
-	      enabled: true,
-	      drawTicks: true,
-	      lineWidth: 1,					
-            },
-          },
-        y: {
-            type: 'linear',
-            display: true,
-            position: 'left',
-	    border: {
-  	    color: "#000000",
-	    },
-            ticks: {
-                color: "#000000",
-	    },
-	    title: {
-  	    display: true,
-  	    color: "#000000",
-	        text: "Температура",
-	    },  
-        grid: {
-            color: "#000000",
-            }
-        }}}});
-    Chart3.update();
-    }
-    if (Chart4 != undefined) {	
-        Chart4.data.datasets.forEach(dataset => {
-            dataset.data = Sensor.air});
-        Chart4.options.scales.x.time.minUnit = time_per;
-            Chart4.update("resize");			
-        } else {	
-            Chart4 = new Chart('chart_AVG', {			
+        if (Chart3 != undefined) {
+            Chart3.data.datasets.forEach(dataset => {
+                dataset.data = Sensor.ground});
+                Chart3.options.scales.x.time.minUnit = time_per;
+                Chart3.update("resize");		
+            } else {
+                Chart3 = new Chart('chart3', {			
                 type: 'line',
                 data: {
                     datasets: [
                 {
-                    label: 'Средняя температура воздуха',
-                    data: Sensor.air,
+                    label: 'Первый',
+                    data: Sensor.ground,
                     yAxisID: 'y',
-                    parsing: {xAxisKey: "dt", yAxisKey: "avg_temp"},	
+                    parsing: {xAxisKey: "dt", yAxisKey: "h1"},	
                     showLine: true,
+                    hidden: false,
                     lineTension: 0.3,
                     color: "#FF0000"},
                 {
-                    label: 'Средняя влажность воздуха',
-                    data: Sensor.air,
+                    label: 'Второй',
+                    data: Sensor.ground,
                     yAxisID: 'y',
-                    parsing: {xAxisKey: "dt", yAxisKey: "avg_hum"},
+                    parsing: {xAxisKey: "dt", yAxisKey: "h2"},
                     showLine: true,
+                    hidden: true,
                     lineTension: 0.3,
                     color: "#00FF00"
+                },
+                {
+                    label: 'Третий',
+                    data: Sensor.ground,
+                    yAxisID: 'y',
+                    parsing: {xAxisKey: "dt", yAxisKey: "h3"},
+                    showLine: true,
+                    hidden: true,
+                    lineTension: 0.3,
+                    color: "#0000FF"
+                },
+                {
+                    label: 'Четвертый',
+                    data: Sensor.ground,
+                    yAxisID: 'y',
+                    parsing: {xAxisKey: "dt", yAxisKey: "h4"},
+                    showLine: true,
+                    hidden: true,
+                    lineTension: 0.3,
+                    color: "#FF00FF"
+                },
+                {
+                    label: 'Пятый',
+                    data: Sensor.ground,
+                    yAxisID: 'y',
+                    parsing: {xAxisKey: "dt", yAxisKey: "h5"},
+                    showLine: true,
+                    hidden: true,
+                    lineTension: 0.3,
+                    color: "#FF00FF"
+                },
+                {
+                    label: 'Шестой',
+                    data: Sensor.ground,
+                    yAxisID: 'y',
+                    parsing: {xAxisKey: "dt", yAxisKey: "h6"},
+                    showLine: true,
+                    hidden: true,
+                    lineTension: 0.3,
+                    color: "#FF00FF"
                 }],
         },
             options: {
@@ -605,13 +525,13 @@ async function DataFetch(strURL) {
                 plugins: {
             title: {
                 display: true,
-                text: 'Датчики средних показаний',
+                text: 'Датчики влажности почвы',
                 color: "#000000"
               },
             legend: {
                 labels: {
                     font: {
-                family: "GOST",				
+	            family: "GOST",				
                     size: 14
                     }
                   }
@@ -625,19 +545,18 @@ async function DataFetch(strURL) {
             scales: {
                 x: {
                     type: 'time',
-            title: {
-              display: true,
-              text: "Время",
+	        title: {
+  	        display: true,
+  	        text: "Время",
             color: "#000000"
-            },
+	        },
                 time: {
-            isoWeekday: true,
-            minUnit: time_per,
+	        isoWeekday: true,
+	        minUnit: time_per,
             displayFormats: {				
                 minute: 'D MMM hh:mm',
                 hour: 'D MMM hh часов/-а',
-                day: 'D MMM'}
-                },
+                day: 'D MMM'}},
                 ticks: {
                     autoSkip: true,
                     maxTicksLimit: 20,
@@ -645,40 +564,149 @@ async function DataFetch(strURL) {
                     minRotation: 30,
                     source: "data",
                     color: "black",
-                display: true,
+	            display: true,
                     font: {
-              },
+	          },
                 },
                 grid: {
                     drawTicks: true,
                     borderColor: "black",
-              enabled: true,
-              drawTicks: true,
-              lineWidth: 1,					
+	          enabled: true,
+	          drawTicks: true,
+	          lineWidth: 1,					
                 },
               },
             y: {
                 type: 'linear',
                 display: true,
                 position: 'left',
-            border: {
-              color: "#000000",
-            },
+	        border: {
+  	        color: "#000000",
+	        },
                 ticks: {
                     color: "#000000",
-            },
-            title: {
-              display: true,
-              color: "#000000",
-                text: "Температура",
-            },  
+	        },
+	        title: {
+  	        display: true,
+  	        color: "#000000",
+	            text: "Температура",
+	        },  
             grid: {
                 color: "#000000",
                 }
             }}}});
-        Chart4.update();
-        }	
- 
+        Chart3.update();
+        }
+        if (Chart4 != undefined) {	
+            Chart4.data.datasets.forEach(dataset => {
+                dataset.data = Sensor.air});
+            Chart4.options.scales.x.time.minUnit = time_per;
+                Chart4.update("resize");			
+            } else {	
+                Chart4 = new Chart('chart_AVG', {			
+                    type: 'line',
+                    data: {
+                        datasets: [
+                    {
+                        label: 'Средняя температура воздуха',
+                        data: Sensor.air,
+                        yAxisID: 'y',
+                        parsing: {xAxisKey: "dt", yAxisKey: "avg_temp"},	
+                        showLine: true,
+                        lineTension: 0.3,
+                        color: "#FF0000"},
+                    {
+                        label: 'Средняя влажность воздуха',
+                        data: Sensor.air,
+                        yAxisID: 'y',
+                        parsing: {xAxisKey: "dt", yAxisKey: "avg_hum"},
+                        showLine: true,
+                        lineTension: 0.3,
+                        color: "#00FF00"
+                    }],
+            },
+                options: {
+                    locale: "ru-RU",
+                    animation: true,
+                    plugins: {
+                title: {
+                    display: true,
+                    text: 'Датчики средних показаний',
+                    color: "#000000"
+                  },
+                legend: {
+                    labels: {
+                        font: {
+                    family: "GOST",				
+                        size: 14
+                        }
+                      }
+                    }	  
+                },
+                layout: {
+                    padding: {
+                        top: 80
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                title: {
+                  display: true,
+                  text: "Время",
+                color: "#000000"
+                },
+                    time: {
+                isoWeekday: true,
+                minUnit: time_per,
+                displayFormats: {				
+                    minute: 'D MMM hh:mm',
+                    hour: 'D MMM hh часов/-а',
+                    day: 'D MMM'}
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 20,
+                        maxRotation: 60,
+                        minRotation: 30,
+                        source: "data",
+                        color: "black",
+                    display: true,
+                        font: {
+                  },
+                    },
+                    grid: {
+                        drawTicks: true,
+                        borderColor: "black",
+                  enabled: true,
+                  drawTicks: true,
+                  lineWidth: 1,					
+                    },
+                  },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                border: {
+                  color: "#000000",
+                },
+                    ticks: {
+                        color: "#000000",
+                },
+                title: {
+                  display: true,
+                  color: "#000000",
+                    text: "Температура",
+                },  
+                grid: {
+                    color: "#000000",
+                    }
+                }}}});
+            Chart4.update();
+            }	
+        } else {
+            alert("Ошибка. Данные пришли не в полном объёме")
+        }
 
 
 }
