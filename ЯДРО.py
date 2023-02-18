@@ -186,7 +186,6 @@ def table_append(var):
                 cur.execute("INSERT INTO ground VALUES(?, ?, ?);", (id, humidity, time))
             conn.commit()
         except Exception as e:
-            print("Ошибка - " + str(e))
             conn.rollback()
 
 
@@ -269,7 +268,6 @@ def TEPLICA():
                 sr_humidity_AIR += k.json()['humidity']
                 data_per_5sec['data']['air'].append(
                     {'id': i, 'temperature': k.json()['temperature'], 'humidity': k.json()['humidity']})
-            print(data_per_5sec['data']['air'][i - 1])
         # Время получения всех запросов с теплицы (влажность воздуха и его температура) в UNIX
         T1_2 = datetime.datetime.now()
         T1_2 = (T1_2 - datetime.datetime(1970, 1, 1)).total_seconds()
@@ -287,7 +285,6 @@ def TEPLICA():
             else:
                 last_GROUND_humidity[i - 1] = (k.json()['humidity'])
                 data_per_5sec['data']['ground'].append({'id': i, 'humidity': k.json()['humidity']})
-            print(data_per_5sec['data']['ground'][i - 1])
         # Время получения всех запросов с теплицы (влажность почв)
         T2_2 = datetime.datetime.now()
         T2_2 = (T2_2 - datetime.datetime(1970, 1, 1)).total_seconds()
@@ -313,7 +310,6 @@ def TEPLICA():
         data_per_5sec['timeGROUND'] = T2
         data_per_5sec['AVGtemp'] = sr_temp
         data_per_5sec['AVGhum'] = sr_humidity_AIR
-        print(data_per_5sec)
         # Заполнение БД данными за минуту
         table_append(data_per_5sec)
         # Задача интервала
@@ -336,7 +332,6 @@ def SERVER():
             self.end_headers()
             # Массив, в котором хранятятся данные, переданные пользователем через ссылку
             m = self.path[1:].split('/')
-            print(m)
             # ЗАПРОС НА ВКЛЮЧЕНИЕ ЭКСТРЕННОГО РЕЖИМА
             if m[0] == 'on_extreme_mode':
                 extreme_mode = True
@@ -396,7 +391,6 @@ def SERVER():
                     sr_humidity_AIR = None
 
                 # Сохранение данных в БД
-                print(data)
                 table_append(data)
 
             # СОХРАНЕНИЕ ПОСЛЕДНЕГО ПАРАМЕТРА СРЕДНЕЙ ТЕМПЕРАТУРЫ ВОЗДУХА
