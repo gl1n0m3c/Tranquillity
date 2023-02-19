@@ -332,14 +332,39 @@ def SERVER():
             self.end_headers()
             # Массив, в котором хранятятся данные, переданные пользователем через ссылку
             m = self.path[1:].split('/')
+            # УВЕДОМЛЕНИЕ О ЗАПУСКЕ ИЛИ ОБНОВЛЕНИИ ПОЛЬЗОВАТЕЛЬСКОГО ИНТЕРФЕЙСА
+            if m[0] == 'update':
+                # Закрытие форточек
+                try:
+                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/fork_drive', params={"state": 0})
+                except Exception:
+                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                else:
+                    self.wfile.write("{\"message\": \"Форточка закрыта!\"}".encode())
+                # Выключение системы увлажнения воздуха
+                try:
+                    k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 0})
+                except Exception:
+                    self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                else:
+                    self.wfile.write("{\"message\": \"Система увлажнения воздуха выключена!\"}".encode())
+                # Выключение систем увлажнения бороздок
+                for i in range(1, 7):
+                    try:
+                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
+                                           params={"id": i, "state": 0})
+                    except Exception:
+                        self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                    else:
+                        self.wfile.write("{\"message\": \"Система полива бороздки выключена!\"}".encode())
+
             # ЗАПРОС НА ВКЛЮЧЕНИЕ ЭКСТРЕННОГО РЕЖИМА
-            if m[0] == 'on_extreme_mode':
+            elif m[0] == 'on_extreme_mode':
                 extreme_mode = True
 
             # ЗАПРОС НА ВЫКЛЮЧЕНИЕ ЭКСТРЕННОГО РЕЖИМА
             elif m[0] == 'off_extreme_mode':
                 extreme_mode = False
-
             # ЗАПРОС НА СОХРАНЕНИЕ ДАННЫХ С ПОЛЬЗОВАТЕЛЬСКОГО ИНТЕРФЕЙСА
             elif m[0] == 'save':
                 global sr_temp
