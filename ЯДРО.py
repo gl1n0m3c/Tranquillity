@@ -520,7 +520,7 @@ def SERVER():
                         self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
                     else:
                         self.wfile.write("{\"message\": \"Система увлажнения включена!\"}".encode())
-                if axc[0][1] > sr_humidity_AIR:
+                elif axc[0][1] > sr_humidity_AIR:
                     try:
                         k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 1})
                     except Exception:
@@ -561,7 +561,7 @@ def SERVER():
                         self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
                     else:
                         self.wfile.write("{\"message\": \"Система полива бороздки включена!\"}".encode())
-                if axc[0][2] > last_GROUND_humidity[(int(m[1])) - 1]:
+                elif axc[0][2] > last_GROUND_humidity[(int(m[1])) - 1]:
                     try:
                         k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
                                            params={"id": int(m[1]), "state": 1})
