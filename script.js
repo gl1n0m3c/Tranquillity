@@ -2,6 +2,7 @@ const getResourse = async(url) => {
     const response = await fetch(url)
     return await response.json()
 }
+zapros('http://localhost:' + m + '/update')
 
 
 const m = '27314'
@@ -14,8 +15,6 @@ let k5 = 0
 let k6 = 0
 let k7 = 0
 let e = 0
-
-zapros('http://localhost:' + m + '/update')
 
 function deldb(){
     zapros('http://localhost:' + m + '/clean_db')
