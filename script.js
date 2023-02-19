@@ -2,7 +2,7 @@ const getResourse = async(url) => {
     const response = await fetch(url)
     return await response.json()
 }
-
+zapros('http://localhost:' + m + '/update')
 
 
 const m = '27314'
@@ -47,6 +47,7 @@ function send(){
     if ((input8.value<101)&&(input9.value<101)&&(input10.value<101)&&(input11.value<101)&&(input12.value<101)&&(input13.value<101)&&(input14.value<101)&&(input15.value<101)&&(input16.value<101)&&(input17.value<101)){
 zapros('http://localhost:' + m +'/save/'+ input4.value+ '/' + input5.value + '/' + input6.value +  '/' + input7.value +  '/' + input8.value +  '/' + input9.value +  '/'
  + input10.value +  '/' + input11.value +  '/' + input12.value +  '/' + input13.value +  '/' + input14.value+  '/' + input15.value +  '/' + input16.value  +  '/' + input17.value)
+
     }
 }
 
@@ -99,9 +100,7 @@ async function windows(url) {
             document.getElementById("1").classList.add('toggle-switch')
             alert("Форточка не может быть открыта в связи со слишком малой температурой в теплице!")}
         if (message_window == "Сервер теплицы не отвечает!"){  
-            k = k - 1                           
-            document.getElementById("1").classList.remove('toggle-switch2')
-            document.getElementById("1").classList.add('toggle-switch')
+            k=k-1
             alert("Сервер теплицы не отвечает!")}
         if (message_window == "Форточка закрыта!"){
             document.getElementById("1").classList.remove('toggle-switch2')
@@ -127,8 +126,6 @@ async function humidity(url){
         }
         if (message_humidity == "Сервер теплицы не отвечает!"){
             k1 = k1 - 1
-            document.getElementById("2").classList.remove('toggle-switch2')
-            document.getElementById("2").classList.add('toggle-switch')
             alert("Сервер теплицы не отвечает!")}
         if (message_humidity == "Система увлажнения воздуха выключена!"){
             document.getElementById("2").classList.remove('toggle-switch2')
@@ -152,8 +149,6 @@ async function borozdka1(url) {
         }
         if (message_ground_1 == "Сервер теплицы не отвечает!"){
             k2 = k2 - 1
-            document.getElementById("3").classList.remove('toggle-switch2')
-            document.getElementById("3").classList.add('toggle-switch')
             alert("Сервер теплицы не отвечает")}
         if (message_ground_1 == "Система полива бороздки выключена!"){
             document.getElementById("3").classList.remove('toggle-switch2')
@@ -178,8 +173,6 @@ async function borozdka2(url) {
     }
     if (message_ground_2 == "Сервер теплицы не отвечает!"){
         k3 = k3 - 1
-        document.getElementById("4").classList.remove('toggle-switch')
-        document.getElementById("4").classList.add('toggle-switch2')
         alert("Сервер теплицы не отвечает")}
     if (message_ground_2 == "Система полива бороздки выключена!"){
         document.getElementById("4").classList.remove('toggle-switch2')
@@ -205,8 +198,6 @@ async function borozdka3(url) {
     }
     if (message_ground_3 == "Сервер теплицы не отвечает!"){
         k4 = k4 - 1
-        document.getElementById("5").classList.remove('toggle-switch2')
-        document.getElementById("5").classList.add('toggle-switch')
         alert("Сервер теплицы не отвечает")}
     if (message_ground_3 == "Система полива бороздки выключена!"){
         document.getElementById("5").classList.remove('toggle-switch2')
@@ -232,8 +223,6 @@ async function borozdka4(url) {
     }
     if (message_ground_4 == "Сервер теплицы не отвечает!"){
         k5 = k5 - 1
-        document.getElementById("6").classList.remove('toggle-switch2')
-        document.getElementById("6").classList.add('toggle-switch')
         alert("Сервер теплицы не отвечает")}
     if (message_ground_4 == "Система полива бороздки выключена!"){
         document.getElementById("6").classList.remove('toggle-switch2')
@@ -259,8 +248,6 @@ async function borozdka5(url) {
     }
     if (message_ground_5 == "Сервер теплицы не отвечает!"){
         k6 = k6 - 1
-        document.getElementById("7").classList.remove('toggle-switch2')
-        document.getElementById("7").classList.add('toggle-switch')
         alert("Сервер теплицы не отвечает")}
     if (message_ground_5 == "Система полива бороздки выключена!"){
         document.getElementById("7").classList.remove('toggle-switch2')
@@ -286,8 +273,6 @@ async function borozdka6(url) {
     }
     if (message_ground_6 == "Сервер теплицы не отвечает!"){
         k7 = k7 - 1
-        document.getElementById("8").classList.remove('toggle-switch2')
-        document.getElementById("8").classList.add('toggle-switch')
         alert("Сервер теплицы не отвечает")}
     if (message_ground_6 == "Система полива бороздки выключена!"){
         document.getElementById("8").classList.remove('toggle-switch2')
