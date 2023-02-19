@@ -9,31 +9,35 @@ var url;
 
 min30.onclick = function() {
     url = "30min";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 hour1.onclick = function() {
     url = "hour";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 hours12.onclick = function() {
     url = "12hours";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 day1.onclick = function() {
     url = "day";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 month1.onclick = function() {
     url = "month";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
+    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 ChartRefresh1.onclick = function() {
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => { TagError.textContent = `Ошибка! ${error}`});
+    if (url != null || url != undefined){
+        DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)})}
+    else {
+        alert("Сначала следует выбрать временной интервал!")
+    }
 }
 
 var Sensor;
@@ -705,8 +709,9 @@ async function DataFetch(strURL) {
             Chart4.update();
             }	
         } else {
-            alert("Ошибка. Данные пришли не в полном объёме")
+            alert("Ошибка. Данных нет!")
         }
 
 
 }
+
