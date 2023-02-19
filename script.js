@@ -16,6 +16,9 @@ let k6 = 0
 let k7 = 0
 let e = 0
 
+function deldb(){
+    zapros('http://localhost:' + m + '/clean_db')
+}
 
 
 async function zapros(n){
