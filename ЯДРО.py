@@ -474,7 +474,14 @@ def SERVER():
             elif m[0] == 'open_windows' and extreme_mode == False:
                 cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
-                if axc[0][0] < sr_temp:
+                if len(axc) == 0:
+                    try:
+                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/fork_drive', params={"state": 1})
+                    except Exception:
+                        self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                    else:
+                        self.wfile.write("{\"message\": \"Форточка открыта!\"}".encode())
+                elif axc[0][0] < sr_temp:
                     try:
                         k = requests.patch(url='https://dt.miet.ru/ppo_it/api/fork_drive', params={"state": 1})
                     except Exception:
@@ -506,6 +513,13 @@ def SERVER():
             elif m[0] == 'start_humidity_system' and extreme_mode == False:
                 cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
+                if len(axc) == 0:
+                    try:
+                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 1})
+                    except Exception:
+                        self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                    else:
+                        self.wfile.write("{\"message\": \"Система увлажнения включена!\"}".encode())
                 if axc[0][1] > sr_humidity_AIR:
                     try:
                         k = requests.patch(url='https://dt.miet.ru/ppo_it/api/total_hum', params={"state": 1})
@@ -539,6 +553,14 @@ def SERVER():
             elif m[0] == 'start_wattering' and extreme_mode == False:
                 cur.execute("SELECT temperature, air_hum, gr_hum from options")
                 axc = cur.fetchall()
+                if len(axc) == 0:
+                    try:
+                        k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
+                                           params={"id": int(m[1]), "state": 1})
+                    except Exception:
+                        self.wfile.write("{\"message\": \"Сервер теплицы не отвечает!\"}".encode())
+                    else:
+                        self.wfile.write("{\"message\": \"Система полива бороздки включена!\"}".encode())
                 if axc[0][2] > last_GROUND_humidity[(int(m[1])) - 1]:
                     try:
                         k = requests.patch(url='https://dt.miet.ru/ppo_it/api/watering',
