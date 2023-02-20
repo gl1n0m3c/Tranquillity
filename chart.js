@@ -1,53 +1,65 @@
 
+document.getElementById("TABLE").style.display = "none";
+
+TABLE_SHOW.onclick = function() {
+    document.getElementById("CHART").style.display = "none";
+    document.getElementById("TABLE").style.display = "block";
+}
+
+CHART_SHOW.onclick = function() {
+    document.getElementById("TABLE").style.display = "none";
+    document.getElementById("CHART").style.display = "block";
+} 
+
 const TagError = document.querySelector('h2');	
 moment.locale('ru');						
 var RowAirFragment = TableRowCreate(1+5+5);		
 var RowGroundFragment = TableRowCreate(1+6);	
 var coFixed = 1;
 const port = "27314";
-var url;
+const host = "http://localhost:" + port;
+var url = "30min";
+var text = "Данных нет";
+
 
 min30.onclick = function() {
     url = "30min";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
+    DataFetch(host + "/give_data/").catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 hour1.onclick = function() {
     url = "hour";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
+    DataFetch(host + "/give_data/").catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 hours12.onclick = function() {
     url = "12hours";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
+    DataFetch(host + "/give_data/").catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 day1.onclick = function() {
     url = "day";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
+    DataFetch(host + "/give_data/").catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 month1.onclick = function() {
     url = "month";
-    DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)});
+    DataFetch(host + "/give_data/").catch(error => {alert(`Ошибка! ${error}`)});
 }
 
 ChartRefresh1.onclick = function() {
-    if (url != null || url != undefined){
-        DataFetch("http://localhost:" + port + "/give_data/" + url).catch(error => {alert(`Ошибка! ${error}`)})}
-    else {
-        alert("Сначала следует выбрать временной интервал!")
-    }
+    DataFetch(host + "/give_data/").catch(error => {alert(`Ошибка! ${error}`)})
 }
+
+
 
 var Sensor;
 var Chart1;		
 var Chart2; 
 var Chart3;	
 var Chart4;				
-moment.locale('ru');
 
-
+DataFetch(host + "/give_data/")
 
 //Подготовка шаблона строки таблицы с указанным в параметре Columns количеством полей
 function TableRowCreate(Columns) {
@@ -79,6 +91,7 @@ function TableRowSetAir(TableBody, RowFragment) {
     }
 }
 
+//Выравниваем количество строк в таблице TableBody по данным из Sensor.ground. RowFragment используется как шаблон строки таблицы
 function TableRowSetGround(TableBody, RowFragment) {
     if (Sensor.ground != null || Sensor.ground != undefined){
         let Delta = Sensor.ground.length - TableBody.rows.length;  //Разница строк между данными и таблицей
@@ -104,27 +117,58 @@ function TableAirRefresh(TableId) {
     let TableRow = TableBody.firstElementChild; // возвращает tr 
     if (Sensor.air != null || Sensor.air != undefined){
         for (const Rec of Sensor.air) {  //Цикл по всем записям Data.sensor
+            
             TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
             if (Rec.t1 != null){
-                TableRow.cells[1].textContent = Rec.t1.toFixed(coFixed)}
+                TableRow.cells[1].textContent = Rec.t1.toFixed(coFixed)
+            } else { 
+                TableRow.cells[1].textContent = text}
+
             if (Rec.t2 != null){
-                TableRow.cells[2].textContent = Rec.t2.toFixed(coFixed)}
+                TableRow.cells[2].textContent = Rec.t2.toFixed(coFixed)
+            } else {
+                TableRow.cells[2].textContent = text}
+
             if (Rec.t3 != null){
-                TableRow.cells[3].textContent = Rec.t3.toFixed(coFixed)}
+                TableRow.cells[3].textContent = Rec.t3.toFixed(coFixed)
+            } else {
+                TableRow.cells[3].textContent = text}
+
             if (Rec.t4 != null){
-                TableRow.cells[4].textContent = Rec.t4.toFixed(coFixed)}
+                TableRow.cells[4].textContent = Rec.t4.toFixed(coFixed)
+            } else {
+                TableRow.cells[4].textContent = text}
+            
             if (Rec.avg_temp != null){
-                TableRow.cells[5].textContent = Rec.avg_temp.toFixed(coFixed)}
+                TableRow.cells[5].textContent = Rec.avg_temp.toFixed(coFixed)
+            } else {
+                TableRow.cells[5].textContent = text}
+
             if (Rec.h1 != null){
-                TableRow.cells[6].textContent = Rec.h1.toFixed(coFixed)}
+                TableRow.cells[6].textContent = Rec.h1.toFixed(coFixed)
+            } else {
+                TableRow.cells[6].textContent = text}
+
             if (Rec.h2 != null){
-                TableRow.cells[7].textContent = Rec.h2.toFixed(coFixed)}
+                TableRow.cells[7].textContent = Rec.h2.toFixed(coFixed)
+            } else {
+                TableRow.cells[7].textContent = text}
+
             if (Rec.h3 != null){
-                TableRow.cells[8].textContent = Rec.h3.toFixed(coFixed)}
+                TableRow.cells[8].textContent = Rec.h3.toFixed(coFixed)
+            } else {
+                TableRow.cells[8].textContent = text}
+
             if (Rec.h4 != null){
-                TableRow.cells[9].textContent = Rec.h4.toFixed(coFixed)}
+                TableRow.cells[9].textContent = Rec.h4.toFixed(coFixed)
+            } else {
+                TableRow.cells[9].textContent = text}
+
             if (Rec.avg_hum != null){
-                TableRow.cells[10].textContent = Rec.avg_hum.toFixed(coFixed)}
+                TableRow.cells[10].textContent = Rec.avg_hum.toFixed(coFixed)
+            } else {
+                TableRow.cells[10].textContent = text}
+
             TableRow = TableRow.nextElementSibling;
         }
     } else {
@@ -145,17 +189,35 @@ function TableGroundRefresh(TableId) {
         for (const Rec of Sensor.ground) {  //Цикл по всем записям Data.air
             TableRow.cells[0].textContent = moment(Rec.dt).format('LLLL');
             if (Rec.h1 != null){
-                TableRow.cells[1].textContent = Rec.h1.toFixed(coFixed)}
+                TableRow.cells[1].textContent = Rec.h1.toFixed(coFixed)
+            } else {
+                TableRow.cells[1].textContent = text}
+
             if (Rec.h2 != null){
-                TableRow.cells[2].textContent = Rec.h2.toFixed(coFixed)}
+                TableRow.cells[2].textContent = Rec.h2.toFixed(coFixed)
+            } else {
+                TableRow.cells[2].textContent = text}
+
             if (Rec.h3 != null){
-                TableRow.cells[3].textContent = Rec.h3.toFixed(coFixed)}
+                TableRow.cells[3].textContent = Rec.h3.toFixed(coFixed)
+            } else {
+                TableRow.cells[3].textContent = text}
+
             if (Rec.h4 != null){
-                TableRow.cells[4].textContent = Rec.h4.toFixed(coFixed)}
+                TableRow.cells[4].textContent = Rec.h4.toFixed(coFixed)
+            } else {
+                TableRow.cells[4].textContent = text}
+
             if (Rec.h5 != null){
-                TableRow.cells[5].textContent = Rec.h5.toFixed(coFixed)}
+                TableRow.cells[5].textContent = Rec.h5.toFixed(coFixed)
+            } else {
+                TableRow.cells[5].textContent = text}
+
             if (Rec.h6 != null){
-                TableRow.cells[6].textContent = Rec.h6.toFixed(coFixed)}
+                TableRow.cells[6].textContent = Rec.h6.toFixed(coFixed)
+            } else {
+                TableRow.cells[6].textContent = text}
+
             TableRow = TableRow.nextElementSibling}
     } else {
         alert("Ошибка. Данные пришли не в полном объёме")
@@ -164,10 +226,11 @@ function TableGroundRefresh(TableId) {
 
 
 
+
 async function DataFetch(strURL) {
     // Очистить сообщение об ошибке
     TagError.textContent = '';
-    const Requ = new Request(strURL);
+    const Requ = new Request(strURL + url);
     const Resp = await fetch(Requ);
     Sensor = await Resp.json();
     var time_per;
@@ -277,12 +340,12 @@ async function DataFetch(strURL) {
                     time: {
                 isoWeekday: true,
                 minUnit: time_per,
-                displayFormats: {				
-                    minute: 'D MMM hh:mm',
-                    hour: 'D MMM hh часов/-а',
+                displayFormats: {					
+                    minute: 'D MMM HH:mm',
+                    hour: 'D MMM HH часов',
                     day: 'D MMM'}
-                    },
-                    ticks: {
+                },
+                ticks: {
                         autoSkip: true,
                         maxTicksLimit: 20,
                         maxRotation: 60,
@@ -408,8 +471,8 @@ async function DataFetch(strURL) {
 	        isoWeekday: true,
 	        minUnit: time_per,
             displayFormats: {				
-                minute: 'D MMM hh:mm',
-                hour: 'D MMM hh часов/-а',
+                minute: 'D MMM HH:mm',
+                hour: 'D MMM HH часов',
                 day: 'D MMM'}},
                 ticks: {
                     autoSkip: true,
@@ -425,9 +488,9 @@ async function DataFetch(strURL) {
                 grid: {
                     drawTicks: true,
                     borderColor: "black",
-	          enabled: true,
-	          drawTicks: true,
-	          lineWidth: 1,					
+	        enabled: true,
+	        drawTicks: true,
+	        lineWidth: 1,					
                 },
               },
             y: {
@@ -558,8 +621,8 @@ async function DataFetch(strURL) {
 	        isoWeekday: true,
 	        minUnit: time_per,
             displayFormats: {				
-                minute: 'D MMM hh:mm',
-                hour: 'D MMM hh часов/-а',
+                minute: 'D MMM HH:mm',
+                hour: 'D MMM часов',
                 day: 'D MMM'}},
                 ticks: {
                     autoSkip: true,
@@ -664,8 +727,8 @@ async function DataFetch(strURL) {
                 isoWeekday: true,
                 minUnit: time_per,
                 displayFormats: {				
-                    minute: 'D MMM hh:mm',
-                    hour: 'D MMM hh часов/-а',
+                    minute: 'D MMM HH:mm',
+                    hour: 'D MMM HH часов',
                     day: 'D MMM'}
                     },
                     ticks: {
@@ -714,4 +777,3 @@ async function DataFetch(strURL) {
 
 
 }
-
