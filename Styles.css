@@ -159,3 +159,10 @@ table {
     margin-right: auto
 }
 
+.dropdown {
+  position: relative;
+}
+
+.hidden {
+  visibility: hidden;
+}
