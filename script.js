@@ -48,6 +48,21 @@ function send(){
     if ((input8.value<101)&&(input9.value<101)&&(input10.value<101)&&(input11.value<101)&&(input12.value<101)&&(input13.value<101)&&(input14.value<101)&&(input15.value<101)&&(input16.value<101)&&(input17.value<101)){
 zapros('http://localhost:' + m +'/save/'+ input4.value+ '/' + input5.value + '/' + input6.value +  '/' + input7.value +  '/' + input8.value +  '/' + input9.value +  '/'
  + input10.value +  '/' + input11.value +  '/' + input12.value +  '/' + input13.value +  '/' + input14.value+  '/' + input15.value +  '/' + input16.value  +  '/' + input17.value)
+ input4.value=''
+ input5.value=''
+ input6.value=''
+ input7.value=''
+ input8.value=''
+ input9.value=''
+ input10.value=''
+ input11.value=''
+ input12.value=''
+ input13.value=''
+ input14.value=''
+ input15.value=''
+ input16.value=''
+ input17.value=''
+
 
     }
 }
