@@ -1,233 +1,314 @@
 <!DOCTYPE html>
 <html lang="ru">
     <link rel="stylesheet" href="styles.css">
-    <script src="chart.umd.min_v4.2.0.js"></script>
-    <script src="moment-with-locales.min_v2.29.4.js"></script>
-    <script src="chartjs-adapter-moment.min_v1.0.1.js"></script>
-<head>
+    <script src="./scripts/chart.umd.min_v4.2.0.js"></script>
+    <script src="./scripts/moment-with-locales.min_v2.29.4.js"></script>
+    <script src="./scripts/chartjs-adapter-moment.min_v1.0.1.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <title>Система управления</title>
-</head>
-<body>
-    <fieldset>
-        <legend align="center"><strong>Установка параметров</strong></legend>
-		    <form class="forma" onsubmit="return false" id="form1">
-		    	<label for="MaxT">Минимальная средняя температура воздуха в теплице(°C)</label>
-		    	<input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
-		    	<button id="send1" type="submit" onclick="get(1)" >Отправить</button>
-		    </form>
-		    <form class="forma"  onsubmit="return false" id="form2">
-		        <label for="MaxH">Максимальная средняя влажность воздуха в теплице(%)</label>
-		    	<input type="number" min="0" max="100" id="MaxH" name="MaxH" placeholder="Введите число" required />
-		    	<button id="send2" type="submit" onclick="get(2)" >Отправить</button>
-		    </form>
-		    <form class="forma"  onsubmit="return false" id="form3">
-		    	<label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
-		    	<input type="number" min="0" max="100" id="MaxHb" name="maxHb" placeholder="Введите число" required />
-		    	<button id="send3" type="submit"onclick="get(3)" >Отправить</button>
-		    </form>
-    </fieldset>
-    <fieldset>
-        <label class="toggle">
-            <input class="toggle-checkbox" type="checkbox"  onclick="extra()">
-            <div id='e1' class="toggle-switch"></div>
-            <span class="toggle-label">Режим экстренного управления</span>
-        </label>
-	</fieldset>
-        <fieldset>
-            <h1>Исполнительные устройства</h1>
-            <div class="switch-btn switch-on">
+<head>
+    
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+              <a class="navbar-brand">Панель управления</a>
+              <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav">
+                        <a class="nav-link" role="button" id="PARAMS_SHOW">
+                            Установка параметров
+                        </a>
+                </ul>
+
+                <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" role="button" id="DEVICE_SHOW">
+                                Исполнительные устройства
+                            </a>
+
+                        </li>
+                  </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" role="button" id="READINGS_SHOW">
+                            Установка показаний датчиков вручную
+                        </a>
+                    </li>
+                </ul>
+
+              </div>
+            </div>
+        </nav>
+
+        <div id="PARAMS">
+            <legend align="center"><strong>Установка параметров</strong></legend>
+                <form class="forma" onsubmit="return false" id="form1">
+                    <label for="MaxT">Минимальная средняя температура воздуха в теплице(°C)</label>
+                    <input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
+                    <input type="submit" class="btn btn-info" value="Отправить" onclick="get(1)" id="send1">
+                </form>
+                <form class="forma"  onsubmit="return false" id="form2">
+                    <label for="MaxH">Максимальная средняя влажность воздуха в теплице(%)</label>
+                    <input type="number" min="0" max="100" id="MaxH" name="MaxH" placeholder="Введите число" required />
+                    <input type="submit" class="btn btn-info" value="Отправить" onclick="get(2)" id="send2">
+                </form>
+                <form class="forma"  onsubmit="return false" id="form3">
+                    <label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
+                    <input type="number" min="0" max="100" id="MaxHb" name="maxHb" placeholder="Введите число" required />
+                    <input type="submit" class="btn btn-info" value="Отправить" onclick="get(3)" id="send3">
+                </form>
                 <label class="toggle">
-                <div id='fortochka'>
-                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki()" >
-                    <div id='1' class="toggle-switch"></div>
-                    <span class="toggle-label">Форточка</span>
+                    <input class="toggle-checkbox" type="checkbox"  onclick="extra()">
+                    <div id='e1' class="toggle-switch"></div>
+                    <span class="toggle-label">Режим экстренного управления</span>
+                </label>
+         </div> 
+
+        <div id="DEVICE">
+            <legend align="center"><strong>Исполнительные устройства</strong></legend>
+                <div class="switch-btn switch-on">
+                    <label class="toggle">
+                    <div id='fortochka'>
+                        <input class="toggle-checkbox" type="checkbox"  onclick="knopki()" >
+                        <div id='1' class="toggle-switch"></div>
+                        <span class="toggle-label">Форточка</span>
+                    </div>
+                    </label>
                 </div>
+            <br>
+            <div id='yvl'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki2()" >
+                    <div id='2' class="toggle-switch"></div>
+                    <span class="toggle-label">Увлажнение</span>
                 </label>
             </div>
-        <br>
-        <div id='yvl'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki2()" >
-                <div id='2' class="toggle-switch"></div>
-                <span class="toggle-label">Увлажнение</span>
-            </label>
+            <br>
+            <div id='auto1'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki3()" >
+                    <div id='3' class="toggle-switch"></div>
+                    <span class="toggle-label">Автополив 1 Бороздки</span>
+                </label>
+            </div>
+            <br>
+            <div id='auto2'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki4()" >
+                    <div id='4' class="toggle-switch"></div>
+                    <span class="toggle-label">Автополив 2 Бороздки</span> 
+                </label>
+            </div>
+            <br>
+            <div id='auto3'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki5()" >
+                    <div id='5' class="toggle-switch"></div>
+                    <span class="toggle-label">Автополив 3 Бороздки</span>
+                </label>
+            </div>
+            <br>
+            <div id='auto4'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki6()" >
+                    <div id='6' class="toggle-switch"></div>
+                    <span class="toggle-label">Автополив 4 Бороздки</span>          
+                </label>
+            </div>
+            <br>
+            <div id='auto5'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki7()" >
+                    <div id='7' class="toggle-switch"></div>
+                    <span class="toggle-label">Автополив 5 Бороздки</span>
+                </label>
+            </div>
+            <br>
+            <div id='auto6'>
+                <label class="toggle">
+                    <input class="toggle-checkbox" type="checkbox"  onclick="knopki8()" >
+                    <div id='8' class="toggle-switch"></div>
+                    <span class="toggle-label">Автополив 6 Бороздки</span>
+                </label>
+            </div>
         </div>
-        <br>
-        <div id='auto1'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki3()" >
-                <div id='3' class="toggle-switch"></div>
-                <span class="toggle-label">Автополив 1 Бороздки</span>
-            </label>
-        </div>
-        <br>
-        <div id='auto2'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki4()" >
-                <div id='4' class="toggle-switch"></div>
-                <span class="toggle-label">Автополив 2 Бороздки</span> 
-            </label>
-        </div>
-        <br>
-        <div id='auto3'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki5()" >
-                <div id='5' class="toggle-switch"></div>
-                <span class="toggle-label">Автополив 3 Бороздки</span>
-            </label>
-        </div>
-        <br>
-        <div id='auto4'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki6()" >
-                <div id='6' class="toggle-switch"></div>
-                <span class="toggle-label">Автополив 4 Бороздки</span>          
-            </label>
-        </div>
-        <br>
-        <div id='auto5'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki7()" >
-                <div id='7' class="toggle-switch"></div>
-                <span class="toggle-label">Автополив 5 Бороздки</span>
-            </label>
-        </div>
-        <br>
-        <div id='auto6'>
-            <label class="toggle">
-                <input class="toggle-checkbox" type="checkbox"  onclick="knopki8()" >
-                <div id='8' class="toggle-switch"></div>
-                <span class="toggle-label">Автополив 6 Бороздки</span>
-            </label>
-        </div>
-    </fieldset>
-	<fieldset>
-		<form class="forma" onsubmit="return false" id="form1">
-		<fieldset>
-		    <label >Показания 1 датчика Температуры</label>
-		    <input type="number"  placeholder="Введите число" id="d1"/>
-			<br>
-			<label >Показания 2 датчика Температуры</label>
-		    <input type="number"  placeholder="Введите число" id="d2"/>
-			<br>
-			<label >Показания 3 датчика Температуры</label>
-		    <input type="number"  placeholder="Введите число" id="d3"/>
-			<br>
-			<label >Показания 4 датчика Температуры</label>
-		    <input type="number"  placeholder="Введите число" id="d4"/>
-			<br>
-			</fieldset>
-			<fieldset>
-			<label >Показания 1 датчика Влажности </label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d5"/>
-			<br>
-			<label >Показания 2 датчика Влажности</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d6"/>
-			<br>
-			<label >Показания 3 датчика Влажности</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d7"/>
-			<br>
-			<label >Показания 4 датчика Влажности</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d8"/>
-			<br>
-			</fieldset>
-			<fieldset>
-			<label >Показания 1 датчика Влажности Бороздки</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d9"/>
-			<br>
-			<label >Показания 2 датчика Влажности Бороздки</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d10"/>
-			<br>
-			<label >Показания 3 датчика Влажности Бороздки</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d11"/>
-			<br>
-			<label >Показания 4 датчика Влажности Бороздки</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d12"/>
-			<br>
-			<label >Показания 5 датчика Влажности Бороздки</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d13"/>
-			<br>
-			<label >Показания 6 датчика Влажности Бороздки</label>
-		    <input type="number" min="0" max="100" placeholder="Введите число" id="d14"/>
-			<br>
-			</fieldset>
-		<button type="submit" onclick="send()" >Отправить</button>
-		</form>
-	</fieldset>
-    <p style="text-align:center"><strong>Графики</strong></p>
-    <fieldset>
-	    <div>
-        <button id="min30">30 минут</button>
-        <button id="hour1">1 час</button>
-        <button id="hours12">12 часов</button>
-        <button id="day1">1 день</button>
-        <button id="month1">1 месяц</button>
-        <button id="ChartRefresh1">Обновить показания датчиков</button>
-		<button onclick="deldb()">Очистить Базу данных</button>
-    </div>
-    <div>
-        <canvas id="chart1" width="800" height="250"></canvas>
-        <canvas id="chart2" width="800" height="250"></canvas>
-        <canvas id="chart3" width="800" height="250"></canvas>
-        <canvas id="chart_AVG" width="800" height="250"></canvas>
-    </div>
 
-    </fieldset>
-    <p style="text-align:center"><strong>Таблицы</strong></p>
-    <header></header>
-    <section></section>
-    <fieldset>
+        <div id="READINGS">
+            <legend align="center"><strong>Установка показаний вручную</strong></legend>
+            <form class="forma" onsubmit="return false" id="form1">
+                <div>
+                    <h5>Датчики Температуры Воздуха:</h5>
+                    <label >Показания 1 датчика</label>
+                    <input type="number"  placeholder="Введите число" id="d1"/>
+                    <br>
+                    <label >Показания 2 датчика</label>
+                    <input type="number"  placeholder="Введите число" id="d2"/>
+                    <br>
+                    <label >Показания 3 датчика</label>
+                    <input type="number"  placeholder="Введите число" id="d3"/>
+                    <br>
+                    <label >Показания 4 датчика</label>
+                    <input type="number"  placeholder="Введите число" id="d4"/>
+                <br>
+                </div>
+                <div>
+                    <h5>Датчики Влажности Воздуха:</h5>
+                    <label >Показания 1 датчика</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d5"/>
+                    <br>
+                    <label >Показания 2 датчика</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d6"/>
+                    <br>
+                    <label >Показания 3 датчика</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d7"/>
+                    <br>
+                    <label >Показания 4 датчика</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d8"/>
+                <br>
+                </div>
+                <div>
+                    <h5>Датчики Влажности Бороздки:</h5>
+                    <label >Показания 1 датчика Влажности</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d9"/>
+                    <br>
+                    <label >Показания 2 датчика Влажности</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d10"/>
+                    <br>
+                    <label >Показания 3 датчика Влажности</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d11"/>
+                    <br>
+                    <label >Показания 4 датчика Влажности</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d12"/>
+                    <br>
+                    <label >Показания 5 датчика Влажности</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d13"/>
+                    <br>
+                    <label >Показания 6 датчика Влажности</label>
+                    <input type="number" min="0" max="100" placeholder="Введите число" id="d14"/>
+                    <br>
+                </div>
+                </fieldset>
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="submit" class="btn btn-info" value="Отправить" onclick="send()">
+            </div>
+            
+            </form>
+        </div>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+              <a class="navbar-brand">Панель управления</a>
+              <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Интервал
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" id="min30">30 минут</a></li>
+                            <li><a class="dropdown-item" id="hour1">1 час</a></li>
+                            <li><a class="dropdown-item" id="hours12">12 часов</a></li>
+                            <li><a class="dropdown-item" id="day1">1 день</a></li>
+                            <li><a class="dropdown-item" id="month1">1 месяц</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Данные
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                                <li><a class="dropdown-item" id="ChartRefresh1">Обновить данные</a></li>
+                                <li><a class="dropdown-item" onclick="deldb()">Очистить Базу Данных</a></li>
+                            </ul>
+                        </li>
+                  </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Вид
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" id="TABLE_SHOW">Показать таблицу</a></li>
+                            <li><a class="dropdown-item" id="CHART_SHOW">Показать график</a></li>
+                        </ul>
+                    </li>
+                </ul>
+              </div>
+            </div>
+        </nav>
+        
+
+        <div id="CHART">
+            <canvas id="chart1" width="800" height="250"></canvas>
+            <canvas id="chart2" width="800" height="250"></canvas>
+            <canvas id="chart3" width="800" height="250"></canvas>
+            <canvas id="chart_AVG" width="800" height="250"></canvas>
+        </div>
+        <header></header>
+        <section></section>
         <h2 style="background-color:red;color:white;"></h2>
-        <div class="scroll-table-body-air">
-            <table id="TableAir" class="table1"><caption>Датчики воздуха</caption>
-                <thead>
-                    <tr>
-                        <th rowspan="2">Дата и время</th>
-                        <th colspan="5">Температура воздуха</th>
-                        <th colspan="5">Влажность воздуха</th>
-                    </tr>
-                    <tr>
-                        <th>№1</th>
-                        <th>№2</th>
-                        <th>№3</th>
-                        <th>№4</th>
-                        <th>Средняя температура</th>
-                        <th>№1</th>
-                        <th>№2</th>
-                        <th>№3</th>
-                        <th>№4</th>
-                        <th>Средняя влажность</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-    </div>
+        <div id="TABLE">
+            <div class="scroll-table-body-air">
+                <caption>Датчики воздуха</caption>
+                <table id="TableAir" class="table1">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Дата и время</th>
+                            <th colspan="5">Температура воздуха</th>
+                            <th colspan="5">Влажность воздуха</th>
+                        </tr>
+                        <tr>
+                            <th>№1</th>
+                            <th>№2</th>
+                            <th>№3</th>
+                            <th>№4</th>
+                            <th>Средняя температура</th>
+                            <th>№1</th>
+                            <th>№2</th>
+                            <th>№3</th>
+                            <th>№4</th>
+                            <th>Средняя влажность</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        
+            <div class="scroll-table-body-ground">
+                <caption>Датчики почвы</caption>
+                <table id="TableGround">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Дата и время</th>
+                            <th colspan="6">Влажность почвы</th>
+                        </tr>
+                        <tr>
+                            <th>№1</th>
+                            <th>№2</th>
+                            <th>№3</th>
+                            <th>№4</th>
+                            <th>№5</th>
+                            <th>№6</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <div class="scroll-table-body-ground">
-        <table id="TableGround"><caption>Датчики почвы</caption>
-            <thead>
-                <tr>
-                    <th rowspan="2">Дата и время</th>
-                    <th colspan="6">Влажность почвы</th>
-                </tr>
-                <tr>
-                    <th>№1</th>
-                    <th>№2</th>
-                    <th>№3</th>
-                    <th>№4</th>
-                    <th>№5</th>
-                    <th>№6</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    </fieldset>
-    <script src="chart.js"></script>
-
-    <script src="script.js"></script>
-</body>
-</html>
+        <script src="chart.js"></script>
+    
+        <script src="script.js"></script>
+    </body>
+    </html>
+    
