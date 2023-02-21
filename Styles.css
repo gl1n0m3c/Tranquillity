@@ -99,6 +99,13 @@ transition: left 0.25s;
   content: "";
 }
 
+.MAIN {
+  margin-left: 20px;
+}
+
+.charts {
+  margin-right: 20px;
+}
 
 table {
     font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
@@ -163,4 +170,7 @@ table {
   position: relative;
 }
 
+.hidden {
+  visibility: hidden;
+}
 
