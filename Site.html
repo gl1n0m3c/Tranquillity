@@ -60,15 +60,19 @@
                     <input type="number" min="0" max="100" id="MaxHb" name="maxHb" placeholder="Введите число" required />
                     <input type="submit" class="btn btn-info" value="Отправить" onclick="get(3)" id="send3">
                 </form>
+
+         </div> 
+
+        <div id="DEVICE">
+            <legend align="center"><strong>Исполнительные устройства</strong></legend>
+            <div>
                 <label class="toggle">
                     <input class="toggle-checkbox" type="checkbox"  onclick="extra()">
                     <div id='e1' class="toggle-switch"></div>
                     <span class="toggle-label">Режим экстренного управления</span>
                 </label>
-         </div> 
-
-        <div id="DEVICE">
-            <legend align="center"><strong>Исполнительные устройства</strong></legend>
+            </div>
+            <br>
                 <div class="switch-btn switch-on">
                     <label class="toggle">
                     <div id='fortochka'>
@@ -241,6 +245,22 @@
                         </ul>
                     </li>
                 </ul>
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="CONFIGURATION">
+                            Графики
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                            <li><a class="dropdown-item" id="AIR">Температура/Влажность воздуха</a></li>
+                            <li><a class="dropdown-item" id="GROUND">Влажность почвы</a></li>
+                            <li><a class="dropdown-item" id="AVERAGE">Средние показания</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" id="SHOW_ALL">Показать всё</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
               </div>
             </div>
         </nav>
