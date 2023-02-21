@@ -1,15 +1,51 @@
 
 document.getElementById("TABLE").style.display = "none";
+document.getElementById("CONFIGURATION").style.display = "block";
 
 TABLE_SHOW.onclick = function() {
     document.getElementById("CHART").style.display = "none";
     document.getElementById("TABLE").style.display = "block";
+    document.getElementById("CONFIGURATION").style.display = "none";
 }
 
 CHART_SHOW.onclick = function() {
     document.getElementById("TABLE").style.display = "none";
     document.getElementById("CHART").style.display = "block";
+    document.getElementById("CONFIGURATION").style.display = "block";
 } 
+
+AIR.onclick = function() {
+    document.getElementById("CONFIGURATION").style.display = "block";
+    document.getElementById("chart1").style.display = "block";
+    document.getElementById("chart2").style.display = "block";
+    document.getElementById("chart3").style.display = "none";
+    document.getElementById("chart_AVG").style.display = "none";
+} 
+
+SHOW_ALL.onclick = function() {
+    document.getElementById("CONFIGURATION").style.display = "block";
+    document.getElementById("chart1").style.display = "block";
+    document.getElementById("chart2").style.display = "block";
+    document.getElementById("chart3").style.display = "block";
+    document.getElementById("chart_AVG").style.display = "block";
+} 
+
+GROUND.onclick = function() {
+    document.getElementById("CONFIGURATION").style.display = "block";
+    document.getElementById("chart1").style.display = "none";
+    document.getElementById("chart2").style.display = "none";
+    document.getElementById("chart3").style.display = "block";
+    document.getElementById("chart_AVG").style.display = "none";
+}
+
+AVERAGE.onclick = function() {
+    document.getElementById("CONFIGURATION").style.display = "block";
+    document.getElementById("chart1").style.display = "none";
+    document.getElementById("chart2").style.display = "none";
+    document.getElementById("chart3").style.display = "none";
+    document.getElementById("chart_AVG").style.display = "block";
+}
+
 
 const TagError = document.querySelector('h2');	
 moment.locale('ru');						
