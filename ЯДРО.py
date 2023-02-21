@@ -49,6 +49,7 @@ def null():
     cur.execute("DELETE FROM ground;")
     conn.commit()
     cur.execute("DELETE FROM options;")
+    conn.commit()
 
 
 # ЕСЛИ БД ПУСТА, ТО ЗАПОЛНИТЬ ЕЕ НУЛЯМИ
