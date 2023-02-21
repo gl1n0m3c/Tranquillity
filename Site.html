@@ -42,19 +42,22 @@
               </div>
             </div>
         </nav>
+        <br>
 
-        <div id="PARAMS">
+        <div id="PARAMS" class="MAIN">
             <legend align="center"><strong>Установка параметров</strong></legend>
                 <form class="forma" onsubmit="return false" id="form1">
                     <label for="MaxT">Минимальная средняя температура воздуха в теплице(°C)</label>
                     <input type="number" id="MaxT" name="MaxT" placeholder="Введите число" required />
                     <input type="submit" class="btn btn-info" value="Отправить" onclick="get(1)" id="send1">
                 </form>
+                <br>
                 <form class="forma"  onsubmit="return false" id="form2">
                     <label for="MaxH">Максимальная средняя влажность воздуха в теплице(%)</label>
                     <input type="number" min="0" max="100" id="MaxH" name="MaxH" placeholder="Введите число" required />
                     <input type="submit" class="btn btn-info" value="Отправить" onclick="get(2)" id="send2">
                 </form>
+                <br>
                 <form class="forma"  onsubmit="return false" id="form3">
                     <label for="MaxHb">Максимальная средняя влажность почвы в теплице(%)</label>
                     <input type="number" min="0" max="100" id="MaxHb" name="maxHb" placeholder="Введите число" required />
@@ -63,7 +66,7 @@
 
          </div> 
 
-        <div id="DEVICE">
+        <div id="DEVICE" class="MAIN">
             <legend align="center"><strong>Исполнительные устройства</strong></legend>
             <div>
                 <label class="toggle">
@@ -140,9 +143,10 @@
             </div>
         </div>
 
-        <div id="READINGS">
+        <div id="READINGS" class="MAIN">
             <legend align="center"><strong>Установка показаний вручную</strong></legend>
             <form class="forma" onsubmit="return false" id="form1">
+                <br>
                 <div>
                     <h5>Датчики Температуры Воздуха:</h5>
                     <label >Показания 1 датчика</label>
@@ -156,8 +160,8 @@
                     <br>
                     <label >Показания 4 датчика</label>
                     <input type="number"  placeholder="Введите число" id="d4"/>
-                <br>
                 </div>
+                <br>
                 <div>
                     <h5>Датчики Влажности Воздуха:</h5>
                     <label >Показания 1 датчика</label>
@@ -171,8 +175,8 @@
                     <br>
                     <label >Показания 4 датчика</label>
                     <input type="number" min="0" max="100" placeholder="Введите число" id="d8"/>
-                <br>
                 </div>
+                <br>
                 <div>
                     <h5>Датчики Влажности Бороздки:</h5>
                     <label >Показания 1 датчика Влажности</label>
@@ -194,14 +198,14 @@
                     <input type="number" min="0" max="100" placeholder="Введите число" id="d14"/>
                     <br>
                 </div>
-                </fieldset>
+            <br>
             <div class="col-sm-offset-2 col-sm-10">
                 <input type="submit" class="btn btn-info" value="Отправить" onclick="send()">
             </div>
             
             </form>
         </div>
-
+        <br>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
               <a class="navbar-brand">Панель управления</a>
@@ -266,12 +270,13 @@
         </nav>
         
 
-        <div id="CHART">
+        <div id="CHART" class="charts">
             <canvas id="chart1" width="800" height="250"></canvas>
             <canvas id="chart2" width="800" height="250"></canvas>
             <canvas id="chart3" width="800" height="250"></canvas>
             <canvas id="chart_AVG" width="800" height="250"></canvas>
         </div>
+        
         <header></header>
         <section></section>
         <h2 style="background-color:red;color:white;"></h2>
