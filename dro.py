@@ -335,6 +335,8 @@ def SERVER():
             m = self.path[1:].split('/')
             # УВЕДОМЛЕНИЕ О ЗАПУСКЕ ИЛИ ОБНОВЛЕНИИ ПОЛЬЗОВАТЕЛЬСКОГО ИНТЕРФЕЙСА
             if m[0] == 'update':
+                # Выключение режима экстренного управления
+                extreme_mode = False
                 # Закрытие форточек
                 try:
                     k = requests.patch(url='https://dt.miet.ru/ppo_it/api/fork_drive', params={"state": 0})
